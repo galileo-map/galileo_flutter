@@ -12,6 +12,7 @@ use galileo::layer::vector_tile_layer::VectorTileLayerBuilder;
 use galileo::render::text::text_service::TextService;
 use galileo::render::text::RustybuzzRasterizer;
 use galileo::TileSchema;
+use crate::utils::invoke_on_platform_main_thread;
 use log::{debug, info};
 use std::sync::atomic::Ordering;
 
@@ -85,45 +86,43 @@ pub fn mark_session_alive(session_id: SessionID) {
     }
 }
 
-/// Destroys all streams for a given engine
+/// Destroys all sessions for a given engine
 pub fn destroy_all_engine_sessions(engine_id: i64) {
     debug!("destroy_engine_streams called for engine {}", engine_id);
 
-    // Find and remove all sessions for this engine
-    let mut sessions_to_remove = Vec::new();
-    {
+    // Collect session IDs first
+    let session_ids: Vec<SessionID> = {
         let sessions = SESSIONS.lock();
-        for (session_id, session) in sessions.iter() {
-            if session.engine_handle == engine_id {
-                sessions_to_remove.push(*session_id);
-            }
-        }
-    }
+        sessions
+            .iter()
+            .filter(|(_, session)| session.engine_handle == engine_id)
+            .map(|(id, _)| *id)
+            .collect()
+    };
 
-    let handles: Vec<_> = sessions_to_remove
-        .into_iter()
-        .map(|session_id| {
-            std::thread::spawn(move || {
-                destroy_session(session_id);
-            })
-        })
-        .collect();
-    for handle in handles {
-        handle.join().unwrap();
+    // Destroy each session (async-safe, non-blocking)
+    for session_id in session_ids {
+        destroy_session(session_id);
     }
 }
 
-/// Destroys a specific session
+
+
+
 pub fn destroy_session(session_id: SessionID) {
-    debug!("destroy_session called for session {}", session_id);
     if let Some(session) = SESSIONS.lock().remove(&session_id) {
-        TOKIO_RUNTIME.get().unwrap().block_on(session.terminate());
+        let session_clone = session.clone();
 
-        info!("Session {} destroyed with full cleanup", session_id);
-        
+        TOKIO_RUNTIME.get().unwrap().spawn(async move {
+            session_clone.shutdown_async().await;
+
+            invoke_on_platform_main_thread(move || {
+                session_clone.dispose_flutter_on_platform_thread();
+            });
+        });
     }
-    info!("Session {session_id} does not exist")
 }
+
 
 /// Replaces {z}, {x}, {y} with tile indices
 fn create_url_source(url_template: String) -> impl Fn(&galileo::tile_schema::TileIndex) -> String {

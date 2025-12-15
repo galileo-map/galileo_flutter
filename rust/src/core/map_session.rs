@@ -72,14 +72,23 @@ impl galileo::Messenger for SessionMessenger {
         if let Some(runtime) = TOKIO_RUNTIME.get() {
             let _ = runtime.spawn(async move {
                 loop {
-                    tokio::time::sleep(Duration::from_millis(16)).await; // throttle to ~60fps
+                    if !session.is_alive() {
+                        break;
+                    }
+                
+                    tokio::time::sleep(Duration::from_millis(16)).await;
+                
                     if !session.requires_redraw.swap(false, Ordering::Relaxed) {
                         session.redraw_scheduled.store(false, Ordering::Release);
                         break;
                     }
-
+                
+                    if !session.is_alive() {
+                        break;
+                    }
+                
                     session._draw_no_res().await;
-                }
+                }                
             });
         }
     }
@@ -167,6 +176,9 @@ impl MapSession {
 
     /// Renders a single frame for the session.
     pub async fn redraw(&self) -> anyhow::Result<()> {
+        if !self.is_alive() {
+            return Ok(());
+        }
         let (payload_holder, sendable_texture) = {
             let flctx = self.flutter_ctx.read();
             let flutter_ctx = flctx
@@ -208,6 +220,11 @@ impl MapSession {
 
         // Update texture provider
         payload_holder.update_pixels(pixels);
+
+        if !self.is_alive() {
+            return Ok(());
+        }
+
         // Mark frame available for Flutter
         sendable_texture.mark_frame_available();
         Ok(())
@@ -262,10 +279,11 @@ impl MapSession {
         self.redraw().await.inspect_err(|err| error!("{err}"));
     }
 
-    pub async fn terminate(self: Arc<Self>) {
+    pub async fn shutdown_async(&self) {
+        // Stop future redraws
         self.is_alive.store(false, Ordering::SeqCst);
-
-        // clear all layers
+    
+        // Clear messengers & layers
         {
             let mut map = self.map.lock().await;
             for layer in map.layers_mut().iter_mut() {
@@ -274,19 +292,20 @@ impl MapSession {
             map.set_messenger(None::<DummyMessenger>);
             map.layers_mut().clear();
         }
+    
+        // Let in-flight redraw loops exit
+        tokio::time::sleep(Duration::from_millis(100)).await;
+    }
 
-        tokio::time::sleep(Duration::from_millis(500)).await;
-
+    // to be named to dispose_flutter later
+    pub fn dispose_flutter_on_platform_thread(&self) {
         let flctx = self.flutter_ctx.write().take();
         if let Some(ctx) = flctx {
-            let _ = Arc::strong_count(&ctx.payload_holder);
-            let _ = Arc::strong_count(&ctx.sendable_texture);
-
-            invoke_on_platform_main_thread(move || {
-                drop(ctx);
-            });
+            drop(ctx); // MUST be platform thread
         }
     }
+    
+    
 }
 /// Updates the session counter and returns a new session ID
 fn create_new_session() -> SessionID {
