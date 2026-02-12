@@ -126,6 +126,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> {
   MapSize? _lastMapSize;
   double _lastPinchScaleValue = 1;
   bool _isPinchScaling = false;
+  Timer? _debounce;
 
   final Set<int> _activePointers = {};
 
@@ -332,7 +333,10 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> {
                 ),
               ),
             );
-            widget.controller.handleEvent(panEvent);
+            if (_debounce?.isActive ?? false) _debounce?.cancel();
+            _debounce = Timer(const Duration(milliseconds: 20), () {
+                widget.controller.handleEvent(panEvent);
+            });
           }
         }
 
