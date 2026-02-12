@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:galileo_flutter/src/galileo_map_controller.dart';
 import 'package:galileo_flutter/src/rust/api/dart_types.dart';
+import 'package:flutter/scheduler.dart';
 
 /// A widget that displays a Galileo map with interactive controls
 class GalileoMapWidget extends StatefulWidget {
@@ -116,17 +117,21 @@ class GalileoMapWidget extends StatefulWidget {
   State<GalileoMapWidget> createState() => _GalileoMapWidgetState();
 }
 
-class _GalileoMapWidgetState extends State<GalileoMapWidget> {
+class _GalileoMapWidgetState extends State<GalileoMapWidget> with SingleTickerProviderStateMixin{
+
   GalileoMapState? currentState;
   StreamSubscription<GalileoMapState>? streamSubscription;
   late FocusNode _focusNode;
   final Set<LogicalKeyboardKey> _pressedKeys = {};
+  late Ticker _ticker;
+  Offset _accumulatedDelta = Offset.zero;
+  bool _isDragging = false;
 
   Offset? _lastPointerPosition;
   MapSize? _lastMapSize;
   double _lastPinchScaleValue = 1;
   bool _isPinchScaling = false;
-  Timer? _debounce;
+  final deltaChanges = [];
 
   final Set<int> _activePointers = {};
 
@@ -139,6 +144,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> {
     super.initState();
 
     _focusNode = widget.focusNode ?? FocusNode();
+    _ticker = createTicker(_onTick);
 
     if (widget.enableKeyboard) {
       HardwareKeyboard.instance.addHandler(_handleKeyEvent);
@@ -151,6 +157,33 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> {
         });
       }
     });
+  }
+  void _sendPanEvent(Offset delta, Offset position) {
+    final scaleFactor = _devicePixelRatio;
+    final panEvent = UserEvent.drag(
+      MouseButton.left,
+      Vector2(dx: delta.dx * scaleFactor, dy: delta.dy * scaleFactor),
+      MouseEvent(
+        screenPointerPosition: Point2(
+          x: position.dx * scaleFactor,
+          y: position.dy * scaleFactor,
+        ),
+        buttons: const MouseButtonsState(
+              left: MouseButtonState.pressed,
+              middle: MouseButtonState.released,
+              right: MouseButtonState.released,
+        ),
+
+      ),
+    ); 
+    widget.controller.handleEvent(panEvent);
+  }
+
+  void _onTick (Duration elapsed) {
+    if (_accumulatedDelta != Offset.zero) {
+      _sendPanEvent(_accumulatedDelta,_lastPointerPosition!);
+      _accumulatedDelta = Offset.zero;
+    }
   }
 
   Widget _buildLoadingWidget(String message) {
@@ -220,29 +253,12 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> {
         }
         widget.onTap?.call(event.localPosition.dx, event.localPosition.dy);
         _lastPointerPosition = event.localPosition;
-
-        final scaleFactor = _devicePixelRatio;
-
         // Handle button press for primary pointer
-        final mouseEvent = UserEvent.buttonPressed(
-          MouseButton.left, // Default to left for touch
-          MouseEvent(
-            screenPointerPosition: Point2(
-              x: event.localPosition.dx * scaleFactor,
-              y: event.localPosition.dy * scaleFactor,
-            ),
-            buttons: const MouseButtonsState(
-              left: MouseButtonState.pressed,
-              middle: MouseButtonState.released,
-              right: MouseButtonState.released,
-            ),
-          ),
-        );
-        widget.controller.handleEvent(mouseEvent);
+        _isDragging = true;
+        _ticker.start();
       },
       onPointerUp: (event) {
         _activePointers.remove(event.pointer);
-
         _lastPointerPosition = null;
         final scaleFactor = _devicePixelRatio;
         // Handle button release for primary pointer
@@ -260,7 +276,9 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> {
             ),
           ),
         );
-        widget.controller.handleEvent(mouseEvent);
+        _isDragging = false;
+        _ticker.stop();
+        _accumulatedDelta = Offset.zero;
       },
       onPointerCancel: (event) {
         _activePointers.remove(event.pointer);
@@ -315,29 +333,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> {
 
         if (_lastPointerPosition case final lastPosition?) {
           final delta = currentPosition - lastPosition;
-
-          if (delta.dx.abs() > 0.1 || delta.dy.abs() > 0.1) {
-            final scaleFactor = _devicePixelRatio;
-            final panEvent = UserEvent.drag(
-              MouseButton.left,
-              Vector2(dx: delta.dx * scaleFactor, dy: delta.dy * scaleFactor),
-              MouseEvent(
-                screenPointerPosition: Point2(
-                  x: currentPosition.dx * scaleFactor,
-                  y: currentPosition.dy * scaleFactor,
-                ),
-                buttons: const MouseButtonsState(
-                  left: MouseButtonState.pressed,
-                  middle: MouseButtonState.released,
-                  right: MouseButtonState.released,
-                ),
-              ),
-            );
-            if (_debounce?.isActive ?? false) _debounce?.cancel();
-            _debounce = Timer(const Duration(milliseconds: 20), () {
-                widget.controller.handleEvent(panEvent);
-            });
-          }
+            _accumulatedDelta += delta;
         }
 
         _lastPointerPosition = currentPosition;
