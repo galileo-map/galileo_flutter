@@ -117,14 +117,16 @@ class GalileoMapWidget extends StatefulWidget {
   State<GalileoMapWidget> createState() => _GalileoMapWidgetState();
 }
 
-class _GalileoMapWidgetState extends State<GalileoMapWidget> with SingleTickerProviderStateMixin{
+class _GalileoMapWidgetState extends State<GalileoMapWidget> with TickerProviderStateMixin{
 
   GalileoMapState? currentState;
   StreamSubscription<GalileoMapState>? streamSubscription;
   late FocusNode _focusNode;
   final Set<LogicalKeyboardKey> _pressedKeys = {};
-  late Ticker _ticker;
-  Offset _accumulatedDelta = Offset.zero;
+  late Ticker _pan_ticker;
+  late Ticker _zoom_ticker;
+  Offset _panAccumulatedDelta = Offset.zero;
+  double _zoomAccumulatedDelta = 1.0;
   bool _isDragging = false;
 
   Offset? _lastPointerPosition;
@@ -143,7 +145,8 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with SingleTickerPr
     super.initState();
 
     _focusNode = widget.focusNode ?? FocusNode();
-    _ticker = createTicker(_onTick);
+    _pan_ticker = createTicker(_onTickPan);
+    _zoom_ticker = createTicker(_onTickZoom);
 
     if (widget.enableKeyboard) {
       HardwareKeyboard.instance.addHandler(_handleKeyEvent);
@@ -177,11 +180,29 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with SingleTickerPr
     ); 
     widget.controller.handleEvent(panEvent);
   }
+  void _sendZoomEvent(double delta, Offset position) {
+    final scaleFactor = _devicePixelRatio;
+    final zoomFactor = math.exp(-delta * 0.01);
+    final zoomEvent = UserEvent.zoom(
+      zoomFactor,
+      Point2(
+        x: position.dx * scaleFactor,
+        y: position.dy * scaleFactor,
+      ),
+    );
+    widget.controller.handleEvent(zoomEvent);
+  }
 
-  void _onTick (Duration elapsed) {
-    if (_accumulatedDelta != Offset.zero) {
-      _sendPanEvent(_accumulatedDelta,_lastPointerPosition!);
-      _accumulatedDelta = Offset.zero;
+  void _onTickPan (Duration elapsed) {
+    if (_panAccumulatedDelta != Offset.zero) {
+      _sendPanEvent(_panAccumulatedDelta,_lastPointerPosition!);
+      _panAccumulatedDelta = Offset.zero;
+    }
+  }
+  void _onTickZoom (Duration elapsed) {
+    if (_zoomAccumulatedDelta != Offset.zero && _lastPointerPosition != null) {
+      _sendZoomEvent(_zoomAccumulatedDelta,_lastPointerPosition!);
+      _zoomAccumulatedDelta = 1.0;
     }
   }
 
@@ -254,7 +275,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with SingleTickerPr
         _lastPointerPosition = event.localPosition;
         // Handle button press for primary pointer
         _isDragging = true;
-        _ticker.start();
+        _pan_ticker.start();
       },
       onPointerUp: (event) {
         _activePointers.remove(event.pointer);
@@ -276,8 +297,8 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with SingleTickerPr
           ),
         );
         _isDragging = false;
-        _ticker.stop();
-        _accumulatedDelta = Offset.zero;
+        _pan_ticker.stop();
+        _panAccumulatedDelta = Offset.zero;
       },
       onPointerCancel: (event) {
         _activePointers.remove(event.pointer);
@@ -332,7 +353,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with SingleTickerPr
 
         if (_lastPointerPosition case final lastPosition?) {
           final delta = currentPosition - lastPosition;
-            _accumulatedDelta += delta;
+            _panAccumulatedDelta += delta;
         }
 
         _lastPointerPosition = currentPosition;
@@ -360,31 +381,23 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with SingleTickerPr
           if (!_isPinchScaling) {
             _isPinchScaling = true;
             _lastPinchScaleValue = details.scale;
+            if (!_zoom_ticker.isTicking) _zoom_ticker.start();
             return;
           }
 
           if (details.scale != _lastPinchScaleValue) {
             final scaleDelta = details.scale / _lastPinchScaleValue;
             const zoomSensitivity = 2.5;
-            final amplifiedDelta =
-                math.pow(scaleDelta, zoomSensitivity).toDouble();
-
-            final zoomEvent = UserEvent.zoom(
-              1.0 / amplifiedDelta,
-              Point2(
-                x: details.localFocalPoint.dx,
-                y: details.localFocalPoint.dy,
-              ),
-            );
-            widget.controller.handleEvent(zoomEvent);
-
+            final amplifiedDelta = math.pow(scaleDelta, zoomSensitivity).toDouble();
+            _zoomAccumulatedDelta *= amplifiedDelta;
             _lastPinchScaleValue = details.scale;
           }
         }
-      },
+},
       onScaleEnd: (details) {
         _lastPinchScaleValue = 1.0;
         _isPinchScaling = false;
+        _zoom_ticker.stop();
       },
       child: mapContent,
     );
