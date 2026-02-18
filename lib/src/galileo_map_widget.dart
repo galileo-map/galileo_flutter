@@ -131,7 +131,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with SingleTickerPr
   MapSize? _lastMapSize;
   double _lastPinchScaleValue = 1;
   bool _isPinchScaling = false;
-  final deltaChanges = [];
 
   final Set<int> _activePointers = {};
 
@@ -648,6 +647,11 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with SingleTickerPr
 
     super.dispose();
 
+    // Dispose focus node if we created it
+    if (widget.focusNode == null) {
+      _focusNode.dispose();
+    }
+
     Future.microtask(() async {
       streamSubscription?.cancel();
       if (widget.autoDispose) {
@@ -665,10 +669,5 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with SingleTickerPr
         }
       }
     });
-
-    // Dispose focus node if we created it
-    if (widget.focusNode == null) {
-      _focusNode.dispose();
-    }
   }
 }
