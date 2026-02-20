@@ -12,6 +12,13 @@ import 'package:flutter/scheduler.dart';
 /// A widget that displays a Galileo map with interactive controls
 class GalileoMapWidget extends StatefulWidget {
   final GalileoMapController controller;
+
+  final MapSize size;
+
+  final MapInitConfig config;
+
+  final List<LayerConfig> layers;
+
   final Widget? child;
 
   /// Whether to dispose the controller when the widget disposes
@@ -26,9 +33,16 @@ class GalileoMapWidget extends StatefulWidget {
   /// Called when the map is tapped
   final void Function(double x, double y)? onTap;
 
-  const GalileoMapWidget._({
+  /// stores the GalileoMapController as a state
+  /// this avoids the re-instantiation of the widget
+  late Future<(GalileoMapController?, String?)>? _controllerFuture;
+
+  GalileoMapWidget._({
     super.key,
     required this.controller,
+    required this.size,
+    required this.config,
+    required this.layers,
     this.child,
     this.autoDispose = true,
     this.enableKeyboard = true,
@@ -40,6 +54,9 @@ class GalileoMapWidget extends StatefulWidget {
   factory GalileoMapWidget.fromController({
     Key? key,
     required GalileoMapController controller,
+    required MapSize size,
+    required  MapInitConfig config,
+    List<LayerConfig> layers = const [LayerConfig.osm()],
     bool autoDispose = true,
     bool enableKeyboard = true,
     FocusNode? focusNode,
@@ -54,6 +71,9 @@ class GalileoMapWidget extends StatefulWidget {
       focusNode: focusNode,
       onTap: onTap,
       child: child,
+      size: size,
+      config: config,
+      layers: layers,
     );
   }
 
@@ -70,46 +90,17 @@ class GalileoMapWidget extends StatefulWidget {
     void Function(double x, double y)? onTap,
     void Function(MapViewport viewport)? onViewportChanged,
   }) {
-    return FutureBuilder(
-      future: GalileoMapController.create(
-        size: size,
-        config: config,
-        layers: layers,
-      ),
-      builder: (ctx, res) {
-        if (res.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (res.hasError) {
-          return Center(
-            child: Text(
-              'Error: ${res.error}',
-              style: const TextStyle(color: Colors.red),
-            ),
-          );
-        }
-
-        final (controller, err) = res.data!;
-        if (err != null) {
-          return Center(
-            child: Text(
-              'Error: $err',
-              style: const TextStyle(color: Colors.red),
-            ),
-          );
-        }
-
-        return GalileoMapWidget.fromController(
-          key: key,
-          controller: controller!,
-          autoDispose: autoDispose,
-          enableKeyboard: enableKeyboard,
-          focusNode: focusNode,
-          onTap: onTap,
-          child: child,
-        );
-      },
+    return _GalileoMapFromConfig(
+      key: key,
+      size: size,
+      config: config,
+      layers: layers,
+      autoDispose: autoDispose,
+      enableKeyboard: enableKeyboard,
+      focusNode: focusNode,
+      onTap: onTap,
+      onViewportChanged: onViewportChanged,
+      child: child,
     );
   }
 
@@ -682,5 +673,103 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with TickerProvider
         }
       }
     });
+  }
+}
+
+class _GalileoMapFromConfig extends StatefulWidget{
+
+  final MapSize size;
+  final MapInitConfig config;
+  final List<LayerConfig> layers;
+  final Widget? child;
+
+  /// Whether to dispose the controller when the widget disposes
+  final bool autoDispose;
+
+  /// Whether to enable keyboard input
+  final bool enableKeyboard;
+
+  /// Focus node for keyboard events
+  final FocusNode? focusNode;
+
+  /// Called when the map is tapped
+  final void Function(double x, double y)? onTap;
+  final void Function(MapViewport viewport)? onViewportChanged;
+
+  _GalileoMapFromConfig({
+    super.key,
+    required this.size,
+    required this.config,
+    required this.layers,
+    this.child,
+    this.autoDispose = true,
+    this.enableKeyboard = true,
+    this.focusNode,
+    this.onTap,
+    this.onViewportChanged,
+  });
+
+  @override
+  State<_GalileoMapFromConfig> createState() => _GalileoMapFromConfigState(); 
+}
+
+/// internal class to store GalileoMapController 
+class _GalileoMapFromConfigState extends State<_GalileoMapFromConfig> {
+
+  /// stores the GalileoMapController as a state
+  /// this avoids the re-instantiation of controller again. 
+  late final Future<(GalileoMapController?, String?)> _controllerFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllerFuture = GalileoMapController.create(
+      size: widget.size,
+      config: widget.config,
+      layers: widget.layers,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _controllerFuture,
+      builder: (ctx, res) {
+        if (res.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (res.hasError) {
+          return Center(
+            child: Text(
+              'Error: ${res.error}',
+              style: const TextStyle(color: Colors.red),
+            ),
+          );
+        }
+
+        final (controller, err) = res.data!;
+        if (err != null) {
+          return Center(
+            child: Text(
+              'Error: $err',
+              style: const TextStyle(color: Colors.red),
+            ),
+          );
+        }
+
+        return GalileoMapWidget._(
+          controller: controller!,
+          size: widget.size,
+          config: widget.config,
+          layers: widget.layers,
+          autoDispose: widget.autoDispose,
+          enableKeyboard: widget.enableKeyboard,
+          focusNode: widget.focusNode,
+          onTap: widget.onTap,
+          child: widget.child,
+        );
+      },
+    );
   }
 }
