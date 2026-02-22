@@ -651,11 +651,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with TickerProvider
 
     super.dispose();
 
-    // Dispose focus node if we created it
-    if (widget.focusNode == null) {
-      _focusNode.dispose();
-    }
-
     Future.microtask(() async {
       streamSubscription?.cancel();
       if (widget.autoDispose) {
@@ -673,6 +668,11 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with TickerProvider
         }
       }
     });
+
+    // Dispose focus node if we created it
+    if (widget.focusNode == null) {
+      _focusNode.dispose();
+    }
   }
 }
 
