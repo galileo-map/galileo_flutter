@@ -535,10 +535,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
       HardwareKeyboard.instance.removeHandler(_handleKeyEvent);
     }
 
-    Future.microtask(() async {
-      await widget.controller.dispose();
-    });
-
     super.dispose();
 
     Future.microtask(() async {

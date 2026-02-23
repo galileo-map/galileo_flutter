@@ -1,131 +1,131 @@
-version: '3'
+version: "3"
 
 vars:
-  DART_BIN:
-    sh: |
-      if command -v fvm &> /dev/null; then
-        echo "fvm dart"
-      else
-        echo "dart"
-      fi
-  FLUTTER_BIN:
-    sh: |
-      if command -v fvm &> /dev/null; then
-        echo "fvm flutter"
-      else
-        echo "flutter"
-      fi
+    DART_BIN:
+        sh: |
+            if command -v fvm &> /dev/null; then
+              echo "fvm dart"
+            else
+              echo "dart"
+            fi
+    FLUTTER_BIN:
+        sh: |
+            if command -v fvm &> /dev/null; then
+              echo "fvm flutter"
+            else
+              echo "flutter"
+            fi
 
 tasks:
-  # --- Rust tasks ---
-  rust.fmt:
-    desc: Format Rust code
-    dir: rust
-    cmds:
-      - cargo fmt
+    # --- Rust tasks ---
+    rust.fmt:
+        desc: Format Rust code
+        dir: rust
+        cmds:
+            - cargo fmt
 
-  rust.fmt-check:
-    desc: Check Rust code formatting
-    dir: rust
-    cmds:
-      - cargo fmt -- --check
+    rust.fmt-check:
+        desc: Check Rust code formatting
+        dir: rust
+        cmds:
+            - cargo fmt -- --check
 
-  rust.lint:
-    desc: Lint Rust code
-    dir: rust
-    cmds:
-      - cargo check
+    rust.lint:
+        desc: Lint Rust code
+        dir: rust
+        cmds:
+            - cargo clippy -- -D warnings
 
-  rust.check:
-    desc: Check Rust compilation
-    dir: rust
-    cmds:
-      - cargo check
+    rust.check:
+        desc: Check Rust compilation
+        dir: rust
+        cmds:
+            - cargo check
 
-  rust.test:
-    desc: Run Rust tests
-    dir: rust
-    cmds:
-      - cargo test
+    rust.test:
+        desc: Run Rust tests
+        dir: rust
+        cmds:
+            - cargo test
 
-  rust.fix:
-    desc: Fix Rust code issues where possible
-    dir: rust
-    cmds:
-      - cargo fix --allow-dirty
+    rust.fix:
+        desc: Fix Rust code issues where possible
+        dir: rust
+        cmds:
+            - cargo clippy --fix --allow-dirty --allow-staged
 
-  # --- Dart/Flutter tasks ---
-  flutter.fmt:
-    desc: Format Dart code
-    cmds:
-      - "{{.DART_BIN}} format ."
+    # --- Dart/Flutter tasks ---
+    flutter.fmt:
+        desc: Format Dart code
+        cmds:
+            - "{{.DART_BIN}} format ."
 
-  flutter.fmt-check:
-    desc: Check Dart code formatting
-    cmds:
-      - "{{.DART_BIN}} format --set-exit-if-changed ."
+    flutter.fmt-check:
+        desc: Check Dart code formatting
+        cmds:
+            - "{{.DART_BIN}} format --set-exit-if-changed ."
 
-  flutter.lint:
-    desc: Run Flutter analyzer
-    cmds:
-      - "{{.FLUTTER_BIN}} analyze ./example ./lib"
+    flutter.lint:
+        desc: Run Flutter analyzer
+        cmds:
+            - "{{.FLUTTER_BIN}} analyze ./example ./lib"
 
-  flutter.fix:
-    desc: Fix all Dart code issues and format
-    cmds:
-      - "{{.DART_BIN}} fix --apply"
-      - "{{.DART_BIN}} format ."
+    flutter.fix:
+        desc: Fix all Dart code issues and format
+        cmds:
+            - "{{.DART_BIN}} fix --apply"
+            - "{{.DART_BIN}} format ."
 
-  flutter.test:
-    desc: Run Flutter tests
-    cmds:
-      - "{{.FLUTTER_BIN}} test"
+    flutter.test:
+        desc: Run Flutter tests
+        cmds:
+            - "{{.FLUTTER_BIN}} test"
 
-  flutter.get:
-    desc: Get Flutter dependencies
-    cmds:
-      - "{{.FLUTTER_BIN}} pub get"
+    flutter.get:
+        desc: Get Flutter dependencies
+        cmds:
+            - "{{.FLUTTER_BIN}} pub get"
 
-  codegen:
-    desc: generate rust bindings
-    cmds:
-      - rm -rf .dart_tool
-      - flutter_rust_bridge_codegen generate
+    codegen:
+        desc: generate rust bindings
+        cmds:
+            - rm -rf .dart_tool
+            - flutter_rust_bridge_codegen generate
 
-  # --- Combined tasks ---
-  fix:
-    desc: Fix both Rust and Flutter code issues
-    deps:
-      - task: rust.fix
-      - task: flutter.fix
+    # --- Combined tasks ---
+    fix:
+        desc: Fix both Rust and Flutter code issues
+        deps:
+            - task: rust.fix
+            - task: flutter.fix
 
-  fmt:
-    desc: Format both Rust and Flutter code
-    deps:
-      - task: rust.fmt
-      - task: flutter.fmt
+    fmt:
+        desc: Format both Rust and Flutter code
+        deps:
+            - task: rust.fmt
+            - task: flutter.fmt
 
-  lint:
-    desc: Lint both Rust and Flutter code
-    deps:
-      - task: rust.lint
-      - task: flutter.lint
+    lint:
+        desc: Lint both Rust and Flutter code
+        deps:
+            - task: rust.lint
+            - task: flutter.lint
 
-  check:
-    desc: Check both Rust and Flutter code
-    deps:
-      - task: rust.check
-      - task: flutter.lint
+    check:
+        desc: Check both Rust and Flutter code
+        deps:
+            - task: rust.check
+            - task: flutter.lint
 
-  test:
-    desc: Run tests for both Rust and Flutter
-    deps:
-      - task: rust.test
-      - task: flutter.test
+    test:
+        desc: Run tests for both Rust and Flutter
+        deps:
+            - task: rust.test
+            - task: flutter.test
 
-  all:
-    desc: Run format, lint, and test for both Rust and Flutter
-    deps:
-      - task: fmt
-      - task: lint
-      - task: test
+    all:
+        desc: Run format, lint, and test for both Rust and Flutter
+        deps:
+            - task: fmt
+            - task: lint
+            - task: test
