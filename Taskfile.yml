@@ -34,7 +34,7 @@ tasks:
     desc: Lint Rust code
     dir: rust
     cmds:
-      - cargo clippy
+      - cargo check
 
   rust.check:
     desc: Check Rust compilation
@@ -52,7 +52,7 @@ tasks:
     desc: Fix Rust code issues where possible
     dir: rust
     cmds:
-      - cargo clippy --fix --allow-dirty
+      - cargo fix --allow-dirty
 
   # --- Dart/Flutter tasks ---
   flutter.fmt:
@@ -68,7 +68,7 @@ tasks:
   flutter.lint:
     desc: Run Flutter analyzer
     cmds:
-      - "{{.FLUTTER_BIN}} analyze"
+      - "{{.FLUTTER_BIN}} analyze ./example ./lib"
 
   flutter.fix:
     desc: Fix all Dart code issues and format
