@@ -86,11 +86,11 @@ tasks:
     cmds:
       - "{{.FLUTTER_BIN}} pub get"
 
-  flutter.codegen:
-    desc: Run code generation (Shalom + Build Runner)
+  codegen:
+    desc: generate rust bindings
     cmds:
-      - shalom generate -f --strict
-      - "{{.DART_BIN}} run build_runner build --delete-conflicting-outputs"
+      - rm -rf .dart_tool
+      - "flutter_rust_bridge_codegen generate"
 
   # --- Combined tasks ---
   fix:
