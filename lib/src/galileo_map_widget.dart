@@ -33,10 +33,6 @@ class GalileoMapWidget extends StatefulWidget {
   /// Called when the map is tapped
   final void Function(double x, double y)? onTap;
 
-  /// stores the GalileoMapController as a state
-  /// this avoids the re-instantiation of the widget
-  late Future<(GalileoMapController?, String?)>? _controllerFuture;
-
   GalileoMapWidget._({
     super.key,
     required this.controller,
@@ -55,7 +51,7 @@ class GalileoMapWidget extends StatefulWidget {
     Key? key,
     required GalileoMapController controller,
     required MapSize size,
-    required  MapInitConfig config,
+    required MapInitConfig config,
     List<LayerConfig> layers = const [LayerConfig.osm()],
     bool autoDispose = true,
     bool enableKeyboard = true,
@@ -108,8 +104,8 @@ class GalileoMapWidget extends StatefulWidget {
   State<GalileoMapWidget> createState() => _GalileoMapWidgetState();
 }
 
-class _GalileoMapWidgetState extends State<GalileoMapWidget> with TickerProviderStateMixin{
-
+class _GalileoMapWidgetState extends State<GalileoMapWidget>
+    with TickerProviderStateMixin {
   GalileoMapState? currentState;
   StreamSubscription<GalileoMapState>? streamSubscription;
   late FocusNode _focusNode;
@@ -118,7 +114,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with TickerProvider
   late Ticker _zoom_ticker;
   Offset _panAccumulatedDelta = Offset.zero;
   double _zoomAccumulatedDelta = 1.0;
-  bool _isDragging = false;
 
   Offset? _lastPointerPosition;
   MapSize? _lastMapSize;
@@ -151,6 +146,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with TickerProvider
       }
     });
   }
+
   void _sendPanEvent(Offset delta, Offset position) {
     final scaleFactor = _devicePixelRatio;
     final panEvent = UserEvent.drag(
@@ -162,37 +158,35 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with TickerProvider
           y: position.dy * scaleFactor,
         ),
         buttons: const MouseButtonsState(
-              left: MouseButtonState.pressed,
-              middle: MouseButtonState.released,
-              right: MouseButtonState.released,
+          left: MouseButtonState.pressed,
+          middle: MouseButtonState.released,
+          right: MouseButtonState.released,
         ),
-
       ),
-    ); 
+    );
     widget.controller.handleEvent(panEvent);
   }
+
   void _sendZoomEvent(double delta, Offset position) {
     final scaleFactor = _devicePixelRatio;
     final zoomFactor = math.exp(-delta * 0.01);
     final zoomEvent = UserEvent.zoom(
       zoomFactor,
-      Point2(
-        x: position.dx * scaleFactor,
-        y: position.dy * scaleFactor,
-      ),
+      Point2(x: position.dx * scaleFactor, y: position.dy * scaleFactor),
     );
     widget.controller.handleEvent(zoomEvent);
   }
 
-  void _onTickPan (Duration elapsed) {
+  void _onTickPan(Duration elapsed) {
     if (_panAccumulatedDelta != Offset.zero) {
-      _sendPanEvent(_panAccumulatedDelta,_lastPointerPosition!);
+      _sendPanEvent(_panAccumulatedDelta, _lastPointerPosition!);
       _panAccumulatedDelta = Offset.zero;
     }
   }
-  void _onTickZoom (Duration elapsed) {
+
+  void _onTickZoom(Duration elapsed) {
     if (_zoomAccumulatedDelta != Offset.zero && _lastPointerPosition != null) {
-      _sendZoomEvent(_zoomAccumulatedDelta,_lastPointerPosition!);
+      _sendZoomEvent(_zoomAccumulatedDelta, _lastPointerPosition!);
       _zoomAccumulatedDelta = 1.0;
     }
   }
@@ -264,30 +258,12 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with TickerProvider
         }
         widget.onTap?.call(event.localPosition.dx, event.localPosition.dy);
         _lastPointerPosition = event.localPosition;
-        // Handle button press for primary pointer
-        _isDragging = true;
         _pan_ticker.start();
       },
       onPointerUp: (event) {
         _activePointers.remove(event.pointer);
         _lastPointerPosition = null;
         final scaleFactor = _devicePixelRatio;
-        // Handle button release for primary pointer
-        final mouseEvent = UserEvent.buttonReleased(
-          MouseButton.left, // Default to left for touch
-          MouseEvent(
-            screenPointerPosition: Point2(
-              x: event.localPosition.dx * scaleFactor,
-              y: event.localPosition.dy * scaleFactor,
-            ),
-            buttons: const MouseButtonsState(
-              left: MouseButtonState.released,
-              middle: MouseButtonState.released,
-              right: MouseButtonState.released,
-            ),
-          ),
-        );
-        _isDragging = false;
         _pan_ticker.stop();
         _panAccumulatedDelta = Offset.zero;
       },
@@ -344,7 +320,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with TickerProvider
 
         if (_lastPointerPosition case final lastPosition?) {
           final delta = currentPosition - lastPosition;
-            _panAccumulatedDelta += delta;
+          _panAccumulatedDelta += delta;
         }
 
         _lastPointerPosition = currentPosition;
@@ -379,12 +355,13 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with TickerProvider
           if (details.scale != _lastPinchScaleValue) {
             final scaleDelta = details.scale / _lastPinchScaleValue;
             const zoomSensitivity = 2.5;
-            final amplifiedDelta = math.pow(scaleDelta, zoomSensitivity).toDouble();
+            final amplifiedDelta =
+                math.pow(scaleDelta, zoomSensitivity).toDouble();
             _zoomAccumulatedDelta *= amplifiedDelta;
             _lastPinchScaleValue = details.scale;
           }
         }
-},
+      },
       onScaleEnd: (details) {
         _lastPinchScaleValue = 1.0;
         _isPinchScaling = false;
@@ -676,8 +653,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget> with TickerProvider
   }
 }
 
-class _GalileoMapFromConfig extends StatefulWidget{
-
+class _GalileoMapFromConfig extends StatefulWidget {
   final MapSize size;
   final MapInitConfig config;
   final List<LayerConfig> layers;
@@ -710,14 +686,13 @@ class _GalileoMapFromConfig extends StatefulWidget{
   });
 
   @override
-  State<_GalileoMapFromConfig> createState() => _GalileoMapFromConfigState(); 
+  State<_GalileoMapFromConfig> createState() => _GalileoMapFromConfigState();
 }
 
-/// internal class to store GalileoMapController 
+/// internal class to store GalileoMapController
 class _GalileoMapFromConfigState extends State<_GalileoMapFromConfig> {
-
   /// stores the GalileoMapController as a state
-  /// this avoids the re-instantiation of controller again. 
+  /// this avoids the re-instantiation of controller again.
   late final Future<(GalileoMapController?, String?)> _controllerFuture;
 
   @override
