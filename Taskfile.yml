@@ -90,7 +90,7 @@ tasks:
     desc: generate rust bindings
     cmds:
       - rm -rf .dart_tool
-      - "flutter_rust_bridge_codegen generate"
+      - flutter_rust_bridge_codegen generate
 
   # --- Combined tasks ---
   fix:
