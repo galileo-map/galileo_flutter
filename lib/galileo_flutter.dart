@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 export 'package:galileo_flutter/src/galileo_map_widget.dart'
     show GalileoMapWidget;
 
-import 'src/rust/api/api.dart' as rlib;
+import 'src/rust/api/galileo_api.dart' as rlib;
 import 'src/rust/frb_generated.dart' as rlib_gen;
 
 export 'package:galileo_flutter/src/rust/api/dart_types.dart'

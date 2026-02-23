@@ -6,8 +6,8 @@
 // Static analysis wrongly picks the IO variant, thus ignore this
 // ignore_for_file: argument_type_not_assignable
 
-import 'api/api.dart';
 import 'api/dart_types.dart';
+import 'api/galileo_api.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
