@@ -280,6 +280,9 @@ impl MapSession {
 }
 /// Updates the session counter and returns a new session ID
 fn create_new_session() -> SessionID {
-    debug!("Session created: {}", SESSION_COUNTER.load(Ordering::Relaxed));
+    debug!(
+        "Session created: {}",
+        SESSION_COUNTER.load(Ordering::Relaxed)
+    );
     SESSION_COUNTER.fetch_add(1, Ordering::SeqCst) + 1
 }

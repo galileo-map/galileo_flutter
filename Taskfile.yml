@@ -1,7 +1,23 @@
 version: '3'
 
+vars:
+  DART_BIN:
+    sh: |
+      if command -v fvm &> /dev/null; then
+        echo "fvm dart"
+      else
+        echo "dart"
+      fi
+  FLUTTER_BIN:
+    sh: |
+      if command -v fvm &> /dev/null; then
+        echo "fvm flutter"
+      else
+        echo "flutter"
+      fi
+
 tasks:
-  # Rust tasks
+  # --- Rust tasks ---
   rust.fmt:
     desc: Format Rust code
     dir: rust
@@ -9,7 +25,7 @@ tasks:
       - cargo fmt
 
   rust.fmt-check:
-    desc: Check Rust code formatting (without changing files)
+    desc: Check Rust code formatting
     dir: rust
     cmds:
       - cargo fmt -- --check
@@ -20,14 +36,8 @@ tasks:
     cmds:
       - cargo clippy
 
-  rust.lint-fix:
-    desc: Automatically fix some Rust lint issues
-    dir: rust
-    cmds:
-      - cargo clippy --fix
-
   rust.check:
-    desc: Check Rust compilation without producing artifacts
+    desc: Check Rust compilation
     dir: rust
     cmds:
       - cargo check
@@ -38,50 +48,51 @@ tasks:
     cmds:
       - cargo test
 
-  # Dart/Flutter tasks
-  flutter.fmt:
-    desc: Format Dart code
-    cmds:
-      - dart format .
-
-  flutter.fmt-check:
-    desc: Check Dart code formatting (without changing files)
-    cmds:
-      - dart format --set-exit-if-changed .
-
-  flutter.lint:
-    desc: Run Flutter analyzer
-    cmds:
-      - flutter analyze
-
-  flutter.lint-fix:
-    desc: Fix Dart code issues where possible
-    cmds:
-      - dart fix --apply
-
-  flutter.test:
-    desc: Run Flutter tests
-    cmds:
-      - flutter test
-
   rust.fix:
     desc: Fix Rust code issues where possible
     dir: rust
     cmds:
       - cargo clippy --fix --allow-dirty
 
-  flutter.fix:
-    desc: Fix all Dart code issues where possible
+  # --- Dart/Flutter tasks ---
+  flutter.fmt:
+    desc: Format Dart code
     cmds:
-      - dart fix --apply
-      - dart format .
+      - "{{.DART_BIN}} format ."
+
+  flutter.fmt-check:
+    desc: Check Dart code formatting
+    cmds:
+      - "{{.DART_BIN}} format --set-exit-if-changed ."
+
+  flutter.lint:
+    desc: Run Flutter analyzer
+    cmds:
+      - "{{.FLUTTER_BIN}} analyze"
+
+  flutter.fix:
+    desc: Fix all Dart code issues and format
+    cmds:
+      - "{{.DART_BIN}} fix --apply"
+      - "{{.DART_BIN}} format ."
+
+  flutter.test:
+    desc: Run Flutter tests
+    cmds:
+      - "{{.FLUTTER_BIN}} test"
 
   flutter.get:
     desc: Get Flutter dependencies
     cmds:
-      - flutter pub get
+      - "{{.FLUTTER_BIN}} pub get"
 
-  # Combined tasks
+  flutter.codegen:
+    desc: Run code generation (Shalom + Build Runner)
+    cmds:
+      - shalom generate -f --strict
+      - "{{.DART_BIN}} run build_runner build --delete-conflicting-outputs"
+
+  # --- Combined tasks ---
   fix:
     desc: Fix both Rust and Flutter code issues
     deps:
@@ -112,7 +123,6 @@ tasks:
       - task: rust.test
       - task: flutter.test
 
-  # Full development cycle
   all:
     desc: Run format, lint, and test for both Rust and Flutter
     deps:

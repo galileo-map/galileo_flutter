@@ -113,7 +113,8 @@ class PrecompileBinariesCommand extends Command {
       )
       ..addMultiOption(
         'target',
-        help: 'Rust target triple of artifact to build.\n'
+        help:
+            'Rust target triple of artifact to build.\n'
             'Can be specified multiple times or omitted in which case\n'
             'all targets for current platform will be built.',
       )
@@ -145,7 +146,8 @@ class PrecompileBinariesCommand extends Command {
   final name = 'precompile-binaries';
 
   @override
-  final description = 'Prebuild and upload binaries\n'
+  final description =
+      'Prebuild and upload binaries\n'
       'Private key must be passed through PRIVATE_KEY environment variable. '
       'Use gen_key through generate priave key.\n'
       'Github token must be passed as GITHUB_TOKEN environment variable.\n';
@@ -185,13 +187,15 @@ class PrecompileBinariesCommand extends Command {
       }
     }
     final targetStrigns = argResults!['target'] as List<String>;
-    final targets = targetStrigns.map((target) {
-      final res = Target.forRustTriple(target);
-      if (res == null) {
-        throw ArgumentError('Invalid target: $target');
-      }
-      return res;
-    }).toList(growable: false);
+    final targets = targetStrigns
+        .map((target) {
+          final res = Target.forRustTriple(target);
+          if (res == null) {
+            throw ArgumentError('Invalid target: $target');
+          }
+          return res;
+        })
+        .toList(growable: false);
     final precompileBinaries = PrecompileBinaries(
       privateKey: PrivateKey(privateKey),
       githubToken: githubToken,
@@ -221,7 +225,8 @@ class VerifyBinariesCommand extends Command {
   final name = "verify-binaries";
 
   @override
-  final description = 'Verifies published binaries\n'
+  final description =
+      'Verifies published binaries\n'
       'Checks whether there is a binary published for each targets\n'
       'and checks the signature.';
 
@@ -242,13 +247,14 @@ Future<void> runMain(List<String> args) async {
       return AndroidEnvironment.clangLinkerWrapper(args);
     }
 
-    final runner = CommandRunner('build_tool', 'Cargokit built_tool')
-      ..addCommand(BuildPodCommand())
-      ..addCommand(BuildGradleCommand())
-      ..addCommand(BuildCMakeCommand())
-      ..addCommand(GenKeyCommand())
-      ..addCommand(PrecompileBinariesCommand())
-      ..addCommand(VerifyBinariesCommand());
+    final runner =
+        CommandRunner('build_tool', 'Cargokit built_tool')
+          ..addCommand(BuildPodCommand())
+          ..addCommand(BuildGradleCommand())
+          ..addCommand(BuildCMakeCommand())
+          ..addCommand(GenKeyCommand())
+          ..addCommand(PrecompileBinariesCommand())
+          ..addCommand(VerifyBinariesCommand());
 
     await runner.run(args);
   } on ArgumentError catch (e) {
