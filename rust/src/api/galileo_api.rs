@@ -12,7 +12,7 @@ use galileo::layer::vector_tile_layer::VectorTileLayerBuilder;
 use galileo::render::text::text_service::TextService;
 use galileo::render::text::RustybuzzRasterizer;
 use galileo::TileSchema;
-use futures::future::join_all
+use futures::future::join_all;
 use log::{debug, info};
 use std::sync::atomic::Ordering;
 
