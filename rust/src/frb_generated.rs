@@ -37,7 +37,11 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
+<<<<<<< HEAD
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -44691892;
+=======
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 56949982;
+>>>>>>> 9dd87a0710ec8fccb6bd1452ef3cf3ec0c2d286f
 
 // Section: executor
 
@@ -45,7 +49,7 @@ flutter_rust_bridge::frb_generated_default_handler!();
 
 // Section: wire_funcs
 
-fn wire__crate__api__api__add_session_layer_impl(
+fn wire__crate__api__galileo_api__add_session_layer_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -74,8 +78,10 @@ fn wire__crate__api__api__add_session_layer_impl(
             move |context| {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || {
-                        let output_ok =
-                            crate::api::api::add_session_layer(api_session_id, api_layer_config)?;
+                        let output_ok = crate::api::galileo_api::add_session_layer(
+                            api_session_id,
+                            api_layer_config,
+                        )?;
                         Ok(output_ok)
                     })(),
                 )
@@ -83,7 +89,7 @@ fn wire__crate__api__api__add_session_layer_impl(
         },
     )
 }
-fn wire__crate__api__api__create_new_map_session_impl(
+fn wire__crate__api__galileo_api__create_new_map_session_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -111,8 +117,10 @@ fn wire__crate__api__api__create_new_map_session_impl(
             move |context| {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || {
-                        let output_ok =
-                            crate::api::api::create_new_map_session(api_engine_handle, api_config)?;
+                        let output_ok = crate::api::galileo_api::create_new_map_session(
+                            api_engine_handle,
+                            api_config,
+                        )?;
                         Ok(output_ok)
                     })(),
                 )
@@ -120,7 +128,7 @@ fn wire__crate__api__api__create_new_map_session_impl(
         },
     )
 }
-fn wire__crate__api__api__destroy_all_engine_sessions_impl(
+fn wire__crate__api__galileo_api__destroy_all_engine_sessions_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -147,7 +155,7 @@ fn wire__crate__api__api__destroy_all_engine_sessions_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::api::api::destroy_all_engine_sessions(api_engine_id);
+                        crate::api::galileo_api::destroy_all_engine_sessions(api_engine_id);
                     })?;
                     Ok(output_ok)
                 })())
@@ -155,7 +163,7 @@ fn wire__crate__api__api__destroy_all_engine_sessions_impl(
         },
     )
 }
-fn wire__crate__api__api__destroy_session_impl(
+fn wire__crate__api__galileo_api__destroy_session_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -182,7 +190,7 @@ fn wire__crate__api__api__destroy_session_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::api::api::destroy_session(api_session_id);
+                        crate::api::galileo_api::destroy_session(api_session_id);
                     })?;
                     Ok(output_ok)
                 })())
@@ -190,7 +198,7 @@ fn wire__crate__api__api__destroy_session_impl(
         },
     )
 }
-fn wire__crate__api__api__galileo_flutter_init_impl(
+fn wire__crate__api__galileo_api__galileo_flutter_init_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -217,7 +225,7 @@ fn wire__crate__api__api__galileo_flutter_init_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::api::api::galileo_flutter_init(api_ffi_ptr);
+                        crate::api::galileo_api::galileo_flutter_init(api_ffi_ptr);
                     })?;
                     Ok(output_ok)
                 })())
@@ -225,7 +233,7 @@ fn wire__crate__api__api__galileo_flutter_init_impl(
         },
     )
 }
-fn wire__crate__api__api__get_map_viewport_impl(
+fn wire__crate__api__galileo_api__get_map_viewport_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -251,15 +259,16 @@ fn wire__crate__api__api__get_map_viewport_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::get_map_viewport(api_session_id))?;
+                    let output_ok = Result::<_, ()>::Ok(
+                        crate::api::galileo_api::get_map_viewport(api_session_id),
+                    )?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__handle_event_for_session_impl(
+fn wire__crate__api__galileo_api__handle_event_for_session_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -287,7 +296,10 @@ fn wire__crate__api__api__handle_event_for_session_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::api::api::handle_event_for_session(api_session_id, api_event);
+                        crate::api::galileo_api::handle_event_for_session(
+                            api_session_id,
+                            api_event,
+                        );
                     })?;
                     Ok(output_ok)
                 })())
@@ -295,7 +307,7 @@ fn wire__crate__api__api__handle_event_for_session_impl(
         },
     )
 }
-fn wire__crate__api__api__init_galileo_flutter_impl(
+fn wire__crate__api__galileo_api__init_galileo_flutter_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -321,7 +333,7 @@ fn wire__crate__api__api__init_galileo_flutter_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::api::api::init_galileo_flutter();
+                        crate::api::galileo_api::init_galileo_flutter();
                     })?;
                     Ok(output_ok)
                 })())
@@ -362,7 +374,7 @@ fn wire__crate__api__dart_types__map_init_config_default_impl(
         },
     )
 }
-fn wire__crate__api__api__mark_session_alive_impl(
+fn wire__crate__api__galileo_api__mark_session_alive_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -389,7 +401,7 @@ fn wire__crate__api__api__mark_session_alive_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::api::api::mark_session_alive(api_session_id);
+                        crate::api::galileo_api::mark_session_alive(api_session_id);
                     })?;
                     Ok(output_ok)
                 })())
@@ -397,7 +409,7 @@ fn wire__crate__api__api__mark_session_alive_impl(
         },
     )
 }
-fn wire__crate__api__api__request_map_redraw_impl(
+fn wire__crate__api__galileo_api__request_map_redraw_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -424,7 +436,8 @@ fn wire__crate__api__api__request_map_redraw_impl(
             move |context| {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || {
-                        let output_ok = crate::api::api::request_map_redraw(api_session_id)?;
+                        let output_ok =
+                            crate::api::galileo_api::request_map_redraw(api_session_id)?;
                         Ok(output_ok)
                     })(),
                 )
@@ -432,7 +445,7 @@ fn wire__crate__api__api__request_map_redraw_impl(
         },
     )
 }
-fn wire__crate__api__api__resize_session_impl(
+fn wire__crate__api__galileo_api__resize_session_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -461,7 +474,7 @@ fn wire__crate__api__api__resize_session_impl(
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || {
                         let output_ok =
-                            crate::api::api::resize_session(api_session_id, api_new_size)?;
+                            crate::api::galileo_api::resize_session(api_session_id, api_new_size)?;
                         Ok(output_ok)
                     })(),
                 )
@@ -469,7 +482,11 @@ fn wire__crate__api__api__resize_session_impl(
         },
     )
 }
+<<<<<<< HEAD
 fn wire__crate__api__api__set_tile_cache_path_impl(
+=======
+fn wire__crate__api__galileo_api__set_tile_cache_path_impl(
+>>>>>>> 9dd87a0710ec8fccb6bd1452ef3cf3ec0c2d286f
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -496,7 +513,11 @@ fn wire__crate__api__api__set_tile_cache_path_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
+<<<<<<< HEAD
                         crate::api::api::set_tile_cache_path(api_path);
+=======
+                        crate::api::galileo_api::set_tile_cache_path(api_path);
+>>>>>>> 9dd87a0710ec8fccb6bd1452ef3cf3ec0c2d286f
                     })?;
                     Ok(output_ok)
                 })())
@@ -530,12 +551,12 @@ impl SseDecode for bool {
     }
 }
 
-impl SseDecode for crate::api::api::CreateNewSessionResponse {
+impl SseDecode for crate::api::galileo_api::CreateNewSessionResponse {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_sessionId = <u32>::sse_decode(deserializer);
         let mut var_textureId = <i64>::sse_decode(deserializer);
-        return crate::api::api::CreateNewSessionResponse {
+        return crate::api::galileo_api::CreateNewSessionResponse {
             session_id: var_sessionId,
             texture_id: var_textureId,
         };
@@ -876,31 +897,75 @@ fn pde_ffi_dispatcher_primary_impl(
 ) {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        1 => wire__crate__api__api__add_session_layer_impl(port, ptr, rust_vec_len, data_len),
-        2 => wire__crate__api__api__create_new_map_session_impl(port, ptr, rust_vec_len, data_len),
-        3 => wire__crate__api__api__destroy_all_engine_sessions_impl(
+        1 => {
+            wire__crate__api__galileo_api__add_session_layer_impl(port, ptr, rust_vec_len, data_len)
+        }
+        2 => wire__crate__api__galileo_api__create_new_map_session_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        4 => wire__crate__api__api__destroy_session_impl(port, ptr, rust_vec_len, data_len),
-        5 => wire__crate__api__api__galileo_flutter_init_impl(port, ptr, rust_vec_len, data_len),
-        6 => wire__crate__api__api__get_map_viewport_impl(port, ptr, rust_vec_len, data_len),
-        7 => {
-            wire__crate__api__api__handle_event_for_session_impl(port, ptr, rust_vec_len, data_len)
+        3 => wire__crate__api__galileo_api__destroy_all_engine_sessions_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        4 => wire__crate__api__galileo_api__destroy_session_impl(port, ptr, rust_vec_len, data_len),
+        5 => wire__crate__api__galileo_api__galileo_flutter_init_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        6 => {
+            wire__crate__api__galileo_api__get_map_viewport_impl(port, ptr, rust_vec_len, data_len)
         }
-        8 => wire__crate__api__api__init_galileo_flutter_impl(port, ptr, rust_vec_len, data_len),
+        7 => wire__crate__api__galileo_api__handle_event_for_session_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        8 => wire__crate__api__galileo_api__init_galileo_flutter_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
         9 => wire__crate__api__dart_types__map_init_config_default_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
+<<<<<<< HEAD
         10 => wire__crate__api__api__mark_session_alive_impl(port, ptr, rust_vec_len, data_len),
         11 => wire__crate__api__api__request_map_redraw_impl(port, ptr, rust_vec_len, data_len),
         12 => wire__crate__api__api__resize_session_impl(port, ptr, rust_vec_len, data_len),
         13 => wire__crate__api__api__set_tile_cache_path_impl(port, ptr, rust_vec_len, data_len),
+=======
+        10 => wire__crate__api__galileo_api__mark_session_alive_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        11 => wire__crate__api__galileo_api__request_map_redraw_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        12 => wire__crate__api__galileo_api__resize_session_impl(port, ptr, rust_vec_len, data_len),
+        13 => wire__crate__api__galileo_api__set_tile_cache_path_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+>>>>>>> 9dd87a0710ec8fccb6bd1452ef3cf3ec0c2d286f
         _ => unreachable!(),
     }
 }
@@ -920,7 +985,7 @@ fn pde_ffi_dispatcher_sync_impl(
 // Section: rust2dart
 
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::api::CreateNewSessionResponse {
+impl flutter_rust_bridge::IntoDart for crate::api::galileo_api::CreateNewSessionResponse {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.session_id.into_into_dart().into_dart(),
@@ -930,13 +995,13 @@ impl flutter_rust_bridge::IntoDart for crate::api::api::CreateNewSessionResponse
     }
 }
 impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::api::CreateNewSessionResponse
+    for crate::api::galileo_api::CreateNewSessionResponse
 {
 }
-impl flutter_rust_bridge::IntoIntoDart<crate::api::api::CreateNewSessionResponse>
-    for crate::api::api::CreateNewSessionResponse
+impl flutter_rust_bridge::IntoIntoDart<crate::api::galileo_api::CreateNewSessionResponse>
+    for crate::api::galileo_api::CreateNewSessionResponse
 {
-    fn into_into_dart(self) -> crate::api::api::CreateNewSessionResponse {
+    fn into_into_dart(self) -> crate::api::galileo_api::CreateNewSessionResponse {
         self
     }
 }
@@ -1280,7 +1345,7 @@ impl SseEncode for bool {
     }
 }
 
-impl SseEncode for crate::api::api::CreateNewSessionResponse {
+impl SseEncode for crate::api::galileo_api::CreateNewSessionResponse {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <u32>::sse_encode(self.session_id, serializer);

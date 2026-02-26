@@ -163,15 +163,17 @@ impl PixelBuffer {
         // Get the mapped data
         let data = buffer_slice.get_mapped_range();
 
-        // Copy data to our internal buffer
-        let expected_size = (4 * self.size.width * self.size.height) as usize;
+        let expected_size = (4 * self.size.width * self.size.height) as usize; // 4 bytes / pixel
         if data.len() != expected_size {
+            drop(data);
+            staging_buffer.unmap();
             return Err(PixelBufferError::InvalidBufferSize {
                 width: self.size.width,
                 height: self.size.height,
             });
         }
 
+        // Copy data to our internal buffer
         self.pixel_data.clear();
         self.pixel_data.extend_from_slice(&data);
 

@@ -71,7 +71,8 @@ impl galileo::Messenger for SessionMessenger {
         if let Some(runtime) = TOKIO_RUNTIME.get() {
             let _ = runtime.spawn(async move {
                 loop {
-                    tokio::time::sleep(Duration::from_millis(16)).await; // throttle to ~60fps
+                    const FRAME_THROTTLE_MS: u64 = 16;
+                    tokio::time::sleep(Duration::from_millis(FRAME_THROTTLE_MS)).await; // throttle to ~60fps
                     if !session.requires_redraw.swap(false, Ordering::Relaxed) {
                         session.redraw_scheduled.store(false, Ordering::Release);
                         break;
@@ -258,7 +259,7 @@ impl MapSession {
     }
 
     async fn _draw_no_res(&self) {
-        self.redraw().await.inspect_err(|err| error!("{err}"));
+        let _ = self.redraw().await.inspect_err(|err| error!("{err}"));
     }
 
     pub async fn terminate(self: Arc<Self>) -> Option<FlutterCtx> {
@@ -275,11 +276,14 @@ impl MapSession {
             map.set_messenger(None::<DummyMessenger>);
             map.layers_mut().clear();
         }
-
-        flctx
+ flctx
     }
 }
 /// Updates the session counter and returns a new session ID
 fn create_new_session() -> SessionID {
+    debug!(
+        "Session created: {}",
+        SESSION_COUNTER.load(Ordering::Relaxed)
+    );
     SESSION_COUNTER.fetch_add(1, Ordering::SeqCst) + 1
 }

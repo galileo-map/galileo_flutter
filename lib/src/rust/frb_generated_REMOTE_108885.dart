@@ -67,7 +67,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => -44691892;
+  int get rustContentHash => 56949982;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -120,7 +120,7 @@ abstract class RustLibApi extends BaseApi {
     required MapSize newSize,
   });
 
-  Future<void> crateApiApiSetTileCachePath({String? path});
+  Future<void> crateApiGalileoApiSetTileCachePath({String? path});
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -543,34 +543,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiGalileoApiSetTileCachePathConstMeta =>
-      const TaskConstMeta(debugName: "set_tile_cache_path", argNames: ["path"]);
-
-  @override
-  Future<void> crateApiApiSetTileCachePath({String? path}) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_opt_String(path, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 13,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiApiSetTileCachePathConstMeta,
-        argValues: [path],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiApiSetTileCachePathConstMeta =>
       const TaskConstMeta(debugName: "set_tile_cache_path", argNames: ["path"]);
 
   @protected
