@@ -17,7 +17,7 @@ use std::sync::atomic::Ordering;
 
 use crate::api::dart_types::*;
 use crate::core::map_session::{MapSession, SessionID};
-use crate::core::{init_logger, IS_INITIALIZED, SESSIONS, TILE_CACHE_PATH, TOKIO_RUNTIME};
+use crate::core::{init_logger, TOKIO_HANDLE,IS_INITIALIZED, SESSIONS, TILE_CACHE_PATH};
 
 #[frb(init)]
 pub fn init_galileo_flutter() {
@@ -59,16 +59,13 @@ pub struct CreateNewSessionResponse {
     pub texture_id: i64,
 }
 
-pub fn create_new_map_session(
+pub async fn create_new_map_session(
     engine_handle: i64,
     config: MapInitConfig,
 ) -> anyhow::Result<CreateNewSessionResponse> {
     info!("create_new_map_session was called");
-
-    let session = TOKIO_RUNTIME
-        .get()
-        .unwrap()
-        .block_on(MapSession::new(engine_handle, config))?;
+    TOKIO_HANDLE.get_or_init(|| tokio::runtime::Handle::current());
+    let session = MapSession::new(engine_handle, config).await?;
     info!("New map session created with ID {}", session.session_id);
     Ok(CreateNewSessionResponse {
         session_id: session.session_id,
@@ -77,12 +74,15 @@ pub fn create_new_map_session(
 }
 
 /// Triggers a map update and re-render.
-pub fn request_map_redraw(session_id: SessionID) -> anyhow::Result<()> {
-    let sessions = SESSIONS.lock();
-    let session = sessions
-        .get(&session_id)
-        .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?;
-    TOKIO_RUNTIME.get().unwrap().block_on(session.redraw())
+pub async fn request_map_redraw(session_id: SessionID) -> anyhow::Result<()> {
+    let session = {
+        SESSIONS.lock()
+            .get(&session_id)
+            .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?
+            .clone() 
+    };
+
+    session.redraw().await
 }
 
 /// Marks the session as alive (called periodically from Flutter)
@@ -94,49 +94,42 @@ pub fn mark_session_alive(session_id: SessionID) {
 }
 
 /// Destroys all streams for a given engine
-pub fn destroy_all_engine_sessions(engine_id: i64) {
+pub async fn destroy_all_engine_sessions(engine_id: i64) {
     debug!("destroy_engine_streams called for engine {}", engine_id);
 
     // Find and remove all sessions for this engine
-    let mut sessions_to_remove = Vec::new();
-    {
-        let sessions = SESSIONS.lock();
-        for (session_id, session) in sessions.iter() {
-            if session.engine_handle == engine_id {
-                sessions_to_remove.push(*session_id);
-            }
-        }
-    }
-
-    let handles: Vec<_> = sessions_to_remove
-        .into_iter()
-        .map(|session_id| {
-            std::thread::spawn(move || {
-                destroy_session(session_id);
-            })
-        })
+    let session_ids: Vec<_> = SESSIONS.lock()
+        .iter()
+        .filter(|(_, s)| s.engine_handle == engine_id)
+        .map(|(id, _)| *id)
         .collect();
-    for handle in handles {
-        handle.join().unwrap();
+    for id in session_ids {
+        destroy_session(id).await;
     }
 }
 
 /// Destroys a specific session
-pub fn destroy_session(session_id: SessionID) {
+pub async fn destroy_session(session_id: SessionID) {
     debug!("destroy_session called for session {}", session_id);
-    if let Some(session) = SESSIONS.lock().remove(&session_id) {
-        let flctx = TOKIO_RUNTIME.get().unwrap().block_on(session.terminate());
 
-        if let Some(ctx) = flctx {
-            crate::utils::invoke_on_platform_main_thread(move || {
-                drop(ctx);
-            });
+    let session = match SESSIONS.lock().remove(&session_id) {
+        Some(s) => s,
+        None => {
+            info!("Session {session_id} does not exist");
+            return;
         }
+    };
 
-        info!("Session {} destroyed with full cleanup", session_id);
-    } else {
-        info!("Session {session_id} does not exist");
+    let flctx = session.terminate().await;
+
+    if let Some(ctx) = flctx {
+        crate::utils::invoke_on_platform_main_thread(move || {
+            drop(ctx);
+        });
     }
+
+    info!("Session {} destroyed with full cleanup", session_id);
+    
 }
 
 /// Replaces {z}, {x}, {y} with tile indices
@@ -150,13 +143,12 @@ fn create_url_source(url_template: String) -> impl Fn(&galileo::tile_schema::Til
 }
 
 /// Adds a layer to a session
-pub fn add_session_layer(session_id: SessionID, layer_config: LayerConfig) -> anyhow::Result<()> {
+pub async fn add_session_layer(session_id: SessionID, layer_config: LayerConfig) -> anyhow::Result<()> {
     let session = {
-        let sessions = SESSIONS.lock();
-        sessions
+        SESSIONS.lock()
             .get(&session_id)
             .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?
-            .clone()
+            .clone() 
     };
 
     match layer_config {
@@ -164,10 +156,7 @@ pub fn add_session_layer(session_id: SessionID, layer_config: LayerConfig) -> an
             let layer = RasterTileLayerBuilder::new_osm()
                 .build()
                 .map_err(|e| anyhow::anyhow!("Failed to create OSM layer: {}", e))?;
-            TOKIO_RUNTIME
-                .get()
-                .unwrap()
-                .block_on(session.add_layer(layer));
+            session.add_layer(layer).await;
         }
         LayerConfig::RasterTiles {
             url_template: _,
@@ -178,10 +167,7 @@ pub fn add_session_layer(session_id: SessionID, layer_config: LayerConfig) -> an
             let layer = RasterTileLayerBuilder::new_osm()
                 .build()
                 .map_err(|e| anyhow::anyhow!("Failed to create OSM layer: {}", e))?;
-            TOKIO_RUNTIME
-                .get()
-                .unwrap()
-                .block_on(session.add_layer(layer));
+            session.add_layer(layer).await;
         }
         LayerConfig::VectorTiles {
             url_template,
@@ -207,58 +193,47 @@ pub fn add_session_layer(session_id: SessionID, layer_config: LayerConfig) -> an
             let layer = builder
                 .build()
                 .map_err(|e| anyhow::anyhow!("Failed to create vector tile layer: {}", e))?;
-            TOKIO_RUNTIME
-                .get()
-                .unwrap()
-                .block_on(session.add_layer(layer));
+            session.add_layer(layer).await;
         }
     }
 
     Ok(())
 }
 
-pub fn get_map_viewport(session_id: SessionID) -> Option<MapViewport> {
-    if let Some(session) = SESSIONS.lock().get(&session_id).cloned() {
-        return TOKIO_RUNTIME
-            .get()
-            .unwrap()
-            .block_on(session.get_viewport());
-    }
-    None
+pub async fn get_map_viewport(session_id: SessionID) -> Option<MapViewport> {
+    let session = {
+        SESSIONS.lock()
+            .get(&session_id)
+            .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id)).ok()?
+            .clone()
+    };
+    return session.get_viewport().await;
 }
 
 pub fn handle_event_for_session(session_id: SessionID, event: UserEvent) {
     let galileo_event = event.to_galileo();
-
-    let session = {
-        let sessions = SESSIONS.lock();
-        sessions.get(&session_id).cloned()
-    };
+    let session = SESSIONS.lock().get(&session_id).cloned();
 
     if let Some(session) = session {
-        if let Some(runtime) = TOKIO_RUNTIME.get() {
-            let _ = runtime.spawn(async move {
+        if let Some(handle) = TOKIO_HANDLE.get() {
+            handle.spawn(async move {
                 match session.map.try_lock() {
-                    Ok(mut map) => {
-                        session.controller.handle(&galileo_event, &mut map);
-                    }
-                    Err(_) => {
-                        info!("Map busy: {:?}", galileo_event);
-                    }
+                    Ok(mut map) =>{session.controller.handle(&galileo_event, &mut map);},
+                    Err(_) => info!("Map busy: {:?}", galileo_event),
                 }
             });
         }
     }
 }
 
-pub fn resize_session(session_id: SessionID, new_size: MapSize) -> anyhow::Result<()> {
-    let sessions = SESSIONS.lock();
-    let session = sessions
-        .get(&session_id)
-        .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?;
+pub async fn resize_session(session_id: SessionID, new_size: MapSize) -> anyhow::Result<()> {
 
-    TOKIO_RUNTIME
-        .get()
-        .unwrap()
-        .block_on(session.resize(new_size))
+    let session = {
+        SESSIONS.lock()
+            .get(&session_id)
+            .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?
+            .clone() 
+    };
+
+    session.resize(new_size).await
 }

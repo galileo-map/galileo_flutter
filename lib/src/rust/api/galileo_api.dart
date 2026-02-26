@@ -17,9 +17,6 @@ Future<void> galileoFlutterInit({required PlatformInt64 ffiPtr}) =>
 Future<void> setTileCachePath({String? path}) =>
     RustLib.instance.api.crateApiGalileoApiSetTileCachePath(path: path);
 
-Future<void> setTileCachePath({String? path}) =>
-    RustLib.instance.api.crateApiApiSetTileCachePath(path: path);
-
 Future<CreateNewSessionResponse> createNewMapSession({
   required PlatformInt64 engineHandle,
   required MapInitConfig config,

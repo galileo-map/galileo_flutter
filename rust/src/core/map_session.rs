@@ -1,6 +1,6 @@
 use crate::core::galileo_ref::create_galileo_map_v2;
 pub use crate::core::pixel_buffer::PixelBuffer;
-use crate::core::{WindowlessRenderer, SESSIONS, SESSION_COUNTER, TOKIO_RUNTIME};
+use crate::core::{WindowlessRenderer, SESSIONS, SESSION_COUNTER};
 use anyhow::anyhow;
 use galileo::{galileo_types, DummyMessenger};
 use log::{debug, error, info};
@@ -68,8 +68,7 @@ impl galileo::Messenger for SessionMessenger {
         }
 
         let session = self.0.clone();
-        if let Some(runtime) = TOKIO_RUNTIME.get() {
-            let _ = runtime.spawn(async move {
+            tokio::spawn(async move {
                 loop {
                     const FRAME_THROTTLE_MS: u64 = 16;
                     tokio::time::sleep(Duration::from_millis(FRAME_THROTTLE_MS)).await; // throttle to ~60fps
@@ -81,7 +80,6 @@ impl galileo::Messenger for SessionMessenger {
                     session._draw_no_res().await;
                 }
             });
-        }
     }
 }
 
@@ -244,17 +242,16 @@ impl MapSession {
             let mut map = self.map.lock().await;
             map.set_size(size.cast::<f64>());
         }
-        let flctx = self.flutter_ctx.read();
-        let flutter_ctx = flctx
-            .as_ref()
-            .ok_or(anyhow!("flutter context not available"))?;
 
-        // Resize texture provider
-        flutter_ctx.payload_holder.resize(new_size);
+        let payload_holder = {
+            let flctx = self.flutter_ctx.read();
+            flctx.as_ref().map(|ctx| ctx.payload_holder.clone())
+        };
 
-        // Trigger render to fill new size
-        self.redraw().await?;
-
+        if let Some(holder) = payload_holder {
+            holder.resize(new_size);
+            self.redraw().await?;
+        }
         Ok(())
     }
 

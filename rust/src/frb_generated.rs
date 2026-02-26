@@ -37,11 +37,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-<<<<<<< HEAD
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -44691892;
-=======
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 56949982;
->>>>>>> 9dd87a0710ec8fccb6bd1452ef3cf3ec0c2d286f
 
 // Section: executor
 
@@ -55,7 +51,7 @@ fn wire__crate__api__galileo_api__add_session_layer_impl(
     rust_vec_len_: i32,
     data_len_: i32,
 ) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "add_session_layer",
             port: Some(port_),
@@ -75,15 +71,17 @@ fn wire__crate__api__galileo_api__add_session_layer_impl(
             let api_layer_config =
                 <crate::api::dart_types::LayerConfig>::sse_decode(&mut deserializer);
             deserializer.end();
-            move |context| {
+            move |context| async move {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
-                    (move || {
+                    (move || async move {
                         let output_ok = crate::api::galileo_api::add_session_layer(
                             api_session_id,
                             api_layer_config,
-                        )?;
+                        )
+                        .await?;
                         Ok(output_ok)
-                    })(),
+                    })()
+                    .await,
                 )
             }
         },
@@ -95,7 +93,7 @@ fn wire__crate__api__galileo_api__create_new_map_session_impl(
     rust_vec_len_: i32,
     data_len_: i32,
 ) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "create_new_map_session",
             port: Some(port_),
@@ -114,15 +112,17 @@ fn wire__crate__api__galileo_api__create_new_map_session_impl(
             let api_engine_handle = <i64>::sse_decode(&mut deserializer);
             let api_config = <crate::api::dart_types::MapInitConfig>::sse_decode(&mut deserializer);
             deserializer.end();
-            move |context| {
+            move |context| async move {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
-                    (move || {
+                    (move || async move {
                         let output_ok = crate::api::galileo_api::create_new_map_session(
                             api_engine_handle,
                             api_config,
-                        )?;
+                        )
+                        .await?;
                         Ok(output_ok)
-                    })(),
+                    })()
+                    .await,
                 )
             }
         },
@@ -134,7 +134,7 @@ fn wire__crate__api__galileo_api__destroy_all_engine_sessions_impl(
     rust_vec_len_: i32,
     data_len_: i32,
 ) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "destroy_all_engine_sessions",
             port: Some(port_),
@@ -152,13 +152,17 @@ fn wire__crate__api__galileo_api__destroy_all_engine_sessions_impl(
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_engine_id = <i64>::sse_decode(&mut deserializer);
             deserializer.end();
-            move |context| {
-                transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok({
-                        crate::api::galileo_api::destroy_all_engine_sessions(api_engine_id);
-                    })?;
-                    Ok(output_ok)
-                })())
+            move |context| async move {
+                transform_result_sse::<_, ()>(
+                    (move || async move {
+                        let output_ok = Result::<_, ()>::Ok({
+                            crate::api::galileo_api::destroy_all_engine_sessions(api_engine_id)
+                                .await;
+                        })?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
             }
         },
     )
@@ -169,7 +173,7 @@ fn wire__crate__api__galileo_api__destroy_session_impl(
     rust_vec_len_: i32,
     data_len_: i32,
 ) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "destroy_session",
             port: Some(port_),
@@ -187,13 +191,16 @@ fn wire__crate__api__galileo_api__destroy_session_impl(
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_session_id = <u32>::sse_decode(&mut deserializer);
             deserializer.end();
-            move |context| {
-                transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok({
-                        crate::api::galileo_api::destroy_session(api_session_id);
-                    })?;
-                    Ok(output_ok)
-                })())
+            move |context| async move {
+                transform_result_sse::<_, ()>(
+                    (move || async move {
+                        let output_ok = Result::<_, ()>::Ok({
+                            crate::api::galileo_api::destroy_session(api_session_id).await;
+                        })?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
             }
         },
     )
@@ -239,7 +246,7 @@ fn wire__crate__api__galileo_api__get_map_viewport_impl(
     rust_vec_len_: i32,
     data_len_: i32,
 ) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "get_map_viewport",
             port: Some(port_),
@@ -257,13 +264,16 @@ fn wire__crate__api__galileo_api__get_map_viewport_impl(
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_session_id = <u32>::sse_decode(&mut deserializer);
             deserializer.end();
-            move |context| {
-                transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(
-                        crate::api::galileo_api::get_map_viewport(api_session_id),
-                    )?;
-                    Ok(output_ok)
-                })())
+            move |context| async move {
+                transform_result_sse::<_, ()>(
+                    (move || async move {
+                        let output_ok = Result::<_, ()>::Ok(
+                            crate::api::galileo_api::get_map_viewport(api_session_id).await,
+                        )?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
             }
         },
     )
@@ -415,7 +425,7 @@ fn wire__crate__api__galileo_api__request_map_redraw_impl(
     rust_vec_len_: i32,
     data_len_: i32,
 ) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "request_map_redraw",
             port: Some(port_),
@@ -433,13 +443,14 @@ fn wire__crate__api__galileo_api__request_map_redraw_impl(
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_session_id = <u32>::sse_decode(&mut deserializer);
             deserializer.end();
-            move |context| {
+            move |context| async move {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
-                    (move || {
+                    (move || async move {
                         let output_ok =
-                            crate::api::galileo_api::request_map_redraw(api_session_id)?;
+                            crate::api::galileo_api::request_map_redraw(api_session_id).await?;
                         Ok(output_ok)
-                    })(),
+                    })()
+                    .await,
                 )
             }
         },
@@ -451,7 +462,7 @@ fn wire__crate__api__galileo_api__resize_session_impl(
     rust_vec_len_: i32,
     data_len_: i32,
 ) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "resize_session",
             port: Some(port_),
@@ -470,23 +481,21 @@ fn wire__crate__api__galileo_api__resize_session_impl(
             let api_session_id = <u32>::sse_decode(&mut deserializer);
             let api_new_size = <crate::api::dart_types::MapSize>::sse_decode(&mut deserializer);
             deserializer.end();
-            move |context| {
+            move |context| async move {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
-                    (move || {
+                    (move || async move {
                         let output_ok =
-                            crate::api::galileo_api::resize_session(api_session_id, api_new_size)?;
+                            crate::api::galileo_api::resize_session(api_session_id, api_new_size)
+                                .await?;
                         Ok(output_ok)
-                    })(),
+                    })()
+                    .await,
                 )
             }
         },
     )
 }
-<<<<<<< HEAD
-fn wire__crate__api__api__set_tile_cache_path_impl(
-=======
 fn wire__crate__api__galileo_api__set_tile_cache_path_impl(
->>>>>>> 9dd87a0710ec8fccb6bd1452ef3cf3ec0c2d286f
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -513,11 +522,7 @@ fn wire__crate__api__galileo_api__set_tile_cache_path_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-<<<<<<< HEAD
-                        crate::api::api::set_tile_cache_path(api_path);
-=======
                         crate::api::galileo_api::set_tile_cache_path(api_path);
->>>>>>> 9dd87a0710ec8fccb6bd1452ef3cf3ec0c2d286f
                     })?;
                     Ok(output_ok)
                 })())
@@ -940,12 +945,6 @@ fn pde_ffi_dispatcher_primary_impl(
             rust_vec_len,
             data_len,
         ),
-<<<<<<< HEAD
-        10 => wire__crate__api__api__mark_session_alive_impl(port, ptr, rust_vec_len, data_len),
-        11 => wire__crate__api__api__request_map_redraw_impl(port, ptr, rust_vec_len, data_len),
-        12 => wire__crate__api__api__resize_session_impl(port, ptr, rust_vec_len, data_len),
-        13 => wire__crate__api__api__set_tile_cache_path_impl(port, ptr, rust_vec_len, data_len),
-=======
         10 => wire__crate__api__galileo_api__mark_session_alive_impl(
             port,
             ptr,
@@ -965,7 +964,6 @@ fn pde_ffi_dispatcher_primary_impl(
             rust_vec_len,
             data_len,
         ),
->>>>>>> 9dd87a0710ec8fccb6bd1452ef3cf3ec0c2d286f
         _ => unreachable!(),
     }
 }

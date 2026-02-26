@@ -10,8 +10,7 @@ use parking_lot::Mutex;
 pub use pixel_buffer::PixelBuffer;
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
-use std::sync::{Arc, OnceLock};
-use tokio::runtime::Runtime;
+use std::sync::{Arc,OnceLock};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 pub use windowless_renderer::WindowlessRenderer;
 
@@ -26,12 +25,7 @@ impl MapSize {
 lazy_static::lazy_static! {
     pub static ref IS_INITIALIZED: AtomicBool = AtomicBool::new(false);
     pub static ref WORKER_GUARD: std::sync::Mutex<Option<tracing_appender::non_blocking::WorkerGuard>> = std::sync::Mutex::new(None);
-    pub static ref TOKIO_RUNTIME: OnceLock<Runtime> = OnceLock::from(
-        tokio::runtime::Builder::new_multi_thread()
-            .worker_threads(4)
-            .enable_all()
-            .build().unwrap()
-    );
+    pub static ref TOKIO_HANDLE: OnceLock<tokio::runtime::Handle> = OnceLock::new();
     pub static ref SESSION_COUNTER: AtomicU32 = AtomicU32::new(0);
     pub static ref SESSIONS: Mutex<HashMap<SessionID, Arc<MapSession>>> = Mutex::new(HashMap::new());
     pub static ref TILE_CACHE_PATH: parking_lot::RwLock<Option<String>> = parking_lot::RwLock::new(None);
