@@ -12,6 +12,7 @@ use galileo::layer::vector_tile_layer::VectorTileLayerBuilder;
 use galileo::render::text::text_service::TextService;
 use galileo::render::text::RustybuzzRasterizer;
 use galileo::TileSchema;
+use futures::future::join_all
 use log::{debug, info};
 use std::sync::atomic::Ordering;
 
@@ -103,9 +104,7 @@ pub async fn destroy_all_engine_sessions(engine_id: i64) {
         .filter(|(_, s)| s.engine_handle == engine_id)
         .map(|(id, _)| *id)
         .collect();
-    for id in session_ids {
-        destroy_session(id).await;
-    }
+    join_all(session_ids.into_iter().map(destroy_session)).await;
 }
 
 /// Destroys a specific session

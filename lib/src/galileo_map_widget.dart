@@ -119,7 +119,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
   MapSize? _lastMapSize;
   double _lastPinchScaleValue = 1;
   bool _isPinchScaling = false;
-  Timer? _debounce;
 
   final Set<int> _activePointers = {};
 
@@ -535,10 +534,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
     if (widget.enableKeyboard) {
       HardwareKeyboard.instance.removeHandler(_handleKeyEvent);
     }
-
-    Future.microtask(() async {
-      await widget.controller.dispose();
-    });
 
     super.dispose();
 
