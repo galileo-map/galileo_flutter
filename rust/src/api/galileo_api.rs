@@ -50,6 +50,9 @@ fn initialize_font_service(){
                 Handle::Path{path , ..}=>{
                     _service.load_fonts(path);
                 }
+                Handle::Memory { bytes, .. } => {
+                    _service.load_font_data(bytes);
+                }
                 _=>{}
             }
         }

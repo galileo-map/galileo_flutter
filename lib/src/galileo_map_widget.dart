@@ -541,10 +541,18 @@ class _GalileoMapFromConfig extends StatefulWidget {
   final MapInitConfig config;
   final List<LayerConfig> layers;
   final Widget? child;
+
+  /// Whether to dispose the controller when the widget disposes
   final bool autoDispose;
+
+
+  /// Focus node for keyboard events
   final bool enableKeyboard;
-  final FocusNode? focusNode;
+
+  /// Whether to enable keyboard input
   final void Function(double x, double y)? onTap;
+
+  /// Called when the map is tappedinal FocusNode? focusNode;
   final void Function(MapViewport viewport)? onViewportChanged;
 
   const _GalileoMapFromConfig({
