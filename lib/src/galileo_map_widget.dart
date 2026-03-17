@@ -18,8 +18,9 @@ class GalileoMapWidget extends StatefulWidget {
   final MapInitConfig config;
 
   final List<LayerConfig> layers;
-
+  
   final Widget? child;
+
 
   /// Whether to dispose the controller when the widget disposes
   final bool autoDispose;
@@ -30,7 +31,7 @@ class GalileoMapWidget extends StatefulWidget {
   /// Focus node for keyboard events
   final FocusNode? focusNode;
 
-  /// Called when the map is tapped
+/// Called when the map is tapped
   final void Function(double x, double y)? onTap;
 
   const GalileoMapWidget._({
@@ -73,7 +74,7 @@ class GalileoMapWidget extends StatefulWidget {
     );
   }
 
-  /// Create a GalileoMapWidget with configuration
+/// Create a GalileoMapWidget with configuration
   static Widget fromConfig({
     Key? key,
     required MapSize size,
@@ -111,9 +112,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
   late FocusNode _focusNode;
   final Set<LogicalKeyboardKey> _pressedKeys = {};
   late Ticker panTicker;
-  late Ticker zoomTicker;
   Offset _panAccumulatedDelta = Offset.zero;
-  double _zoomAccumulatedDelta = 1.0;
 
   Offset? _lastPointerPosition;
   MapSize? _lastMapSize;
@@ -132,7 +131,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
 
     _focusNode = widget.focusNode ?? FocusNode();
     panTicker = createTicker(_onTickPan);
-    zoomTicker = createTicker(_onTickZoom);
 
     if (widget.enableKeyboard) {
       HardwareKeyboard.instance.addHandler(_handleKeyEvent);
@@ -167,9 +165,8 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
     widget.controller.handleEvent(panEvent);
   }
 
-  void _sendZoomEvent(double delta, Offset position) {
+  void _sendZoomEvent(double zoomFactor, Offset position) {
     final scaleFactor = _devicePixelRatio;
-    final zoomFactor = math.exp(-delta * 0.01);
     final zoomEvent = UserEvent.zoom(
       zoomFactor,
       Point2(x: position.dx * scaleFactor, y: position.dy * scaleFactor),
@@ -181,13 +178,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
     if (_panAccumulatedDelta != Offset.zero) {
       _sendPanEvent(_panAccumulatedDelta, _lastPointerPosition!);
       _panAccumulatedDelta = Offset.zero;
-    }
-  }
-
-  void _onTickZoom(Duration elapsed) {
-    if (_zoomAccumulatedDelta != 0.0 && _lastPointerPosition != null) {
-      _sendZoomEvent(_zoomAccumulatedDelta, _lastPointerPosition!);
-      _zoomAccumulatedDelta = 1.0;
     }
   }
 
@@ -241,7 +231,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
         if (widget.child != null) widget.child!,
       ],
     );
-
     // Wrap with low-level pointer events for more control
     mapContent = Listener(
       behavior: HitTestBehavior.opaque,
@@ -251,7 +240,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
         if (_activePointers.length > 1 || _isPinchScaling) {
           return;
         }
-
         // Request focus for keyboard events
         if (widget.enableKeyboard) {
           _focusNode.requestFocus();
@@ -268,8 +256,8 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
       },
       onPointerCancel: (event) {
         _activePointers.remove(event.pointer);
-
         _lastPointerPosition = null;
+
         final scaleFactor = _devicePixelRatio;
         // Release button on cancel
         final mouseEvent = UserEvent.buttonReleased(
@@ -290,20 +278,10 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
       },
       onPointerSignal: (event) {
         if (event is PointerScrollEvent) {
-          final delta = -event.scrollDelta.dy;
-
           const zoomSensitivity = 0.002;
-          final zoomFactor = math.pow(1.0 - zoomSensitivity, delta).toDouble();
-          final scaleFactor = _devicePixelRatio;
-          final zoomEvent = UserEvent.zoom(
-            zoomFactor,
-            Point2(
-              x: event.localPosition.dx * scaleFactor,
-              y: event.localPosition.dy * scaleFactor,
-            ),
-          );
-
-          widget.controller.handleEvent(zoomEvent);
+          final zoomFactor =
+              math.pow(1.0 - zoomSensitivity, -event.scrollDelta.dy).toDouble();
+          _sendZoomEvent(zoomFactor, event.localPosition);
         }
       },
       onPointerMove: (event) {
@@ -324,10 +302,8 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
 
         _lastPointerPosition = currentPosition;
       },
-
       child: mapContent,
     );
-
     // Add keyboard support if enabled
     if (widget.enableKeyboard) {
       mapContent = Focus(
@@ -347,7 +323,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
           if (!_isPinchScaling) {
             _isPinchScaling = true;
             _lastPinchScaleValue = details.scale;
-            if (!zoomTicker.isTicking) zoomTicker.start();
             return;
           }
 
@@ -356,15 +331,14 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
             const zoomSensitivity = 2.5;
             final amplifiedDelta =
                 math.pow(scaleDelta, zoomSensitivity).toDouble();
-            _zoomAccumulatedDelta *= amplifiedDelta;
             _lastPinchScaleValue = details.scale;
+            _sendZoomEvent(1.0 / amplifiedDelta, details.localFocalPoint);
           }
         }
       },
       onScaleEnd: (details) {
         _lastPinchScaleValue = 1.0;
         _isPinchScaling = false;
-        zoomTicker.stop();
       },
       child: mapContent,
     );
@@ -407,7 +381,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
     return false;
   }
 
-  _handleKeyNavigation(LogicalKeyboardKey key){
+  _handleKeyNavigation(LogicalKeyboardKey key) {
     switch (key) {
       case LogicalKeyboardKey.arrowUp:
         // Pan up using drag event
@@ -554,11 +528,11 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
         }
       }
     });
-
     // Dispose focus node if we created it
     if (widget.focusNode == null) {
       _focusNode.dispose();
     }
+    panTicker.dispose();
   }
 }
 
@@ -567,17 +541,9 @@ class _GalileoMapFromConfig extends StatefulWidget {
   final MapInitConfig config;
   final List<LayerConfig> layers;
   final Widget? child;
-
-  /// Whether to dispose the controller when the widget disposes
   final bool autoDispose;
-
-  /// Whether to enable keyboard input
   final bool enableKeyboard;
-
-  /// Focus node for keyboard events
   final FocusNode? focusNode;
-
-  /// Called when the map is tapped
   final void Function(double x, double y)? onTap;
   final void Function(MapViewport viewport)? onViewportChanged;
 
@@ -598,10 +564,7 @@ class _GalileoMapFromConfig extends StatefulWidget {
   State<_GalileoMapFromConfig> createState() => _GalileoMapFromConfigState();
 }
 
-/// internal class to store GalileoMapController
 class _GalileoMapFromConfigState extends State<_GalileoMapFromConfig> {
-  /// stores the GalileoMapController as a state
-  /// this avoids the re-instantiation of controller again.
   late final Future<(GalileoMapController?, String?)> _controllerFuture;
 
   @override

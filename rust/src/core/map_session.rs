@@ -128,7 +128,7 @@ impl MapSession {
 
             let mut map = map.lock().await;
             for layer in map.layers_mut().iter_mut() {
-                layer.set_messenger(Box::new(messenger.clone()));
+                layer.set_messenger(Arc::new(messenger.clone()) as Arc<dyn galileo::Messenger>);
             }
 
             map.set_messenger(Some(messenger));
@@ -155,7 +155,7 @@ impl MapSession {
     pub async fn add_layer(&self, mut layer: impl galileo::layer::Layer + 'static) {
         if let Some(session) = SESSIONS.lock().get(&self.session_id).cloned() {
             let messenger: SessionMessenger = SessionMessenger(session);
-            layer.set_messenger(Box::new(messenger));
+            layer.set_messenger(Arc::new(messenger) as Arc<dyn galileo::Messenger>);
         }
 
         let mut map = self.map.lock().await;
@@ -268,7 +268,7 @@ impl MapSession {
         {
             let mut map = self.map.lock().await;
             for layer in map.layers_mut().iter_mut() {
-                layer.set_messenger(Box::new(DummyMessenger {}));
+                layer.set_messenger(Arc::new(DummyMessenger {}) as Arc<dyn galileo::Messenger>);
             }
             map.set_messenger(None::<DummyMessenger>);
             map.layers_mut().clear();
