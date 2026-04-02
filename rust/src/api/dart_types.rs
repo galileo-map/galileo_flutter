@@ -81,9 +81,70 @@ pub enum LayerConfig {
         style_json: String,
         attribution: Option<String>,
     },
+    /// Layer to render polygons
+    PolygonLayer {
+        /// Stores the features to be rendered
+       features: Vec<Polygon>,
+    },
 }
 
+
+/// Closed geographic polygon with fill/stroke styling.
+/// Usage:
+///   Polygon(
+///     points: [(27.7,85.3), ...],
+///     style: PolygonStyle(
+///       fillColor: (0.2,0.5,0.9,0.8),
+///       strokeColor: (1.0,1.0,1.0,1.0),
+///       strokeWidth: 2.0,
+///       strokeOffset: 0.0,
+///     ),
+///   )
+#[derive(Clone, Debug,PartialEq)]
+pub struct Polygon {
+    pub points: Vec<(f64, f64)>,
+    pub style: PolygonStyle,
+}
+
+#[derive(Clone, Debug,PartialEq)]
+pub struct PolygonStyle {
+    /// fillColor also as RGBA (0.0-1.0 range)
+    pub fillColor: Color,
+    /// fillColor also as RGBA (0.0-1.0 range)
+    pub strokeColor: Color, 
+    /// strokeWidth with (0.0-1.0 range)
+    pub strokeWidth: f64,
+    /// strokeOffset with (0.0-1.0 range)
+    pub strokeOffset: f64,
+}
+
+#[derive(Clone, Debug)]
+pub struct PolygonSymbol {}
+
 // Manual type definitions for Dart-friendly versions
+//
+/// 2D point in cartesian coordinate space.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct Color {
+    pub r: f64,
+    pub g: f64,
+    pub b: f64,
+    pub a: f64,
+}
+
+impl Color {
+
+    #[frb(ignore)]
+    pub fn to_galileo(&self)-> galileo::Color {
+        galileo::Color::rgba(    
+            (self.r * 255.0) as u8,
+            (self.g * 255.0) as u8,
+            (self.b * 255.0) as u8,
+            (self.a * 255.0) as u8,
+        )
+    }
+}
+
 
 /// 2D point in cartesian coordinate space.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -96,6 +157,21 @@ impl Point2 {
     #[frb(ignore)]
     pub fn to_galileo(&self) -> galileo_types::cartesian::Point2<f64> {
         galileo_types::cartesian::Point2::new(self.x, self.y)
+    }
+}
+
+/// 3D point in cartesian coordinate space.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct Point3 {
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+}
+
+impl Point3 {
+    #[frb(ignore)]
+    pub fn to_galileo(&self) -> galileo_types::cartesian::Point3<f64> {
+        galileo_types::cartesian::Point3::new(self.x, self.y, self.z)
     }
 }
 

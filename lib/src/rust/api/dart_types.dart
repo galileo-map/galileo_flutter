@@ -8,9 +8,37 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'dart_types.freezed.dart';
 
-// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `MapPosition`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
-// These functions are ignored (category: IgnoreBecauseExplicitAttribute): `from_rect`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `MapPosition`, `Point3`, `PolygonSymbol`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
+// These functions are ignored (category: IgnoreBecauseExplicitAttribute): `from_rect`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`
+
+/// 2D point in cartesian coordinate space.
+class Color {
+  final double r;
+  final double g;
+  final double b;
+  final double a;
+
+  const Color({
+    required this.r,
+    required this.g,
+    required this.b,
+    required this.a,
+  });
+
+  @override
+  int get hashCode => r.hashCode ^ g.hashCode ^ b.hashCode ^ a.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Color &&
+          runtimeType == other.runtimeType &&
+          r == other.r &&
+          g == other.g &&
+          b == other.b &&
+          a == other.a;
+}
 
 @freezed
 sealed class LayerConfig with _$LayerConfig {
@@ -29,6 +57,12 @@ sealed class LayerConfig with _$LayerConfig {
     required String styleJson,
     String? attribution,
   }) = LayerConfig_VectorTiles;
+
+  /// Layer to render polygons
+  const factory LayerConfig.polygonLayer({
+    /// Stores the features to be rendered
+    required List<Polygon> features,
+  }) = LayerConfig_PolygonLayer;
 }
 
 class MapInitConfig {
@@ -218,6 +252,73 @@ class Point2 {
           runtimeType == other.runtimeType &&
           x == other.x &&
           y == other.y;
+}
+
+/// Closed geographic polygon with fill/stroke styling.
+/// Usage:
+///   Polygon(
+///     points: [(27.7,85.3), ...],
+///     style: PolygonStyle(
+///       fillColor: (0.2,0.5,0.9,0.8),
+///       strokeColor: (1.0,1.0,1.0,1.0),
+///       strokeWidth: 2.0,
+///       strokeOffset: 0.0,
+///     ),
+///   )
+class Polygon {
+  final List<(double, double)> points;
+  final PolygonStyle style;
+
+  const Polygon({required this.points, required this.style});
+
+  @override
+  int get hashCode => points.hashCode ^ style.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Polygon &&
+          runtimeType == other.runtimeType &&
+          points == other.points &&
+          style == other.style;
+}
+
+class PolygonStyle {
+  /// fillColor also as RGBA (0.0-1.0 range)
+  final Color fillColor;
+
+  /// fillColor also as RGBA (0.0-1.0 range)
+  final Color strokeColor;
+
+  /// strokeWidth with (0.0-1.0 range)
+  final double strokeWidth;
+
+  /// strokeOffset with (0.0-1.0 range)
+  final double strokeOffset;
+
+  const PolygonStyle({
+    required this.fillColor,
+    required this.strokeColor,
+    required this.strokeWidth,
+    required this.strokeOffset,
+  });
+
+  @override
+  int get hashCode =>
+      fillColor.hashCode ^
+      strokeColor.hashCode ^
+      strokeWidth.hashCode ^
+      strokeOffset.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PolygonStyle &&
+          runtimeType == other.runtimeType &&
+          fillColor == other.fillColor &&
+          strokeColor == other.strokeColor &&
+          strokeWidth == other.strokeWidth &&
+          strokeOffset == other.strokeOffset;
 }
 
 @freezed

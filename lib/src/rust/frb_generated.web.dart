@@ -55,6 +55,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Vector2 dco_decode_box_autoadd_vector_2(dynamic raw);
 
   @protected
+  Color dco_decode_color(dynamic raw);
+
+  @protected
   CreateNewSessionResponse dco_decode_create_new_session_response(dynamic raw);
 
   @protected
@@ -73,7 +76,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   LayerConfig dco_decode_layer_config(dynamic raw);
 
   @protected
+  List<Polygon> dco_decode_list_polygon(dynamic raw);
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
+
+  @protected
+  List<(double, double)> dco_decode_list_record_f_64_f_64(dynamic raw);
 
   @protected
   MapInitConfig dco_decode_map_init_config(dynamic raw);
@@ -104,6 +113,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Point2 dco_decode_point_2(dynamic raw);
+
+  @protected
+  Polygon dco_decode_polygon(dynamic raw);
+
+  @protected
+  PolygonStyle dco_decode_polygon_style(dynamic raw);
 
   @protected
   (double, double, double, double) dco_decode_record_f_32_f_32_f_32_f_32(
@@ -164,6 +179,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Vector2 sse_decode_box_autoadd_vector_2(SseDeserializer deserializer);
 
   @protected
+  Color sse_decode_color(SseDeserializer deserializer);
+
+  @protected
   CreateNewSessionResponse sse_decode_create_new_session_response(
     SseDeserializer deserializer,
   );
@@ -184,7 +202,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   LayerConfig sse_decode_layer_config(SseDeserializer deserializer);
 
   @protected
+  List<Polygon> sse_decode_list_polygon(SseDeserializer deserializer);
+
+  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
+
+  @protected
+  List<(double, double)> sse_decode_list_record_f_64_f_64(
+    SseDeserializer deserializer,
+  );
 
   @protected
   MapInitConfig sse_decode_map_init_config(SseDeserializer deserializer);
@@ -219,6 +245,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Point2 sse_decode_point_2(SseDeserializer deserializer);
+
+  @protected
+  Polygon sse_decode_polygon(SseDeserializer deserializer);
+
+  @protected
+  PolygonStyle sse_decode_polygon_style(SseDeserializer deserializer);
 
   @protected
   (double, double, double, double) sse_decode_record_f_32_f_32_f_32_f_32(
@@ -295,6 +327,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_box_autoadd_vector_2(Vector2 self, SseSerializer serializer);
 
   @protected
+  void sse_encode_color(Color self, SseSerializer serializer);
+
+  @protected
   void sse_encode_create_new_session_response(
     CreateNewSessionResponse self,
     SseSerializer serializer,
@@ -316,8 +351,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_layer_config(LayerConfig self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_polygon(List<Polygon> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_prim_u_8_strict(
     Uint8List self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_record_f_64_f_64(
+    List<(double, double)> self,
     SseSerializer serializer,
   );
 
@@ -359,6 +403,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_point_2(Point2 self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_polygon(Polygon self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_polygon_style(PolygonStyle self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_f_32_f_32_f_32_f_32(

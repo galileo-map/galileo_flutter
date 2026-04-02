@@ -556,6 +556,22 @@ impl SseDecode for bool {
     }
 }
 
+impl SseDecode for crate::api::dart_types::Color {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_r = <f64>::sse_decode(deserializer);
+        let mut var_g = <f64>::sse_decode(deserializer);
+        let mut var_b = <f64>::sse_decode(deserializer);
+        let mut var_a = <f64>::sse_decode(deserializer);
+        return crate::api::dart_types::Color {
+            r: var_r,
+            g: var_g,
+            b: var_b,
+            a: var_a,
+        };
+    }
+}
+
 impl SseDecode for crate::api::galileo_api::CreateNewSessionResponse {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -622,10 +638,29 @@ impl SseDecode for crate::api::dart_types::LayerConfig {
                     attribution: var_attribution,
                 };
             }
+            3 => {
+                let mut var_features =
+                    <Vec<crate::api::dart_types::Polygon>>::sse_decode(deserializer);
+                return crate::api::dart_types::LayerConfig::PolygonLayer {
+                    features: var_features,
+                };
+            }
             _ => {
                 unimplemented!("");
             }
         }
+    }
+}
+
+impl SseDecode for Vec<crate::api::dart_types::Polygon> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::dart_types::Polygon>::sse_decode(deserializer));
+        }
+        return ans_;
     }
 }
 
@@ -636,6 +671,18 @@ impl SseDecode for Vec<u8> {
         let mut ans_ = vec![];
         for idx_ in 0..len_ {
             ans_.push(<u8>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<(f64, f64)> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<(f64, f64)>::sse_decode(deserializer));
         }
         return ans_;
     }
@@ -770,6 +817,34 @@ impl SseDecode for crate::api::dart_types::Point2 {
         let mut var_x = <f64>::sse_decode(deserializer);
         let mut var_y = <f64>::sse_decode(deserializer);
         return crate::api::dart_types::Point2 { x: var_x, y: var_y };
+    }
+}
+
+impl SseDecode for crate::api::dart_types::Polygon {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_points = <Vec<(f64, f64)>>::sse_decode(deserializer);
+        let mut var_style = <crate::api::dart_types::PolygonStyle>::sse_decode(deserializer);
+        return crate::api::dart_types::Polygon {
+            points: var_points,
+            style: var_style,
+        };
+    }
+}
+
+impl SseDecode for crate::api::dart_types::PolygonStyle {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_fillColor = <crate::api::dart_types::Color>::sse_decode(deserializer);
+        let mut var_strokeColor = <crate::api::dart_types::Color>::sse_decode(deserializer);
+        let mut var_strokeWidth = <f64>::sse_decode(deserializer);
+        let mut var_strokeOffset = <f64>::sse_decode(deserializer);
+        return crate::api::dart_types::PolygonStyle {
+            fillColor: var_fillColor,
+            strokeColor: var_strokeColor,
+            strokeWidth: var_strokeWidth,
+            strokeOffset: var_strokeOffset,
+        };
     }
 }
 
@@ -983,6 +1058,26 @@ fn pde_ffi_dispatcher_sync_impl(
 // Section: rust2dart
 
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::dart_types::Color {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.r.into_into_dart().into_dart(),
+            self.g.into_into_dart().into_dart(),
+            self.b.into_into_dart().into_dart(),
+            self.a.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::dart_types::Color {}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::dart_types::Color>
+    for crate::api::dart_types::Color
+{
+    fn into_into_dart(self) -> crate::api::dart_types::Color {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::galileo_api::CreateNewSessionResponse {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -1028,6 +1123,9 @@ impl flutter_rust_bridge::IntoDart for crate::api::dart_types::LayerConfig {
                 attribution.into_into_dart().into_dart(),
             ]
             .into_dart(),
+            crate::api::dart_types::LayerConfig::PolygonLayer { features } => {
+                [3.into_dart(), features.into_into_dart().into_dart()].into_dart()
+            }
             _ => {
                 unimplemented!("");
             }
@@ -1222,6 +1320,50 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::dart_types::Point2>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::dart_types::Polygon {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.points.into_into_dart().into_dart(),
+            self.style.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::dart_types::Polygon
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::dart_types::Polygon>
+    for crate::api::dart_types::Polygon
+{
+    fn into_into_dart(self) -> crate::api::dart_types::Polygon {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::dart_types::PolygonStyle {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.fillColor.into_into_dart().into_dart(),
+            self.strokeColor.into_into_dart().into_dart(),
+            self.strokeWidth.into_into_dart().into_dart(),
+            self.strokeOffset.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::dart_types::PolygonStyle
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::dart_types::PolygonStyle>
+    for crate::api::dart_types::PolygonStyle
+{
+    fn into_into_dart(self) -> crate::api::dart_types::PolygonStyle {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::dart_types::UserEvent {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
@@ -1343,6 +1485,16 @@ impl SseEncode for bool {
     }
 }
 
+impl SseEncode for crate::api::dart_types::Color {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <f64>::sse_encode(self.r, serializer);
+        <f64>::sse_encode(self.g, serializer);
+        <f64>::sse_encode(self.b, serializer);
+        <f64>::sse_encode(self.a, serializer);
+    }
+}
+
 impl SseEncode for crate::api::galileo_api::CreateNewSessionResponse {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1404,9 +1556,23 @@ impl SseEncode for crate::api::dart_types::LayerConfig {
                 <String>::sse_encode(style_json, serializer);
                 <Option<String>>::sse_encode(attribution, serializer);
             }
+            crate::api::dart_types::LayerConfig::PolygonLayer { features } => {
+                <i32>::sse_encode(3, serializer);
+                <Vec<crate::api::dart_types::Polygon>>::sse_encode(features, serializer);
+            }
             _ => {
                 unimplemented!("");
             }
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::dart_types::Polygon> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::dart_types::Polygon>::sse_encode(item, serializer);
         }
     }
 }
@@ -1417,6 +1583,16 @@ impl SseEncode for Vec<u8> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <u8>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<(f64, f64)> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <(f64, f64)>::sse_encode(item, serializer);
         }
     }
 }
@@ -1526,6 +1702,24 @@ impl SseEncode for crate::api::dart_types::Point2 {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <f64>::sse_encode(self.x, serializer);
         <f64>::sse_encode(self.y, serializer);
+    }
+}
+
+impl SseEncode for crate::api::dart_types::Polygon {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<(f64, f64)>>::sse_encode(self.points, serializer);
+        <crate::api::dart_types::PolygonStyle>::sse_encode(self.style, serializer);
+    }
+}
+
+impl SseEncode for crate::api::dart_types::PolygonStyle {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::dart_types::Color>::sse_encode(self.fillColor, serializer);
+        <crate::api::dart_types::Color>::sse_encode(self.strokeColor, serializer);
+        <f64>::sse_encode(self.strokeWidth, serializer);
+        <f64>::sse_encode(self.strokeOffset, serializer);
     }
 }
 

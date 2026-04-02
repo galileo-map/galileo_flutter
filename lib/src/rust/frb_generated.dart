@@ -612,6 +612,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Color dco_decode_color(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return Color(
+      r: dco_decode_f_64(arr[0]),
+      g: dco_decode_f_64(arr[1]),
+      b: dco_decode_f_64(arr[2]),
+      a: dco_decode_f_64(arr[3]),
+    );
+  }
+
+  @protected
   CreateNewSessionResponse dco_decode_create_new_session_response(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
@@ -664,15 +678,31 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           styleJson: dco_decode_String(raw[2]),
           attribution: dco_decode_opt_String(raw[3]),
         );
+      case 3:
+        return LayerConfig_PolygonLayer(
+          features: dco_decode_list_polygon(raw[1]),
+        );
       default:
         throw Exception("unreachable");
     }
   }
 
   @protected
+  List<Polygon> dco_decode_list_polygon(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_polygon).toList();
+  }
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as Uint8List;
+  }
+
+  @protected
+  List<(double, double)> dco_decode_list_record_f_64_f_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_record_f_64_f_64).toList();
   }
 
   @protected
@@ -772,6 +802,32 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     if (arr.length != 2)
       throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
     return Point2(x: dco_decode_f_64(arr[0]), y: dco_decode_f_64(arr[1]));
+  }
+
+  @protected
+  Polygon dco_decode_polygon(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return Polygon(
+      points: dco_decode_list_record_f_64_f_64(arr[0]),
+      style: dco_decode_polygon_style(arr[1]),
+    );
+  }
+
+  @protected
+  PolygonStyle dco_decode_polygon_style(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return PolygonStyle(
+      fillColor: dco_decode_color(arr[0]),
+      strokeColor: dco_decode_color(arr[1]),
+      strokeWidth: dco_decode_f_64(arr[2]),
+      strokeOffset: dco_decode_f_64(arr[3]),
+    );
   }
 
   @protected
@@ -962,6 +1018,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Color sse_decode_color(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_r = sse_decode_f_64(deserializer);
+    var var_g = sse_decode_f_64(deserializer);
+    var var_b = sse_decode_f_64(deserializer);
+    var var_a = sse_decode_f_64(deserializer);
+    return Color(r: var_r, g: var_g, b: var_b, a: var_a);
+  }
+
+  @protected
   CreateNewSessionResponse sse_decode_create_new_session_response(
     SseDeserializer deserializer,
   ) {
@@ -1022,9 +1088,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           styleJson: var_styleJson,
           attribution: var_attribution,
         );
+      case 3:
+        var var_features = sse_decode_list_polygon(deserializer);
+        return LayerConfig_PolygonLayer(features: var_features);
       default:
         throw UnimplementedError('');
     }
+  }
+
+  @protected
+  List<Polygon> sse_decode_list_polygon(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <Polygon>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_polygon(deserializer));
+    }
+    return ans_;
   }
 
   @protected
@@ -1032,6 +1113,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var len_ = sse_decode_i_32(deserializer);
     return deserializer.buffer.getUint8List(len_);
+  }
+
+  @protected
+  List<(double, double)> sse_decode_list_record_f_64_f_64(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <(double, double)>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_record_f_64_f_64(deserializer));
+    }
+    return ans_;
   }
 
   @protected
@@ -1146,6 +1241,29 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_x = sse_decode_f_64(deserializer);
     var var_y = sse_decode_f_64(deserializer);
     return Point2(x: var_x, y: var_y);
+  }
+
+  @protected
+  Polygon sse_decode_polygon(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_points = sse_decode_list_record_f_64_f_64(deserializer);
+    var var_style = sse_decode_polygon_style(deserializer);
+    return Polygon(points: var_points, style: var_style);
+  }
+
+  @protected
+  PolygonStyle sse_decode_polygon_style(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_fillColor = sse_decode_color(deserializer);
+    var var_strokeColor = sse_decode_color(deserializer);
+    var var_strokeWidth = sse_decode_f_64(deserializer);
+    var var_strokeOffset = sse_decode_f_64(deserializer);
+    return PolygonStyle(
+      fillColor: var_fillColor,
+      strokeColor: var_strokeColor,
+      strokeWidth: var_strokeWidth,
+      strokeOffset: var_strokeOffset,
+    );
   }
 
   @protected
@@ -1329,6 +1447,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_color(Color self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_f_64(self.r, serializer);
+    sse_encode_f_64(self.g, serializer);
+    sse_encode_f_64(self.b, serializer);
+    sse_encode_f_64(self.a, serializer);
+  }
+
+  @protected
   void sse_encode_create_new_session_response(
     CreateNewSessionResponse self,
     SseSerializer serializer,
@@ -1384,6 +1511,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(urlTemplate, serializer);
         sse_encode_String(styleJson, serializer);
         sse_encode_opt_String(attribution, serializer);
+      case LayerConfig_PolygonLayer(features: final features):
+        sse_encode_i_32(3, serializer);
+        sse_encode_list_polygon(features, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_polygon(List<Polygon> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_polygon(item, serializer);
     }
   }
 
@@ -1395,6 +1534,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     serializer.buffer.putUint8List(self);
+  }
+
+  @protected
+  void sse_encode_list_record_f_64_f_64(
+    List<(double, double)> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_record_f_64_f_64(item, serializer);
+    }
   }
 
   @protected
@@ -1487,6 +1638,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_f_64(self.x, serializer);
     sse_encode_f_64(self.y, serializer);
+  }
+
+  @protected
+  void sse_encode_polygon(Polygon self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_record_f_64_f_64(self.points, serializer);
+    sse_encode_polygon_style(self.style, serializer);
+  }
+
+  @protected
+  void sse_encode_polygon_style(PolygonStyle self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_color(self.fillColor, serializer);
+    sse_encode_color(self.strokeColor, serializer);
+    sse_encode_f_64(self.strokeWidth, serializer);
+    sse_encode_f_64(self.strokeOffset, serializer);
   }
 
   @protected

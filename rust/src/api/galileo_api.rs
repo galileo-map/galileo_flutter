@@ -6,6 +6,8 @@
 use flutter_rust_bridge::frb;
 use galileo::control::UserEventHandler;
 use galileo::layer::data_provider::remove_parameters_modifier;
+use galileo::layer::feature_layer::FeatureLayer;
+use galileo::galileo_types::geo::Crs;
 use galileo::layer::raster_tile_layer::RasterTileLayerBuilder;
 use galileo::layer::vector_tile_layer::style::VectorTileStyle;
 use galileo::layer::vector_tile_layer::VectorTileLayerBuilder;
@@ -20,7 +22,7 @@ use std::sync::atomic::Ordering;
 
 use crate::api::dart_types::*;
 use crate::core::map_session::{MapSession, SessionID};
-use crate::core::{init_logger, TOKIO_HANDLE,IS_INITIALIZED, SESSIONS, TILE_CACHE_PATH};
+use crate::core::{init_logger, TOKIO_HANDLE, IS_INITIALIZED, SESSIONS, TILE_CACHE_PATH};
 
 #[frb(init)]
 pub fn init_galileo_flutter() {
@@ -33,7 +35,6 @@ pub fn galileo_flutter_init(ffi_ptr: i64) {
         return;
     }
 
-    // Initialize irondash FFI
     irondash_dart_ffi::irondash_init_ffi(ffi_ptr as *mut std::ffi::c_void);
     init_logger();
     initialize_font_service();
@@ -41,20 +42,19 @@ pub fn galileo_flutter_init(ffi_ptr: i64) {
     IS_INITIALIZED.store(true, Ordering::SeqCst);
 }
 
-fn initialize_font_service(){
+fn initialize_font_service() {
     let rasterizer: RustybuzzRasterizer = RustybuzzRasterizer::default();
     let _service: &'static TextService = TextService::initialize(rasterizer);
-    if let Ok(default_font_source) = SystemSource::new().all_fonts(){
+    if let Ok(default_font_source) = SystemSource::new().all_fonts() {
         for font_source in default_font_source {
             match font_source {
-                Handle::Path{path , ..}=>{
+                Handle::Path { path, .. } => {
                     _service.load_fonts(path);
                 }
-                _=>{}
+                _ => {}
             }
         }
-    }
-    else{
+    } else {
         info!("Failed to find source!");
     }
 }
@@ -92,10 +92,11 @@ pub async fn create_new_map_session(
 /// Triggers a map update and re-render.
 pub async fn request_map_redraw(session_id: SessionID) -> anyhow::Result<()> {
     let session = {
-        SESSIONS.lock()
+        SESSIONS
+            .lock()
             .get(&session_id)
             .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?
-            .clone() 
+            .clone()
     };
 
     session.redraw().await
@@ -113,12 +114,13 @@ pub fn mark_session_alive(session_id: SessionID) {
 pub async fn destroy_all_engine_sessions(engine_id: i64) {
     debug!("destroy_engine_streams called for engine {}", engine_id);
 
-    // Find and remove all sessions for this engine
-    let session_ids: Vec<_> = SESSIONS.lock()
+    let session_ids: Vec<_> = SESSIONS
+        .lock()
         .iter()
         .filter(|(_, s)| s.engine_handle == engine_id)
         .map(|(id, _)| *id)
         .collect();
+
     join_all(session_ids.into_iter().map(destroy_session)).await;
 }
 
@@ -143,7 +145,6 @@ pub async fn destroy_session(session_id: SessionID) {
     }
 
     info!("Session {} destroyed with full cleanup", session_id);
-    
 }
 
 /// Replaces {z}, {x}, {y} with tile indices
@@ -157,12 +158,16 @@ fn create_url_source(url_template: String) -> impl Fn(&galileo::tile_schema::Til
 }
 
 /// Adds a layer to a session
-pub async fn add_session_layer(session_id: SessionID, layer_config: LayerConfig) -> anyhow::Result<()> {
+pub async fn add_session_layer(
+    session_id: SessionID,
+    layer_config: LayerConfig,
+) -> anyhow::Result<()> {
     let session = {
-        SESSIONS.lock()
+        SESSIONS
+            .lock()
             .get(&session_id)
             .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?
-            .clone() 
+            .clone()
     };
 
     match layer_config {
@@ -176,7 +181,6 @@ pub async fn add_session_layer(session_id: SessionID, layer_config: LayerConfig)
             url_template: _,
             attribution: _,
         } => {
-            // For now, just return OSM layer for custom tile providers
             // TODO: Implement custom URL tile providers
             let layer = RasterTileLayerBuilder::new_osm()
                 .build()
@@ -191,16 +195,19 @@ pub async fn add_session_layer(session_id: SessionID, layer_config: LayerConfig)
             let style: VectorTileStyle = serde_json::from_str(&style_json)
                 .map_err(|e| anyhow::anyhow!("Failed to parse vector tile style: {}", e))?;
             let tile_schema = TileSchemaBuilder::web_mercator(0..19)
-                                        .build()
-                                        .map_err(|e| anyhow::anyhow!("Failed to build tile schema: {}", e))?;
+                .build()
+                .map_err(|e| anyhow::anyhow!("Failed to build tile schema: {}", e))?;
 
-            let mut builder = VectorTileLayerBuilder::new_rest(create_url_source(url_template))
-                .with_style(style)
-                .with_tile_schema(tile_schema);
+            let mut builder =
+                VectorTileLayerBuilder::new_rest(create_url_source(url_template))
+                    .with_style(style)
+                    .with_tile_schema(tile_schema);
 
             if let Some(ref path) = *TILE_CACHE_PATH.read() {
-                builder = builder
-                    .with_file_cache_modifier_checked(path, Box::new(remove_parameters_modifier));
+                builder = builder.with_file_cache_modifier_checked(
+                    path,
+                    Box::new(remove_parameters_modifier),
+                );
             }
 
             if let Some(attr) = attribution {
@@ -212,6 +219,11 @@ pub async fn add_session_layer(session_id: SessionID, layer_config: LayerConfig)
                 .map_err(|e| anyhow::anyhow!("Failed to create vector tile layer: {}", e))?;
             session.add_layer(layer).await;
         }
+        LayerConfig::PolygonLayer { features } => {
+            // PolygonSymbol is stateless; style is read per-feature at render time.
+            let layer = FeatureLayer::new(features, PolygonSymbol {},Crs::WGS84);
+            session.add_layer(layer).await;
+        }
     }
 
     Ok(())
@@ -219,9 +231,11 @@ pub async fn add_session_layer(session_id: SessionID, layer_config: LayerConfig)
 
 pub async fn get_map_viewport(session_id: SessionID) -> Option<MapViewport> {
     let session = {
-        SESSIONS.lock()
+        SESSIONS
+            .lock()
             .get(&session_id)
-            .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id)).ok()?
+            .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))
+            .ok()?
             .clone()
     };
     return session.get_viewport().await;
@@ -235,7 +249,9 @@ pub fn handle_event_for_session(session_id: SessionID, event: UserEvent) {
         if let Some(handle) = TOKIO_HANDLE.get() {
             handle.spawn(async move {
                 match session.map.try_lock() {
-                    Ok(mut map) =>{session.controller.handle(&galileo_event, &mut map);},
+                    Ok(mut map) => {
+                        session.controller.handle(&galileo_event, &mut map);
+                    }
                     Err(_) => info!("Map busy: {:?}", galileo_event),
                 }
             });
@@ -244,12 +260,12 @@ pub fn handle_event_for_session(session_id: SessionID, event: UserEvent) {
 }
 
 pub async fn resize_session(session_id: SessionID, new_size: MapSize) -> anyhow::Result<()> {
-
     let session = {
-        SESSIONS.lock()
+        SESSIONS
+            .lock()
             .get(&session_id)
             .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?
-            .clone() 
+            .clone()
     };
 
     session.resize(new_size).await

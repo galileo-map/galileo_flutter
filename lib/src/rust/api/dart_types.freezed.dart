@@ -28,6 +28,7 @@ mixin _$LayerConfig {
       String? attribution,
     )
     vectorTiles,
+    required TResult Function(List<Polygon> features) polygonLayer,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
@@ -39,6 +40,7 @@ mixin _$LayerConfig {
       String? attribution,
     )?
     vectorTiles,
+    TResult? Function(List<Polygon> features)? polygonLayer,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
@@ -46,6 +48,7 @@ mixin _$LayerConfig {
     TResult Function(String urlTemplate, String? attribution)? rasterTiles,
     TResult Function(String urlTemplate, String styleJson, String? attribution)?
     vectorTiles,
+    TResult Function(List<Polygon> features)? polygonLayer,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -53,18 +56,21 @@ mixin _$LayerConfig {
     required TResult Function(LayerConfig_Osm value) osm,
     required TResult Function(LayerConfig_RasterTiles value) rasterTiles,
     required TResult Function(LayerConfig_VectorTiles value) vectorTiles,
+    required TResult Function(LayerConfig_PolygonLayer value) polygonLayer,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LayerConfig_Osm value)? osm,
     TResult? Function(LayerConfig_RasterTiles value)? rasterTiles,
     TResult? Function(LayerConfig_VectorTiles value)? vectorTiles,
+    TResult? Function(LayerConfig_PolygonLayer value)? polygonLayer,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LayerConfig_Osm value)? osm,
     TResult Function(LayerConfig_RasterTiles value)? rasterTiles,
     TResult Function(LayerConfig_VectorTiles value)? vectorTiles,
+    TResult Function(LayerConfig_PolygonLayer value)? polygonLayer,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
@@ -143,6 +149,7 @@ class _$LayerConfig_OsmImpl extends LayerConfig_Osm {
       String? attribution,
     )
     vectorTiles,
+    required TResult Function(List<Polygon> features) polygonLayer,
   }) {
     return osm();
   }
@@ -158,6 +165,7 @@ class _$LayerConfig_OsmImpl extends LayerConfig_Osm {
       String? attribution,
     )?
     vectorTiles,
+    TResult? Function(List<Polygon> features)? polygonLayer,
   }) {
     return osm?.call();
   }
@@ -169,6 +177,7 @@ class _$LayerConfig_OsmImpl extends LayerConfig_Osm {
     TResult Function(String urlTemplate, String? attribution)? rasterTiles,
     TResult Function(String urlTemplate, String styleJson, String? attribution)?
     vectorTiles,
+    TResult Function(List<Polygon> features)? polygonLayer,
     required TResult orElse(),
   }) {
     if (osm != null) {
@@ -183,6 +192,7 @@ class _$LayerConfig_OsmImpl extends LayerConfig_Osm {
     required TResult Function(LayerConfig_Osm value) osm,
     required TResult Function(LayerConfig_RasterTiles value) rasterTiles,
     required TResult Function(LayerConfig_VectorTiles value) vectorTiles,
+    required TResult Function(LayerConfig_PolygonLayer value) polygonLayer,
   }) {
     return osm(this);
   }
@@ -193,6 +203,7 @@ class _$LayerConfig_OsmImpl extends LayerConfig_Osm {
     TResult? Function(LayerConfig_Osm value)? osm,
     TResult? Function(LayerConfig_RasterTiles value)? rasterTiles,
     TResult? Function(LayerConfig_VectorTiles value)? vectorTiles,
+    TResult? Function(LayerConfig_PolygonLayer value)? polygonLayer,
   }) {
     return osm?.call(this);
   }
@@ -203,6 +214,7 @@ class _$LayerConfig_OsmImpl extends LayerConfig_Osm {
     TResult Function(LayerConfig_Osm value)? osm,
     TResult Function(LayerConfig_RasterTiles value)? rasterTiles,
     TResult Function(LayerConfig_VectorTiles value)? vectorTiles,
+    TResult Function(LayerConfig_PolygonLayer value)? polygonLayer,
     required TResult orElse(),
   }) {
     if (osm != null) {
@@ -312,6 +324,7 @@ class _$LayerConfig_RasterTilesImpl extends LayerConfig_RasterTiles {
       String? attribution,
     )
     vectorTiles,
+    required TResult Function(List<Polygon> features) polygonLayer,
   }) {
     return rasterTiles(urlTemplate, attribution);
   }
@@ -327,6 +340,7 @@ class _$LayerConfig_RasterTilesImpl extends LayerConfig_RasterTiles {
       String? attribution,
     )?
     vectorTiles,
+    TResult? Function(List<Polygon> features)? polygonLayer,
   }) {
     return rasterTiles?.call(urlTemplate, attribution);
   }
@@ -338,6 +352,7 @@ class _$LayerConfig_RasterTilesImpl extends LayerConfig_RasterTiles {
     TResult Function(String urlTemplate, String? attribution)? rasterTiles,
     TResult Function(String urlTemplate, String styleJson, String? attribution)?
     vectorTiles,
+    TResult Function(List<Polygon> features)? polygonLayer,
     required TResult orElse(),
   }) {
     if (rasterTiles != null) {
@@ -352,6 +367,7 @@ class _$LayerConfig_RasterTilesImpl extends LayerConfig_RasterTiles {
     required TResult Function(LayerConfig_Osm value) osm,
     required TResult Function(LayerConfig_RasterTiles value) rasterTiles,
     required TResult Function(LayerConfig_VectorTiles value) vectorTiles,
+    required TResult Function(LayerConfig_PolygonLayer value) polygonLayer,
   }) {
     return rasterTiles(this);
   }
@@ -362,6 +378,7 @@ class _$LayerConfig_RasterTilesImpl extends LayerConfig_RasterTiles {
     TResult? Function(LayerConfig_Osm value)? osm,
     TResult? Function(LayerConfig_RasterTiles value)? rasterTiles,
     TResult? Function(LayerConfig_VectorTiles value)? vectorTiles,
+    TResult? Function(LayerConfig_PolygonLayer value)? polygonLayer,
   }) {
     return rasterTiles?.call(this);
   }
@@ -372,6 +389,7 @@ class _$LayerConfig_RasterTilesImpl extends LayerConfig_RasterTiles {
     TResult Function(LayerConfig_Osm value)? osm,
     TResult Function(LayerConfig_RasterTiles value)? rasterTiles,
     TResult Function(LayerConfig_VectorTiles value)? vectorTiles,
+    TResult Function(LayerConfig_PolygonLayer value)? polygonLayer,
     required TResult orElse(),
   }) {
     if (rasterTiles != null) {
@@ -508,6 +526,7 @@ class _$LayerConfig_VectorTilesImpl extends LayerConfig_VectorTiles {
       String? attribution,
     )
     vectorTiles,
+    required TResult Function(List<Polygon> features) polygonLayer,
   }) {
     return vectorTiles(urlTemplate, styleJson, attribution);
   }
@@ -523,6 +542,7 @@ class _$LayerConfig_VectorTilesImpl extends LayerConfig_VectorTiles {
       String? attribution,
     )?
     vectorTiles,
+    TResult? Function(List<Polygon> features)? polygonLayer,
   }) {
     return vectorTiles?.call(urlTemplate, styleJson, attribution);
   }
@@ -534,6 +554,7 @@ class _$LayerConfig_VectorTilesImpl extends LayerConfig_VectorTiles {
     TResult Function(String urlTemplate, String? attribution)? rasterTiles,
     TResult Function(String urlTemplate, String styleJson, String? attribution)?
     vectorTiles,
+    TResult Function(List<Polygon> features)? polygonLayer,
     required TResult orElse(),
   }) {
     if (vectorTiles != null) {
@@ -548,6 +569,7 @@ class _$LayerConfig_VectorTilesImpl extends LayerConfig_VectorTiles {
     required TResult Function(LayerConfig_Osm value) osm,
     required TResult Function(LayerConfig_RasterTiles value) rasterTiles,
     required TResult Function(LayerConfig_VectorTiles value) vectorTiles,
+    required TResult Function(LayerConfig_PolygonLayer value) polygonLayer,
   }) {
     return vectorTiles(this);
   }
@@ -558,6 +580,7 @@ class _$LayerConfig_VectorTilesImpl extends LayerConfig_VectorTiles {
     TResult? Function(LayerConfig_Osm value)? osm,
     TResult? Function(LayerConfig_RasterTiles value)? rasterTiles,
     TResult? Function(LayerConfig_VectorTiles value)? vectorTiles,
+    TResult? Function(LayerConfig_PolygonLayer value)? polygonLayer,
   }) {
     return vectorTiles?.call(this);
   }
@@ -568,6 +591,7 @@ class _$LayerConfig_VectorTilesImpl extends LayerConfig_VectorTiles {
     TResult Function(LayerConfig_Osm value)? osm,
     TResult Function(LayerConfig_RasterTiles value)? rasterTiles,
     TResult Function(LayerConfig_VectorTiles value)? vectorTiles,
+    TResult Function(LayerConfig_PolygonLayer value)? polygonLayer,
     required TResult orElse(),
   }) {
     if (vectorTiles != null) {
@@ -593,6 +617,190 @@ abstract class LayerConfig_VectorTiles extends LayerConfig {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LayerConfig_VectorTilesImplCopyWith<_$LayerConfig_VectorTilesImpl>
+  get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$LayerConfig_PolygonLayerImplCopyWith<$Res> {
+  factory _$$LayerConfig_PolygonLayerImplCopyWith(
+    _$LayerConfig_PolygonLayerImpl value,
+    $Res Function(_$LayerConfig_PolygonLayerImpl) then,
+  ) = __$$LayerConfig_PolygonLayerImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({List<Polygon> features});
+}
+
+/// @nodoc
+class __$$LayerConfig_PolygonLayerImplCopyWithImpl<$Res>
+    extends _$LayerConfigCopyWithImpl<$Res, _$LayerConfig_PolygonLayerImpl>
+    implements _$$LayerConfig_PolygonLayerImplCopyWith<$Res> {
+  __$$LayerConfig_PolygonLayerImplCopyWithImpl(
+    _$LayerConfig_PolygonLayerImpl _value,
+    $Res Function(_$LayerConfig_PolygonLayerImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of LayerConfig
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? features = null}) {
+    return _then(
+      _$LayerConfig_PolygonLayerImpl(
+        features:
+            null == features
+                ? _value._features
+                : features // ignore: cast_nullable_to_non_nullable
+                    as List<Polygon>,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$LayerConfig_PolygonLayerImpl extends LayerConfig_PolygonLayer {
+  const _$LayerConfig_PolygonLayerImpl({required final List<Polygon> features})
+    : _features = features,
+      super._();
+
+  /// Stores the features to be rendered
+  final List<Polygon> _features;
+
+  /// Stores the features to be rendered
+  @override
+  List<Polygon> get features {
+    if (_features is EqualUnmodifiableListView) return _features;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_features);
+  }
+
+  @override
+  String toString() {
+    return 'LayerConfig.polygonLayer(features: $features)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LayerConfig_PolygonLayerImpl &&
+            const DeepCollectionEquality().equals(other._features, _features));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_features));
+
+  /// Create a copy of LayerConfig
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LayerConfig_PolygonLayerImplCopyWith<_$LayerConfig_PolygonLayerImpl>
+  get copyWith => __$$LayerConfig_PolygonLayerImplCopyWithImpl<
+    _$LayerConfig_PolygonLayerImpl
+  >(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() osm,
+    required TResult Function(String urlTemplate, String? attribution)
+    rasterTiles,
+    required TResult Function(
+      String urlTemplate,
+      String styleJson,
+      String? attribution,
+    )
+    vectorTiles,
+    required TResult Function(List<Polygon> features) polygonLayer,
+  }) {
+    return polygonLayer(features);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? osm,
+    TResult? Function(String urlTemplate, String? attribution)? rasterTiles,
+    TResult? Function(
+      String urlTemplate,
+      String styleJson,
+      String? attribution,
+    )?
+    vectorTiles,
+    TResult? Function(List<Polygon> features)? polygonLayer,
+  }) {
+    return polygonLayer?.call(features);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? osm,
+    TResult Function(String urlTemplate, String? attribution)? rasterTiles,
+    TResult Function(String urlTemplate, String styleJson, String? attribution)?
+    vectorTiles,
+    TResult Function(List<Polygon> features)? polygonLayer,
+    required TResult orElse(),
+  }) {
+    if (polygonLayer != null) {
+      return polygonLayer(features);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(LayerConfig_Osm value) osm,
+    required TResult Function(LayerConfig_RasterTiles value) rasterTiles,
+    required TResult Function(LayerConfig_VectorTiles value) vectorTiles,
+    required TResult Function(LayerConfig_PolygonLayer value) polygonLayer,
+  }) {
+    return polygonLayer(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(LayerConfig_Osm value)? osm,
+    TResult? Function(LayerConfig_RasterTiles value)? rasterTiles,
+    TResult? Function(LayerConfig_VectorTiles value)? vectorTiles,
+    TResult? Function(LayerConfig_PolygonLayer value)? polygonLayer,
+  }) {
+    return polygonLayer?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(LayerConfig_Osm value)? osm,
+    TResult Function(LayerConfig_RasterTiles value)? rasterTiles,
+    TResult Function(LayerConfig_VectorTiles value)? vectorTiles,
+    TResult Function(LayerConfig_PolygonLayer value)? polygonLayer,
+    required TResult orElse(),
+  }) {
+    if (polygonLayer != null) {
+      return polygonLayer(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class LayerConfig_PolygonLayer extends LayerConfig {
+  const factory LayerConfig_PolygonLayer({
+    required final List<Polygon> features,
+  }) = _$LayerConfig_PolygonLayerImpl;
+  const LayerConfig_PolygonLayer._() : super._();
+
+  /// Stores the features to be rendered
+  List<Polygon> get features;
+
+  /// Create a copy of LayerConfig
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$LayerConfig_PolygonLayerImplCopyWith<_$LayerConfig_PolygonLayerImpl>
   get copyWith => throw _privateConstructorUsedError;
 }
 
