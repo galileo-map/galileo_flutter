@@ -545,6 +545,8 @@ class _GalileoMapFromConfig extends StatefulWidget {
   final bool enableKeyboard;
   final FocusNode? focusNode;
   final void Function(double x, double y)? onTap;
+
+  /// Called when the map is tappedinal FocusNode? focusNode;
   final void Function(MapViewport viewport)? onViewportChanged;
 
   const _GalileoMapFromConfig({
