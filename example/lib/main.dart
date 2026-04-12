@@ -163,6 +163,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
             child: Container(
               decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
               child: GalileoMapWidget.fromConfig(
+                key: ValueKey(_layerConfigString),
                 size: const MapSize(width: 800, height: 600),
                 layers: [_layerConfig],
                 config: MapInitConfig(

@@ -11,7 +11,9 @@ use galileo::layer::vector_tile_layer::style::VectorTileStyle;
 use galileo::layer::vector_tile_layer::VectorTileLayerBuilder;
 use galileo::render::text::text_service::TextService;
 use galileo::render::text::RustybuzzRasterizer;
-use galileo::TileSchema;
+use font_kit::source::SystemSource;
+use font_kit::handle::Handle;
+use galileo::tile_schema::TileSchemaBuilder;
 use futures::future::join_all;
 use log::{debug, info};
 use std::sync::atomic::Ordering;
@@ -39,9 +41,25 @@ pub fn galileo_flutter_init(ffi_ptr: i64) {
     IS_INITIALIZED.store(true, Ordering::SeqCst);
 }
 
-fn initialize_font_service() {
+fn initialize_font_service(){
     let rasterizer: RustybuzzRasterizer = RustybuzzRasterizer::default();
     let _service: &'static TextService = TextService::initialize(rasterizer);
+    if let Ok(default_font_source) = SystemSource::new().all_fonts(){
+        for font_source in default_font_source {
+            match font_source {
+                Handle::Path{path , ..}=>{
+                    _service.load_fonts(path);
+                }
+                Handle::Memory { bytes, .. } => {
+                    _service.load_font_data(bytes);
+                }
+                _=>{}
+            }
+        }
+    }
+    else{
+        info!("Failed to find source!");
+    }
 }
 
 pub fn set_tile_cache_path(path: Option<String>) {
@@ -175,10 +193,13 @@ pub async fn add_session_layer(session_id: SessionID, layer_config: LayerConfig)
         } => {
             let style: VectorTileStyle = serde_json::from_str(&style_json)
                 .map_err(|e| anyhow::anyhow!("Failed to parse vector tile style: {}", e))?;
+            let tile_schema = TileSchemaBuilder::web_mercator(0..19)
+                                        .build()
+                                        .map_err(|e| anyhow::anyhow!("Failed to build tile schema: {}", e))?;
 
             let mut builder = VectorTileLayerBuilder::new_rest(create_url_source(url_template))
                 .with_style(style)
-                .with_tile_schema(TileSchema::web(19));
+                .with_tile_schema(tile_schema);
 
             if let Some(ref path) = *TILE_CACHE_PATH.read() {
                 builder = builder
