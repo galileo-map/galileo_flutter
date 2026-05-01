@@ -167,35 +167,35 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                 key: ValueKey(_layerConfigString),
                 size: const MapSize(width: 800, height: 600),
                 layers: [
-                _layerConfig,
-                LayerConfig.pointLayer(
-                        features: [
-                          Point(
-                            coordinate: (27.900, 85.400),
-                            style: PointStyle(
-                              fillColor: Color(r: 0, g: 0, b: 0, a: 1.0),
-                            ),
-                          ),
-                        ],
+                  _layerConfig,
+                  LayerConfig.pointLayer(
+                    features: [
+                      Point(
+                        coordinate: (27.900, 85.400),
+                        style: PointStyle(
+                          fillColor: Color(r: 0, g: 0, b: 0, a: 1.0),
+                        ),
                       ),
-                LayerConfig.polygonLayer(
-                        features: [
-                          Polygon(
-                            points: [
-                              (27.700, 85.300),
-                              (27.700, 85.400),
-                              (27.800, 85.400),
-                              (27.800, 85.300),
-                            ],
-                            style: PolygonStyle(
-                              fillColor: Color(r: 0.2, g: 0.5, b: 0.9, a: 0.5),
-                              strokeColor: Color(r: 1.0, g: 1.0, b: 1.0, a: 1.0),
-                              strokeWidth: 2.0,
-                              strokeOffset: 0.0,
-                            ),
-                          ),
+                    ],
+                  ),
+                  LayerConfig.polygonLayer(
+                    features: [
+                      Polygon(
+                        points: [
+                          (27.700, 85.300),
+                          (27.700, 85.400),
+                          (27.800, 85.400),
+                          (27.800, 85.300),
                         ],
+                        style: PolygonStyle(
+                          fillColor: Color(r: 0.2, g: 0.5, b: 0.9, a: 0.5),
+                          strokeColor: Color(r: 1.0, g: 1.0, b: 1.0, a: 1.0),
+                          strokeWidth: 2.0,
+                          strokeOffset: 0.0,
+                        ),
                       ),
+                    ],
+                  ),
                 ],
                 config: MapInitConfig(
                   backgroundColor: (0.1, 0.1, 0, 0.5),

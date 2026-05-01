@@ -18,9 +18,8 @@ class GalileoMapWidget extends StatefulWidget {
   final MapInitConfig config;
 
   final List<LayerConfig> layers;
-  
-  final Widget? child;
 
+  final Widget? child;
 
   /// Whether to dispose the controller when the widget disposes
   final bool autoDispose;
@@ -31,7 +30,7 @@ class GalileoMapWidget extends StatefulWidget {
   /// Focus node for keyboard events
   final FocusNode? focusNode;
 
-/// Called when the map is tapped
+  /// Called when the map is tapped
   final void Function(double x, double y)? onTap;
 
   const GalileoMapWidget._({
@@ -74,7 +73,7 @@ class GalileoMapWidget extends StatefulWidget {
     );
   }
 
-/// Create a GalileoMapWidget with configuration
+  /// Create a GalileoMapWidget with configuration
   static Widget fromConfig({
     Key? key,
     required MapSize size,

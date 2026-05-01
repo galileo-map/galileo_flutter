@@ -20,7 +20,7 @@ use futures::future::join_all;
 use log::{debug, info};
 use std::sync::atomic::Ordering;
 
-use crate::api::dart_types::*;
+use crate::api::dart_types::{*};
 use crate::core::map_session::{MapSession, SessionID};
 use crate::core::{init_logger, TOKIO_HANDLE, IS_INITIALIZED, SESSIONS, TILE_CACHE_PATH};
 
@@ -47,11 +47,8 @@ fn initialize_font_service() {
     let _service: &'static TextService = TextService::initialize(rasterizer);
     if let Ok(default_font_source) = SystemSource::new().all_fonts() {
         for font_source in default_font_source {
-            match font_source {
-                Handle::Path { path, .. } => {
-                    _service.load_fonts(path);
-                }
-                _ => {}
+            if let Handle::Path { path, .. } = font_source {
+                _service.load_fonts(path);
             }
         }
     } else {
@@ -234,25 +231,53 @@ pub async fn add_session_layer(
     Ok(())
 }
 
-pub async fn create_feature_point_layer(
+pub async fn add_point_feature_layer(
         session_id: SessionID,
         initial_points: Vec<Point>,
 )->anyhow::Result<SessionID>{
-    Ok(1)
+    let session = {
+        SESSIONS
+            .lock()
+            .get(&session_id)
+            .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?
+            .clone()
+    };
+
+    let layer = FeatureLayer::new(initial_points, PointSymbol {},Crs::WGS84);
+    let layer_id = session.add_managed_layer(layer).await;
+    Ok(layer_id)
 }
 
 pub async fn add_point_to_layer(
+        session_id: SessionID,
         layer_id: u32,
         point: Point,
 )->anyhow::Result<u32>{
-    Ok(1)
+    let session = {
+        SESSIONS
+            .lock()
+            .get(&session_id)
+            .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?
+            .clone()
+    };
+    let feature_id = session.add_point_to_layer(layer_id,point).await?;
+    Ok(unsafe { std::mem::transmute::<galileo::layer::FeatureId, u64>(feature_id) as u32 })
 }
 
 pub async fn remove_point_from_layer(
+        session_id: SessionID,
         layer_id: u32,
         index: u32,
 )->anyhow::Result<bool>{
-    Ok(true)
+    let session = {
+        SESSIONS
+            .lock()
+            .get(&session_id)
+            .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?
+            .clone()
+    };
+    let id = unsafe { std::mem::transmute::<u64,galileo::layer::FeatureId>(index as u64)};
+    session.remove_point_from_layer(layer_id, id).await
 }
 
 pub async fn get_map_viewport(session_id: SessionID) -> Option<MapViewport> {

@@ -63,10 +63,10 @@ impl Feature for Point {
 
 impl PolygonSymbol {
     fn get_polygon_symbol(&self, feature: &Polygon) -> SimplePolygonSymbol {
-        let stroke_color = feature.style.strokeColor.to_galileo();
-        let fill_color = feature.style.fillColor.to_galileo();
-        let stroke_width = feature.style.strokeWidth;
-        let stroke_offset = feature.style.strokeOffset;
+        let stroke_color = feature.style.stroke_color.to_galileo();
+        let fill_color = feature.style.fill_color.to_galileo();
+        let stroke_width = feature.style.stroke_width;
+        let stroke_offset = feature.style.stroke_offset;
 
         SimplePolygonSymbol::new(fill_color)
             .with_stroke_color(stroke_color)
@@ -98,7 +98,7 @@ impl Symbol<Point> for PointSymbol {
         bundle: &mut RenderBundle,
     ) {
         if let Geom::Point(point) = geometry {
-            bundle.add_point(point, &PointPaint::circle(feature.style.fillColor.to_galileo(),8.0), min_resolution);
+            bundle.add_point(point, &PointPaint::circle(feature.style.fill_color.to_galileo(),8.0), min_resolution);
         }
     }
 }

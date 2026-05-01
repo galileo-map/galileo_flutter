@@ -11,8 +11,16 @@ import 'src/rust/api/galileo_api.dart' as rlib;
 import 'src/rust/frb_generated.dart' as rlib_gen;
 
 export 'package:galileo_flutter/src/rust/api/dart_types.dart'
-    show MapViewport, MapSize, LayerConfig, MapInitConfig,
-         Polygon, PolygonStyle, Color, Point, PointStyle;
+    show
+        MapViewport,
+        MapSize,
+        LayerConfig,
+        MapInitConfig,
+        Polygon,
+        PolygonStyle,
+        Color,
+        Point,
+        PointStyle;
 
 Future<void> initGalileo({String? cachePath}) async {
   await rlib_gen.RustLib.init();

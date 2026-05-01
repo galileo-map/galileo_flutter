@@ -2,13 +2,18 @@ use crate::core::galileo_ref::create_galileo_map_v2;
 pub use crate::core::pixel_buffer::PixelBuffer;
 use crate::core::{WindowlessRenderer, SESSIONS, SESSION_COUNTER};
 use anyhow::anyhow;
-use galileo::{galileo_types, DummyMessenger};
+use galileo::layer::{FeatureId, FeatureLayer};
+use galileo::{DummyMessenger, Messenger, galileo_types};
 use log::{debug, error, info};
 use parking_lot::RwLock;
+use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::sync::Mutex;
+use galileo_types::geo::impls::GeoPoint2d;
+use galileo_types::geometry_type::GeoSpace2d;
+use crate::api::dart_types::{Point, PointSymbol};
 
 use crate::api::dart_types::{MapInitConfig, MapSize, MapViewport};
 use crate::core::flutter::pixel_texture::{
@@ -41,6 +46,10 @@ impl FlutterCtx {
 pub struct MapSession {
     pub session_id: SessionID,
     pub map: Arc<Mutex<galileo::Map>>,
+    /// This is used to manage feature layers as it stores the index of the
+    /// feature layer
+    managed_layers: Arc<Mutex<HashMap<u32,usize>>>,
+    managed_layer_id: std::sync::atomic::AtomicU32,
     renderer: Arc<Mutex<WindowlessRenderer>>,
     /// this is optional because we wanna drop this on the platform thread.
     flutter_ctx: RwLock<Option<FlutterCtx>>,
@@ -121,6 +130,8 @@ impl MapSession {
             is_first_render: AtomicBool::new(true),
             requires_redraw: AtomicBool::new(false),
             redraw_scheduled: AtomicBool::new(false),
+            managed_layers: Arc::new(Mutex::new(HashMap::default())),
+            managed_layer_id: std::sync::atomic::AtomicU32::new(0),
         });
         // set session as message callback for galileo
         {
@@ -161,6 +172,67 @@ impl MapSession {
         let mut map = self.map.lock().await;
         map.layers_mut().push(layer);
         map.redraw();
+    }
+
+    pub async fn add_managed_layer(&self, mut layer: impl galileo::layer::Layer + 'static)-> u32{
+        if let Some(session) = SESSIONS.lock().get(&self.session_id).cloned(){
+            let messenger = SessionMessenger(session);
+            layer.set_messenger(Arc::new(messenger) as Arc<dyn Messenger>);
+        }
+        let layer_id = self.managed_layer_id.fetch_add(1, Ordering::SeqCst);
+        
+        let mut map = self.map.lock().await;
+        let  mut managed = self.managed_layers.lock().await;
+
+        let index = map.layers().len();
+        map.layers_mut().push(layer);
+        managed.insert(layer_id, index);
+        map.redraw();
+
+        layer_id
+    }
+    pub async fn add_point_to_layer(&self, layer_id: u32, point: Point) -> anyhow::Result<FeatureId> {
+        let managed = self.managed_layers.lock().await;
+        let &index = managed
+            .get(&layer_id)
+            .ok_or_else(|| anyhow::anyhow!("Layer {} not found", layer_id))?;
+
+        let mut map = self.map.lock().await;
+        let layer = map
+            .layers_mut()
+            .get_mut(index)
+            .ok_or_else(|| anyhow::anyhow!("Layer at index {} missing", index))?
+            .as_any_mut()
+            .downcast_mut::<FeatureLayer<GeoPoint2d, Point, PointSymbol, GeoSpace2d>>()
+            .ok_or_else(|| anyhow::anyhow!("Layer {} type mismatch on downcast", layer_id))?;
+
+        let feature_id = layer.features_mut().add(point);
+        layer.update_feature(feature_id);
+
+        Ok(feature_id)
+    }
+
+    pub async fn remove_point_from_layer(&self, layer_id: u32, feature_id: FeatureId) -> anyhow::Result<bool> {
+        let managed = self.managed_layers.lock().await;
+        let &layer_index = managed
+            .get(&layer_id)
+            .ok_or_else(|| anyhow::anyhow!("Layer {} not found", layer_id))?;
+
+        let mut map = self.map.lock().await;
+        let layer = map
+            .layers_mut()
+            .get_mut(layer_index)
+            .ok_or_else(|| anyhow::anyhow!("Layer at index {} missing", layer_index))?
+            .as_any_mut()
+            .downcast_mut::<FeatureLayer<GeoPoint2d, Point, PointSymbol, GeoSpace2d>>()
+            .ok_or_else(|| anyhow::anyhow!("Layer {} type mismatch on downcast", layer_id))?;
+
+        let removed = layer.features_mut().remove(feature_id);
+        if removed.is_some() {
+            Ok(true)
+        } else {
+            Ok(false)
+        }
     }
 
     /// Renders a single frame for the session.
@@ -263,6 +335,7 @@ impl MapSession {
         self.is_alive.store(false, Ordering::SeqCst);
 
         let flctx = self.flutter_ctx.write().take();
+        self.managed_layers.lock().await.clear();
 
         // clear all layers
         {

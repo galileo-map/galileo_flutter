@@ -84,15 +84,14 @@ pub enum LayerConfig {
     /// Layer to render polygons
     PolygonLayer {
         /// Stores the Polygon features to be rendered
-       features: Vec<Polygon>,
+        features: Vec<Polygon>,
     },
 
     PointLayer {
         /// Stores the Point features to be rendered
-       features: Vec<Point>,
+        features: Vec<Point>,
     },
 }
-
 
 /// Closed geographic polygon with fill/stroke styling.
 /// Usage:
@@ -105,22 +104,22 @@ pub enum LayerConfig {
 ///       strokeOffset: 0.0,
 ///     ),
 ///   )
-#[derive(Clone, Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Polygon {
     pub points: Vec<(f64, f64)>,
     pub style: PolygonStyle,
 }
 
-#[derive(Clone, Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct PolygonStyle {
     /// fillColor also as RGBA (0.0-1.0 range)
-    pub fillColor: Color,
+    pub fill_color: Color,
     /// fillColor also as RGBA (0.0-1.0 range)
-    pub strokeColor: Color, 
+    pub stroke_color: Color,
     /// strokeWidth with (0.0-1.0 range)
-    pub strokeWidth: f64,
+    pub stroke_width: f64,
     /// strokeOffset with (0.0-1.0 range)
-    pub strokeOffset: f64,
+    pub stroke_offset: f64,
 }
 
 #[derive(Clone, Debug)]
@@ -134,20 +133,20 @@ pub struct PolygonSymbol {}
 ///       Color: (0.2,0.5,0.9,0.8),
 ///     ),
 ///   )
-#[derive(Clone, Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Point {
     pub coordinate: (f64, f64),
     pub style: PointStyle,
 }
 
-#[derive(Clone, Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct PointStyle {
-    pub fillColor: Color,
+    pub fill_color: Color,
     // pub border_color: Color,
 }
 
 #[derive(Clone, Debug)]
-pub struct PointSymbol{}
+pub struct PointSymbol {}
 
 // Manual type definitions for Dart-friendly versions
 /// 2D point in cartesian coordinate space.
@@ -160,10 +159,9 @@ pub struct Color {
 }
 
 impl Color {
-
     #[frb(ignore)]
-    pub fn to_galileo(&self)-> galileo::Color {
-        galileo::Color::rgba(    
+    pub fn to_galileo(&self) -> galileo::Color {
+        galileo::Color::rgba(
             (self.r * 255.0) as u8,
             (self.g * 255.0) as u8,
             (self.b * 255.0) as u8,
@@ -171,7 +169,6 @@ impl Color {
         )
     }
 }
-
 
 /// 2D point in cartesian coordinate space.
 #[derive(Debug, Clone, Copy, PartialEq)]

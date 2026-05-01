@@ -27,7 +27,7 @@ class GalileoMapController {
   final MapSize size;
   final MapInitConfig config;
   final List<LayerConfig> layers;
-  final _pointLayers = {};
+  final _layers = {};
 
   final int sessionId;
   final rx.BehaviorSubject<GalileoMapState> _stateBroadcast;
@@ -189,17 +189,17 @@ class GalileoMapController {
   }
 
   /// Creates a managed point layer on the Rust side and stores the handle under name.
-  Future<int?> createPointLayer(
+  Future<int?> _addPointFeatureLayer(
     String name, {
     List<Point> initialPoints = const [],
   }) async {
     if (!_running) return null;
     try {
-      final id = await rlib.createFeaturePointLayer(
+      final id = await rlib.addPointFeatureLayer(
         sessionId: sessionId,
         initialPoints: initialPoints,
       );
-      _pointLayers[name] = id;
+      _layers[name] = id;
       return id;
     } catch (e) {
       if (kDebugMode) debugPrint('Error creating point layer "$name": $e');
@@ -226,14 +226,18 @@ class GalileoMapController {
   //   }
   // }
 
-  Future<int> addPoint(String layerName, Point point) async {
-    final id = _pointLayers[layerName];
+  Future<int> addPointToLayer(String layerName, Point point) async {
+    final id = _layers[layerName];
     if (id == null) {
       if (kDebugMode) debugPrint('No point layer named "$layerName"');
       return -1;
     }
     try {
-      return await rlib.addPointToLayer(layerId: id, point: point);
+      return await rlib.addPointToLayer(
+        sessionId: sessionId,
+        layerId: id,
+        point: point,
+      );
     } catch (e) {
       if (kDebugMode) debugPrint('Error adding point to "$layerName": $e');
       return -1;
@@ -241,10 +245,14 @@ class GalileoMapController {
   }
 
   Future<bool> removePoint(String layerName, int index) async {
-    final id = _pointLayers[layerName];
+    final id = _layers[layerName];
     if (id == null) return false;
     try {
-      return await rlib.removePointFromLayer(layerId: id, index: index);
+      return await rlib.removePointFromLayer(
+        sessionId: sessionId,
+        layerId: id,
+        index: index,
+      );
     } catch (e) {
       if (kDebugMode) debugPrint('Error removing point from "$layerName": $e');
       return false;
