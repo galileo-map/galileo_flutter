@@ -7,66 +7,143 @@ import '../frb_generated.dart';
 import 'dart_types.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-
-            // These functions are ignored because they are not marked as `pub`: `create_url_source`, `initialize_font_service`
+// These functions are ignored because they are not marked as `pub`: `create_url_source`, `initialize_font_service`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`
 
+/// Initialize the Galileo Flutter plugin with FFI pointer for irondash
+Future<void> galileoFlutterInit({required PlatformInt64 ffiPtr}) =>
+    RustLib.instance.api.crateApiGalileoApiGalileoFlutterInit(ffiPtr: ffiPtr);
 
-            /// Initialize the Galileo Flutter plugin with FFI pointer for irondash
-Future<void>  galileoFlutterInit({required PlatformInt64 ffiPtr }) => RustLib.instance.api.crateApiGalileoApiGalileoFlutterInit(ffiPtr: ffiPtr);
+Future<void> setTileCachePath({String? path}) =>
+    RustLib.instance.api.crateApiGalileoApiSetTileCachePath(path: path);
 
-Future<void>  setTileCachePath({String? path }) => RustLib.instance.api.crateApiGalileoApiSetTileCachePath(path: path);
-
-Future<CreateNewSessionResponse>  createNewMapSession({required PlatformInt64 engineHandle , required MapInitConfig config }) => RustLib.instance.api.crateApiGalileoApiCreateNewMapSession(engineHandle: engineHandle, config: config);
+Future<CreateNewSessionResponse> createNewMapSession({
+  required PlatformInt64 engineHandle,
+  required MapInitConfig config,
+}) => RustLib.instance.api.crateApiGalileoApiCreateNewMapSession(
+  engineHandle: engineHandle,
+  config: config,
+);
 
 /// Triggers a map update and re-render.
-Future<void>  requestMapRedraw({required int sessionId }) => RustLib.instance.api.crateApiGalileoApiRequestMapRedraw(sessionId: sessionId);
+Future<void> requestMapRedraw({required int sessionId}) => RustLib.instance.api
+    .crateApiGalileoApiRequestMapRedraw(sessionId: sessionId);
 
 /// Marks the session as alive (called periodically from Flutter)
-Future<void>  markSessionAlive({required int sessionId }) => RustLib.instance.api.crateApiGalileoApiMarkSessionAlive(sessionId: sessionId);
+Future<void> markSessionAlive({required int sessionId}) => RustLib.instance.api
+    .crateApiGalileoApiMarkSessionAlive(sessionId: sessionId);
 
 /// Destroys all streams for a given engine
-Future<void>  destroyAllEngineSessions({required PlatformInt64 engineId }) => RustLib.instance.api.crateApiGalileoApiDestroyAllEngineSessions(engineId: engineId);
+Future<void> destroyAllEngineSessions({required PlatformInt64 engineId}) =>
+    RustLib.instance.api.crateApiGalileoApiDestroyAllEngineSessions(
+      engineId: engineId,
+    );
 
 /// Destroys a specific session
-Future<void>  destroySession({required int sessionId }) => RustLib.instance.api.crateApiGalileoApiDestroySession(sessionId: sessionId);
+Future<void> destroySession({required int sessionId}) =>
+    RustLib.instance.api.crateApiGalileoApiDestroySession(sessionId: sessionId);
 
 /// Adds a layer to a session
-Future<void>  addSessionLayer({required int sessionId , required LayerConfig layerConfig }) => RustLib.instance.api.crateApiGalileoApiAddSessionLayer(sessionId: sessionId, layerConfig: layerConfig);
+Future<void> addSessionLayer({
+  required int sessionId,
+  required LayerConfig layerConfig,
+}) => RustLib.instance.api.crateApiGalileoApiAddSessionLayer(
+  sessionId: sessionId,
+  layerConfig: layerConfig,
+);
 
-Future<int>  addPointFeatureLayer({required int sessionId , required List<Point> initialPoints }) => RustLib.instance.api.crateApiGalileoApiAddPointFeatureLayer(sessionId: sessionId, initialPoints: initialPoints);
+Future<int> addPointFeatureLayer({
+  required int sessionId,
+  required List<Point> initialPoints,
+}) => RustLib.instance.api.crateApiGalileoApiAddPointFeatureLayer(
+  sessionId: sessionId,
+  initialPoints: initialPoints,
+);
 
-Future<int>  addPointToLayer({required int sessionId , required int layerId , required Point point }) => RustLib.instance.api.crateApiGalileoApiAddPointToLayer(sessionId: sessionId, layerId: layerId, point: point);
+Future<int> addPolygonFeatureLayer({
+  required int sessionId,
+  required List<Polygon> initialPolygons,
+}) => RustLib.instance.api.crateApiGalileoApiAddPolygonFeatureLayer(
+  sessionId: sessionId,
+  initialPolygons: initialPolygons,
+);
 
-Future<bool>  removePointFromLayer({required int sessionId , required int layerId , required int index }) => RustLib.instance.api.crateApiGalileoApiRemovePointFromLayer(sessionId: sessionId, layerId: layerId, index: index);
+Future<int> addPointToLayer({
+  required int sessionId,
+  required int layerId,
+  required Point point,
+}) => RustLib.instance.api.crateApiGalileoApiAddPointToLayer(
+  sessionId: sessionId,
+  layerId: layerId,
+  point: point,
+);
 
-Future<MapViewport?>  getMapViewport({required int sessionId }) => RustLib.instance.api.crateApiGalileoApiGetMapViewport(sessionId: sessionId);
+Future<int> addPolygonToLayer({
+  required int sessionId,
+  required int layerId,
+  required Polygon point,
+}) => RustLib.instance.api.crateApiGalileoApiAddPolygonToLayer(
+  sessionId: sessionId,
+  layerId: layerId,
+  point: point,
+);
 
-Future<void>  handleEventForSession({required int sessionId , required UserEvent event }) => RustLib.instance.api.crateApiGalileoApiHandleEventForSession(sessionId: sessionId, event: event);
+Future<bool> removePointFromLayer({
+  required int sessionId,
+  required int layerId,
+  required int index,
+}) => RustLib.instance.api.crateApiGalileoApiRemovePointFromLayer(
+  sessionId: sessionId,
+  layerId: layerId,
+  index: index,
+);
 
-Future<void>  resizeSession({required int sessionId , required MapSize newSize }) => RustLib.instance.api.crateApiGalileoApiResizeSession(sessionId: sessionId, newSize: newSize);
+Future<bool> removePolygonFromLayer({
+  required int sessionId,
+  required int layerId,
+  required int index,
+}) => RustLib.instance.api.crateApiGalileoApiRemovePolygonFromLayer(
+  sessionId: sessionId,
+  layerId: layerId,
+  index: index,
+);
 
-            class CreateNewSessionResponse  {
-                final int sessionId;
-final PlatformInt64 textureId;
+Future<MapViewport?> getMapViewport({required int sessionId}) =>
+    RustLib.instance.api.crateApiGalileoApiGetMapViewport(sessionId: sessionId);
 
-                const CreateNewSessionResponse({required this.sessionId ,required this.textureId ,});
+Future<void> handleEventForSession({
+  required int sessionId,
+  required UserEvent event,
+}) => RustLib.instance.api.crateApiGalileoApiHandleEventForSession(
+  sessionId: sessionId,
+  event: event,
+);
 
-                
-                
+Future<void> resizeSession({
+  required int sessionId,
+  required MapSize newSize,
+}) => RustLib.instance.api.crateApiGalileoApiResizeSession(
+  sessionId: sessionId,
+  newSize: newSize,
+);
 
-                
-        @override
-        int get hashCode => sessionId.hashCode^textureId.hashCode;
-        
+class CreateNewSessionResponse {
+  final int sessionId;
+  final PlatformInt64 textureId;
 
-                
-        @override
-        bool operator ==(Object other) =>
-            identical(this, other) ||
-            other is CreateNewSessionResponse &&
-                runtimeType == other.runtimeType
-                && sessionId == other.sessionId&& textureId == other.textureId;
-        
-            }
-            
+  const CreateNewSessionResponse({
+    required this.sessionId,
+    required this.textureId,
+  });
+
+  @override
+  int get hashCode => sessionId.hashCode ^ textureId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CreateNewSessionResponse &&
+          runtimeType == other.runtimeType &&
+          sessionId == other.sessionId &&
+          textureId == other.textureId;
+}

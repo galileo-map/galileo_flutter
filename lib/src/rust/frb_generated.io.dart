@@ -11,302 +11,487 @@ import 'dart:ffi' as ffi;
 import 'frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
+abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
+  RustLibApiImplPlatform({
+    required super.handler,
+    required super.wire,
+    required super.generalizedFrbRustBinding,
+    required super.portManager,
+  });
 
+  @protected
+  AnyhowException dco_decode_AnyhowException(dynamic raw);
 
+  @protected
+  String dco_decode_String(dynamic raw);
 
-                abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
-                  RustLibApiImplPlatform({
-                    required super.handler,
-                    required super.wire,
-                    required super.generalizedFrbRustBinding,
-                    required super.portManager,
-                  });
+  @protected
+  bool dco_decode_bool(dynamic raw);
 
-                  
+  @protected
+  LayerConfig dco_decode_box_autoadd_layer_config(dynamic raw);
 
-                  @protected AnyhowException dco_decode_AnyhowException(dynamic raw);
+  @protected
+  MapInitConfig dco_decode_box_autoadd_map_init_config(dynamic raw);
 
-@protected String dco_decode_String(dynamic raw);
+  @protected
+  MapSize dco_decode_box_autoadd_map_size(dynamic raw);
 
-@protected bool dco_decode_bool(dynamic raw);
+  @protected
+  MapViewport dco_decode_box_autoadd_map_viewport(dynamic raw);
 
-@protected LayerConfig dco_decode_box_autoadd_layer_config(dynamic raw);
+  @protected
+  MouseEvent dco_decode_box_autoadd_mouse_event(dynamic raw);
 
-@protected MapInitConfig dco_decode_box_autoadd_map_init_config(dynamic raw);
+  @protected
+  Point dco_decode_box_autoadd_point(dynamic raw);
 
-@protected MapSize dco_decode_box_autoadd_map_size(dynamic raw);
+  @protected
+  Point2 dco_decode_box_autoadd_point_2(dynamic raw);
 
-@protected MapViewport dco_decode_box_autoadd_map_viewport(dynamic raw);
+  @protected
+  Polygon dco_decode_box_autoadd_polygon(dynamic raw);
 
-@protected MouseEvent dco_decode_box_autoadd_mouse_event(dynamic raw);
+  @protected
+  UserEvent dco_decode_box_autoadd_user_event(dynamic raw);
 
-@protected Point dco_decode_box_autoadd_point(dynamic raw);
+  @protected
+  Vector2 dco_decode_box_autoadd_vector_2(dynamic raw);
 
-@protected Point2 dco_decode_box_autoadd_point_2(dynamic raw);
+  @protected
+  Color dco_decode_color(dynamic raw);
 
-@protected UserEvent dco_decode_box_autoadd_user_event(dynamic raw);
+  @protected
+  CreateNewSessionResponse dco_decode_create_new_session_response(dynamic raw);
 
-@protected Vector2 dco_decode_box_autoadd_vector_2(dynamic raw);
+  @protected
+  double dco_decode_f_32(dynamic raw);
 
-@protected Color dco_decode_color(dynamic raw);
+  @protected
+  double dco_decode_f_64(dynamic raw);
 
-@protected CreateNewSessionResponse dco_decode_create_new_session_response(dynamic raw);
+  @protected
+  int dco_decode_i_32(dynamic raw);
 
-@protected double dco_decode_f_32(dynamic raw);
+  @protected
+  PlatformInt64 dco_decode_i_64(dynamic raw);
 
-@protected double dco_decode_f_64(dynamic raw);
+  @protected
+  LayerConfig dco_decode_layer_config(dynamic raw);
 
-@protected int dco_decode_i_32(dynamic raw);
+  @protected
+  List<Point> dco_decode_list_point(dynamic raw);
 
-@protected PlatformInt64 dco_decode_i_64(dynamic raw);
+  @protected
+  List<Polygon> dco_decode_list_polygon(dynamic raw);
 
-@protected LayerConfig dco_decode_layer_config(dynamic raw);
+  @protected
+  Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
-@protected List<Point> dco_decode_list_point(dynamic raw);
+  @protected
+  List<(double, double)> dco_decode_list_record_f_64_f_64(dynamic raw);
 
-@protected List<Polygon> dco_decode_list_polygon(dynamic raw);
+  @protected
+  MapInitConfig dco_decode_map_init_config(dynamic raw);
 
-@protected Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
+  @protected
+  MapSize dco_decode_map_size(dynamic raw);
 
-@protected List<(double,double)> dco_decode_list_record_f_64_f_64(dynamic raw);
+  @protected
+  MapViewport dco_decode_map_viewport(dynamic raw);
 
-@protected MapInitConfig dco_decode_map_init_config(dynamic raw);
+  @protected
+  MouseButton dco_decode_mouse_button(dynamic raw);
 
-@protected MapSize dco_decode_map_size(dynamic raw);
+  @protected
+  MouseButtonState dco_decode_mouse_button_state(dynamic raw);
 
-@protected MapViewport dco_decode_map_viewport(dynamic raw);
+  @protected
+  MouseButtonsState dco_decode_mouse_buttons_state(dynamic raw);
 
-@protected MouseButton dco_decode_mouse_button(dynamic raw);
+  @protected
+  MouseEvent dco_decode_mouse_event(dynamic raw);
 
-@protected MouseButtonState dco_decode_mouse_button_state(dynamic raw);
+  @protected
+  String? dco_decode_opt_String(dynamic raw);
 
-@protected MouseButtonsState dco_decode_mouse_buttons_state(dynamic raw);
+  @protected
+  MapViewport? dco_decode_opt_box_autoadd_map_viewport(dynamic raw);
 
-@protected MouseEvent dco_decode_mouse_event(dynamic raw);
+  @protected
+  Point dco_decode_point(dynamic raw);
 
-@protected String? dco_decode_opt_String(dynamic raw);
+  @protected
+  Point2 dco_decode_point_2(dynamic raw);
 
-@protected MapViewport? dco_decode_opt_box_autoadd_map_viewport(dynamic raw);
+  @protected
+  PointStyle dco_decode_point_style(dynamic raw);
 
-@protected Point dco_decode_point(dynamic raw);
+  @protected
+  Polygon dco_decode_polygon(dynamic raw);
 
-@protected Point2 dco_decode_point_2(dynamic raw);
+  @protected
+  PolygonStyle dco_decode_polygon_style(dynamic raw);
 
-@protected PointStyle dco_decode_point_style(dynamic raw);
+  @protected
+  (double, double, double, double) dco_decode_record_f_32_f_32_f_32_f_32(
+    dynamic raw,
+  );
 
-@protected Polygon dco_decode_polygon(dynamic raw);
+  @protected
+  (double, double) dco_decode_record_f_64_f_64(dynamic raw);
 
-@protected PolygonStyle dco_decode_polygon_style(dynamic raw);
+  @protected
+  int dco_decode_u_32(dynamic raw);
 
-@protected (double,double,double,double) dco_decode_record_f_32_f_32_f_32_f_32(dynamic raw);
+  @protected
+  int dco_decode_u_8(dynamic raw);
 
-@protected (double,double) dco_decode_record_f_64_f_64(dynamic raw);
+  @protected
+  void dco_decode_unit(dynamic raw);
 
-@protected int dco_decode_u_32(dynamic raw);
+  @protected
+  UserEvent dco_decode_user_event(dynamic raw);
 
-@protected int dco_decode_u_8(dynamic raw);
+  @protected
+  Vector2 dco_decode_vector_2(dynamic raw);
 
-@protected void dco_decode_unit(dynamic raw);
+  @protected
+  AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
 
-@protected UserEvent dco_decode_user_event(dynamic raw);
+  @protected
+  String sse_decode_String(SseDeserializer deserializer);
 
-@protected Vector2 dco_decode_vector_2(dynamic raw);
+  @protected
+  bool sse_decode_bool(SseDeserializer deserializer);
 
-@protected AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
+  @protected
+  LayerConfig sse_decode_box_autoadd_layer_config(SseDeserializer deserializer);
 
-@protected String sse_decode_String(SseDeserializer deserializer);
+  @protected
+  MapInitConfig sse_decode_box_autoadd_map_init_config(
+    SseDeserializer deserializer,
+  );
 
-@protected bool sse_decode_bool(SseDeserializer deserializer);
+  @protected
+  MapSize sse_decode_box_autoadd_map_size(SseDeserializer deserializer);
 
-@protected LayerConfig sse_decode_box_autoadd_layer_config(SseDeserializer deserializer);
+  @protected
+  MapViewport sse_decode_box_autoadd_map_viewport(SseDeserializer deserializer);
 
-@protected MapInitConfig sse_decode_box_autoadd_map_init_config(SseDeserializer deserializer);
+  @protected
+  MouseEvent sse_decode_box_autoadd_mouse_event(SseDeserializer deserializer);
 
-@protected MapSize sse_decode_box_autoadd_map_size(SseDeserializer deserializer);
+  @protected
+  Point sse_decode_box_autoadd_point(SseDeserializer deserializer);
 
-@protected MapViewport sse_decode_box_autoadd_map_viewport(SseDeserializer deserializer);
+  @protected
+  Point2 sse_decode_box_autoadd_point_2(SseDeserializer deserializer);
 
-@protected MouseEvent sse_decode_box_autoadd_mouse_event(SseDeserializer deserializer);
+  @protected
+  Polygon sse_decode_box_autoadd_polygon(SseDeserializer deserializer);
 
-@protected Point sse_decode_box_autoadd_point(SseDeserializer deserializer);
+  @protected
+  UserEvent sse_decode_box_autoadd_user_event(SseDeserializer deserializer);
 
-@protected Point2 sse_decode_box_autoadd_point_2(SseDeserializer deserializer);
+  @protected
+  Vector2 sse_decode_box_autoadd_vector_2(SseDeserializer deserializer);
 
-@protected UserEvent sse_decode_box_autoadd_user_event(SseDeserializer deserializer);
+  @protected
+  Color sse_decode_color(SseDeserializer deserializer);
 
-@protected Vector2 sse_decode_box_autoadd_vector_2(SseDeserializer deserializer);
+  @protected
+  CreateNewSessionResponse sse_decode_create_new_session_response(
+    SseDeserializer deserializer,
+  );
 
-@protected Color sse_decode_color(SseDeserializer deserializer);
+  @protected
+  double sse_decode_f_32(SseDeserializer deserializer);
 
-@protected CreateNewSessionResponse sse_decode_create_new_session_response(SseDeserializer deserializer);
+  @protected
+  double sse_decode_f_64(SseDeserializer deserializer);
 
-@protected double sse_decode_f_32(SseDeserializer deserializer);
+  @protected
+  int sse_decode_i_32(SseDeserializer deserializer);
 
-@protected double sse_decode_f_64(SseDeserializer deserializer);
+  @protected
+  PlatformInt64 sse_decode_i_64(SseDeserializer deserializer);
 
-@protected int sse_decode_i_32(SseDeserializer deserializer);
+  @protected
+  LayerConfig sse_decode_layer_config(SseDeserializer deserializer);
 
-@protected PlatformInt64 sse_decode_i_64(SseDeserializer deserializer);
+  @protected
+  List<Point> sse_decode_list_point(SseDeserializer deserializer);
 
-@protected LayerConfig sse_decode_layer_config(SseDeserializer deserializer);
+  @protected
+  List<Polygon> sse_decode_list_polygon(SseDeserializer deserializer);
 
-@protected List<Point> sse_decode_list_point(SseDeserializer deserializer);
+  @protected
+  Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
-@protected List<Polygon> sse_decode_list_polygon(SseDeserializer deserializer);
+  @protected
+  List<(double, double)> sse_decode_list_record_f_64_f_64(
+    SseDeserializer deserializer,
+  );
 
-@protected Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
+  @protected
+  MapInitConfig sse_decode_map_init_config(SseDeserializer deserializer);
 
-@protected List<(double,double)> sse_decode_list_record_f_64_f_64(SseDeserializer deserializer);
+  @protected
+  MapSize sse_decode_map_size(SseDeserializer deserializer);
 
-@protected MapInitConfig sse_decode_map_init_config(SseDeserializer deserializer);
+  @protected
+  MapViewport sse_decode_map_viewport(SseDeserializer deserializer);
 
-@protected MapSize sse_decode_map_size(SseDeserializer deserializer);
+  @protected
+  MouseButton sse_decode_mouse_button(SseDeserializer deserializer);
 
-@protected MapViewport sse_decode_map_viewport(SseDeserializer deserializer);
+  @protected
+  MouseButtonState sse_decode_mouse_button_state(SseDeserializer deserializer);
 
-@protected MouseButton sse_decode_mouse_button(SseDeserializer deserializer);
+  @protected
+  MouseButtonsState sse_decode_mouse_buttons_state(
+    SseDeserializer deserializer,
+  );
 
-@protected MouseButtonState sse_decode_mouse_button_state(SseDeserializer deserializer);
+  @protected
+  MouseEvent sse_decode_mouse_event(SseDeserializer deserializer);
 
-@protected MouseButtonsState sse_decode_mouse_buttons_state(SseDeserializer deserializer);
+  @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer);
 
-@protected MouseEvent sse_decode_mouse_event(SseDeserializer deserializer);
+  @protected
+  MapViewport? sse_decode_opt_box_autoadd_map_viewport(
+    SseDeserializer deserializer,
+  );
 
-@protected String? sse_decode_opt_String(SseDeserializer deserializer);
+  @protected
+  Point sse_decode_point(SseDeserializer deserializer);
 
-@protected MapViewport? sse_decode_opt_box_autoadd_map_viewport(SseDeserializer deserializer);
+  @protected
+  Point2 sse_decode_point_2(SseDeserializer deserializer);
 
-@protected Point sse_decode_point(SseDeserializer deserializer);
+  @protected
+  PointStyle sse_decode_point_style(SseDeserializer deserializer);
 
-@protected Point2 sse_decode_point_2(SseDeserializer deserializer);
+  @protected
+  Polygon sse_decode_polygon(SseDeserializer deserializer);
 
-@protected PointStyle sse_decode_point_style(SseDeserializer deserializer);
+  @protected
+  PolygonStyle sse_decode_polygon_style(SseDeserializer deserializer);
 
-@protected Polygon sse_decode_polygon(SseDeserializer deserializer);
+  @protected
+  (double, double, double, double) sse_decode_record_f_32_f_32_f_32_f_32(
+    SseDeserializer deserializer,
+  );
 
-@protected PolygonStyle sse_decode_polygon_style(SseDeserializer deserializer);
+  @protected
+  (double, double) sse_decode_record_f_64_f_64(SseDeserializer deserializer);
 
-@protected (double,double,double,double) sse_decode_record_f_32_f_32_f_32_f_32(SseDeserializer deserializer);
+  @protected
+  int sse_decode_u_32(SseDeserializer deserializer);
 
-@protected (double,double) sse_decode_record_f_64_f_64(SseDeserializer deserializer);
+  @protected
+  int sse_decode_u_8(SseDeserializer deserializer);
 
-@protected int sse_decode_u_32(SseDeserializer deserializer);
+  @protected
+  void sse_decode_unit(SseDeserializer deserializer);
 
-@protected int sse_decode_u_8(SseDeserializer deserializer);
+  @protected
+  UserEvent sse_decode_user_event(SseDeserializer deserializer);
 
-@protected void sse_decode_unit(SseDeserializer deserializer);
+  @protected
+  Vector2 sse_decode_vector_2(SseDeserializer deserializer);
 
-@protected UserEvent sse_decode_user_event(SseDeserializer deserializer);
+  @protected
+  void sse_encode_AnyhowException(
+    AnyhowException self,
+    SseSerializer serializer,
+  );
 
-@protected Vector2 sse_decode_vector_2(SseDeserializer deserializer);
+  @protected
+  void sse_encode_String(String self, SseSerializer serializer);
 
-@protected void sse_encode_AnyhowException(AnyhowException self, SseSerializer serializer);
+  @protected
+  void sse_encode_bool(bool self, SseSerializer serializer);
 
-@protected void sse_encode_String(String self, SseSerializer serializer);
+  @protected
+  void sse_encode_box_autoadd_layer_config(
+    LayerConfig self,
+    SseSerializer serializer,
+  );
 
-@protected void sse_encode_bool(bool self, SseSerializer serializer);
+  @protected
+  void sse_encode_box_autoadd_map_init_config(
+    MapInitConfig self,
+    SseSerializer serializer,
+  );
 
-@protected void sse_encode_box_autoadd_layer_config(LayerConfig self, SseSerializer serializer);
+  @protected
+  void sse_encode_box_autoadd_map_size(MapSize self, SseSerializer serializer);
 
-@protected void sse_encode_box_autoadd_map_init_config(MapInitConfig self, SseSerializer serializer);
+  @protected
+  void sse_encode_box_autoadd_map_viewport(
+    MapViewport self,
+    SseSerializer serializer,
+  );
 
-@protected void sse_encode_box_autoadd_map_size(MapSize self, SseSerializer serializer);
+  @protected
+  void sse_encode_box_autoadd_mouse_event(
+    MouseEvent self,
+    SseSerializer serializer,
+  );
 
-@protected void sse_encode_box_autoadd_map_viewport(MapViewport self, SseSerializer serializer);
+  @protected
+  void sse_encode_box_autoadd_point(Point self, SseSerializer serializer);
 
-@protected void sse_encode_box_autoadd_mouse_event(MouseEvent self, SseSerializer serializer);
+  @protected
+  void sse_encode_box_autoadd_point_2(Point2 self, SseSerializer serializer);
 
-@protected void sse_encode_box_autoadd_point(Point self, SseSerializer serializer);
+  @protected
+  void sse_encode_box_autoadd_polygon(Polygon self, SseSerializer serializer);
 
-@protected void sse_encode_box_autoadd_point_2(Point2 self, SseSerializer serializer);
+  @protected
+  void sse_encode_box_autoadd_user_event(
+    UserEvent self,
+    SseSerializer serializer,
+  );
 
-@protected void sse_encode_box_autoadd_user_event(UserEvent self, SseSerializer serializer);
+  @protected
+  void sse_encode_box_autoadd_vector_2(Vector2 self, SseSerializer serializer);
 
-@protected void sse_encode_box_autoadd_vector_2(Vector2 self, SseSerializer serializer);
+  @protected
+  void sse_encode_color(Color self, SseSerializer serializer);
 
-@protected void sse_encode_color(Color self, SseSerializer serializer);
+  @protected
+  void sse_encode_create_new_session_response(
+    CreateNewSessionResponse self,
+    SseSerializer serializer,
+  );
 
-@protected void sse_encode_create_new_session_response(CreateNewSessionResponse self, SseSerializer serializer);
+  @protected
+  void sse_encode_f_32(double self, SseSerializer serializer);
 
-@protected void sse_encode_f_32(double self, SseSerializer serializer);
+  @protected
+  void sse_encode_f_64(double self, SseSerializer serializer);
 
-@protected void sse_encode_f_64(double self, SseSerializer serializer);
+  @protected
+  void sse_encode_i_32(int self, SseSerializer serializer);
 
-@protected void sse_encode_i_32(int self, SseSerializer serializer);
+  @protected
+  void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer);
 
-@protected void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer);
+  @protected
+  void sse_encode_layer_config(LayerConfig self, SseSerializer serializer);
 
-@protected void sse_encode_layer_config(LayerConfig self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_point(List<Point> self, SseSerializer serializer);
 
-@protected void sse_encode_list_point(List<Point> self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_polygon(List<Polygon> self, SseSerializer serializer);
 
-@protected void sse_encode_list_polygon(List<Polygon> self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_prim_u_8_strict(
+    Uint8List self,
+    SseSerializer serializer,
+  );
 
-@protected void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer);
+  @protected
+  void sse_encode_list_record_f_64_f_64(
+    List<(double, double)> self,
+    SseSerializer serializer,
+  );
 
-@protected void sse_encode_list_record_f_64_f_64(List<(double,double)> self, SseSerializer serializer);
+  @protected
+  void sse_encode_map_init_config(MapInitConfig self, SseSerializer serializer);
 
-@protected void sse_encode_map_init_config(MapInitConfig self, SseSerializer serializer);
+  @protected
+  void sse_encode_map_size(MapSize self, SseSerializer serializer);
 
-@protected void sse_encode_map_size(MapSize self, SseSerializer serializer);
+  @protected
+  void sse_encode_map_viewport(MapViewport self, SseSerializer serializer);
 
-@protected void sse_encode_map_viewport(MapViewport self, SseSerializer serializer);
+  @protected
+  void sse_encode_mouse_button(MouseButton self, SseSerializer serializer);
 
-@protected void sse_encode_mouse_button(MouseButton self, SseSerializer serializer);
+  @protected
+  void sse_encode_mouse_button_state(
+    MouseButtonState self,
+    SseSerializer serializer,
+  );
 
-@protected void sse_encode_mouse_button_state(MouseButtonState self, SseSerializer serializer);
+  @protected
+  void sse_encode_mouse_buttons_state(
+    MouseButtonsState self,
+    SseSerializer serializer,
+  );
 
-@protected void sse_encode_mouse_buttons_state(MouseButtonsState self, SseSerializer serializer);
+  @protected
+  void sse_encode_mouse_event(MouseEvent self, SseSerializer serializer);
 
-@protected void sse_encode_mouse_event(MouseEvent self, SseSerializer serializer);
+  @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer);
 
-@protected void sse_encode_opt_String(String? self, SseSerializer serializer);
+  @protected
+  void sse_encode_opt_box_autoadd_map_viewport(
+    MapViewport? self,
+    SseSerializer serializer,
+  );
 
-@protected void sse_encode_opt_box_autoadd_map_viewport(MapViewport? self, SseSerializer serializer);
+  @protected
+  void sse_encode_point(Point self, SseSerializer serializer);
 
-@protected void sse_encode_point(Point self, SseSerializer serializer);
+  @protected
+  void sse_encode_point_2(Point2 self, SseSerializer serializer);
 
-@protected void sse_encode_point_2(Point2 self, SseSerializer serializer);
+  @protected
+  void sse_encode_point_style(PointStyle self, SseSerializer serializer);
 
-@protected void sse_encode_point_style(PointStyle self, SseSerializer serializer);
+  @protected
+  void sse_encode_polygon(Polygon self, SseSerializer serializer);
 
-@protected void sse_encode_polygon(Polygon self, SseSerializer serializer);
+  @protected
+  void sse_encode_polygon_style(PolygonStyle self, SseSerializer serializer);
 
-@protected void sse_encode_polygon_style(PolygonStyle self, SseSerializer serializer);
+  @protected
+  void sse_encode_record_f_32_f_32_f_32_f_32(
+    (double, double, double, double) self,
+    SseSerializer serializer,
+  );
 
-@protected void sse_encode_record_f_32_f_32_f_32_f_32((double,double,double,double) self, SseSerializer serializer);
+  @protected
+  void sse_encode_record_f_64_f_64(
+    (double, double) self,
+    SseSerializer serializer,
+  );
 
-@protected void sse_encode_record_f_64_f_64((double,double) self, SseSerializer serializer);
+  @protected
+  void sse_encode_u_32(int self, SseSerializer serializer);
 
-@protected void sse_encode_u_32(int self, SseSerializer serializer);
+  @protected
+  void sse_encode_u_8(int self, SseSerializer serializer);
 
-@protected void sse_encode_u_8(int self, SseSerializer serializer);
+  @protected
+  void sse_encode_unit(void self, SseSerializer serializer);
 
-@protected void sse_encode_unit(void self, SseSerializer serializer);
+  @protected
+  void sse_encode_user_event(UserEvent self, SseSerializer serializer);
 
-@protected void sse_encode_user_event(UserEvent self, SseSerializer serializer);
-
-@protected void sse_encode_vector_2(Vector2 self, SseSerializer serializer);
-                }
-                
-
+  @protected
+  void sse_encode_vector_2(Vector2 self, SseSerializer serializer);
+}
 
 // Section: wire_class
 
+class RustLibWire implements BaseWire {
+  factory RustLibWire.fromExternalLibrary(ExternalLibrary lib) =>
+      RustLibWire(lib.ffiDynamicLibrary);
 
-        class RustLibWire implements BaseWire {
+  /// Holds the symbol lookup function.
+  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
+  _lookup;
 
-            factory RustLibWire.fromExternalLibrary(ExternalLibrary lib) =>
-              RustLibWire(lib.ffiDynamicLibrary);
-        
-            /// Holds the symbol lookup function.
-            final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-                _lookup;
-  
-            /// The symbols are looked up in [dynamicLibrary].
-            RustLibWire(ffi.DynamicLibrary dynamicLibrary)
-                : _lookup = dynamicLibrary.lookup;
-
-            
-        }
-        
+  /// The symbols are looked up in [dynamicLibrary].
+  RustLibWire(ffi.DynamicLibrary dynamicLibrary)
+    : _lookup = dynamicLibrary.lookup;
+}

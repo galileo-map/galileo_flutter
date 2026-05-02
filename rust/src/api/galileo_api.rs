@@ -5,6 +5,7 @@
 
 use flutter_rust_bridge::frb;
 use galileo::control::UserEventHandler;
+use galileo::galileo_types::geo::impls::GeoPoint2d;
 use galileo::layer::data_provider::remove_parameters_modifier;
 use galileo::layer::feature_layer::FeatureLayer;
 use galileo::galileo_types::geo::Crs;
@@ -255,6 +256,23 @@ pub async fn add_point_feature_layer(
     Ok(layer_id)
 }
 
+pub async fn add_polygon_feature_layer(
+        session_id: SessionID,
+        initial_polygons: Vec<Polygon>,
+)->anyhow::Result<SessionID>{
+    let session = {
+        SESSIONS
+            .lock()
+            .get(&session_id)
+            .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?
+            .clone()
+    };
+
+    let layer = FeatureLayer::new(initial_polygons, PolygonSymbol {},Crs::EPSG3857);
+    let layer_id = session.add_managed_layer(layer).await;
+    Ok(layer_id)
+}
+
 pub async fn add_point_to_layer(
         session_id: SessionID,
         layer_id: u32,
@@ -268,6 +286,22 @@ pub async fn add_point_to_layer(
             .clone()
     };
     let feature_id = session.add_point_to_layer(layer_id,point).await?;
+    Ok(unsafe { std::mem::transmute::<galileo::layer::FeatureId, u64>(feature_id) as u32 })
+}
+
+pub async fn add_polygon_to_layer(
+        session_id: SessionID,
+        layer_id: u32,
+        point: Polygon,
+)->anyhow::Result<u32>{
+    let session = {
+        SESSIONS
+            .lock()
+            .get(&session_id)
+            .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?
+            .clone()
+    };
+    let feature_id = session.add_polygon_to_layer(layer_id,point).await?;
     Ok(unsafe { std::mem::transmute::<galileo::layer::FeatureId, u64>(feature_id) as u32 })
 }
 
@@ -285,6 +319,22 @@ pub async fn remove_point_from_layer(
     };
     let id = unsafe { std::mem::transmute::<u64,galileo::layer::FeatureId>(index as u64)};
     session.remove_point_from_layer(layer_id, id).await
+}
+
+pub async fn remove_polygon_from_layer(
+        session_id: SessionID,
+        layer_id: u32,
+        index: u32,
+)->anyhow::Result<bool>{
+    let session = {
+        SESSIONS
+            .lock()
+            .get(&session_id)
+            .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?
+            .clone()
+    };
+    let id = unsafe { std::mem::transmute::<u64,galileo::layer::FeatureId>(index as u64)};
+    session.remove_polygon_from_layer(layer_id, id).await
 }
 
 pub async fn get_map_viewport(session_id: SessionID) -> Option<MapViewport> {

@@ -8,223 +8,236 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'dart_types.freezed.dart';
 
-            // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `MapPosition`, `Point3`, `PointSymbol`, `PolygonSymbol`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `MapPosition`, `Point3`, `PointSymbol`, `PolygonSymbol`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 // These functions are ignored (category: IgnoreBecauseExplicitAttribute): `from_rect`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`
 
+/// 2D point in cartesian coordinate space.
+class Color {
+  final double r;
+  final double g;
+  final double b;
+  final double a;
 
-            
+  const Color({
+    required this.r,
+    required this.g,
+    required this.b,
+    required this.a,
+  });
 
-            /// 2D point in cartesian coordinate space.
-class Color  {
-                final double r;
-final double g;
-final double b;
-final double a;
+  @override
+  int get hashCode => r.hashCode ^ g.hashCode ^ b.hashCode ^ a.hashCode;
 
-                const Color({required this.r ,required this.g ,required this.b ,required this.a ,});
-
-                
-                
-
-                
-        @override
-        int get hashCode => r.hashCode^g.hashCode^b.hashCode^a.hashCode;
-        
-
-                
-        @override
-        bool operator ==(Object other) =>
-            identical(this, other) ||
-            other is Color &&
-                runtimeType == other.runtimeType
-                && r == other.r&& g == other.g&& b == other.b&& a == other.a;
-        
-            }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Color &&
+          runtimeType == other.runtimeType &&
+          r == other.r &&
+          g == other.g &&
+          b == other.b &&
+          a == other.a;
+}
 
 @freezed
-                sealed class LayerConfig with _$LayerConfig  {
-                    const LayerConfig._();
+sealed class LayerConfig with _$LayerConfig {
+  const LayerConfig._();
 
-                     /// OpenStreetMap raster tile layer
-const factory LayerConfig.osm() = LayerConfig_Osm;
- /// Custom raster tile layer with URL template
-const factory LayerConfig.rasterTiles({   required String urlTemplate ,  String? attribution , }) = LayerConfig_RasterTiles;
- const factory LayerConfig.vectorTiles({   required String urlTemplate ,  required String styleJson ,  String? attribution , }) = LayerConfig_VectorTiles;
- /// Layer to render polygons
-const factory LayerConfig.polygonLayer({ /// Stores the Polygon features to be rendered
-  required List<Polygon> features , }) = LayerConfig_PolygonLayer;
- const factory LayerConfig.pointLayer({ /// Stores the Point features to be rendered
-  required List<Point> features , }) = LayerConfig_PointLayer;
+  /// OpenStreetMap raster tile layer
+  const factory LayerConfig.osm() = LayerConfig_Osm;
 
-                    
+  /// Custom raster tile layer with URL template
+  const factory LayerConfig.rasterTiles({
+    required String urlTemplate,
+    String? attribution,
+  }) = LayerConfig_RasterTiles;
+  const factory LayerConfig.vectorTiles({
+    required String urlTemplate,
+    required String styleJson,
+    String? attribution,
+  }) = LayerConfig_VectorTiles;
 
-                    
-                }
+  /// Layer to render polygons
+  const factory LayerConfig.polygonLayer({
+    /// Stores the Polygon features to be rendered
+    required List<Polygon> features,
+  }) = LayerConfig_PolygonLayer;
+  const factory LayerConfig.pointLayer({
+    /// Stores the Point features to be rendered
+    required List<Point> features,
+  }) = LayerConfig_PointLayer;
+}
 
-class MapInitConfig  {
-                final (double,double) latlon;
-final int zoomLevel;
-final MapSize mapSize;
-/// Frames per second for the render loop (default: 30)
-/// Enable multisampling anti-aliasing
-final bool enableMultisampling;
-/// Background color as RGBA (0.0-1.0 range)
-final (double,double,double,double) backgroundColor;
+class MapInitConfig {
+  final (double, double) latlon;
+  final int zoomLevel;
+  final MapSize mapSize;
 
-                const MapInitConfig({required this.latlon ,required this.zoomLevel ,required this.mapSize ,required this.enableMultisampling ,required this.backgroundColor ,});
+  /// Frames per second for the render loop (default: 30)
+  /// Enable multisampling anti-aliasing
+  final bool enableMultisampling;
 
-                static Future<MapInitConfig>  default_()=>RustLib.instance.api.crateApiDartTypesMapInitConfigDefault();
+  /// Background color as RGBA (0.0-1.0 range)
+  final (double, double, double, double) backgroundColor;
 
+  const MapInitConfig({
+    required this.latlon,
+    required this.zoomLevel,
+    required this.mapSize,
+    required this.enableMultisampling,
+    required this.backgroundColor,
+  });
 
-                
+  static Future<MapInitConfig> default_() =>
+      RustLib.instance.api.crateApiDartTypesMapInitConfigDefault();
 
-                
-        @override
-        int get hashCode => latlon.hashCode^zoomLevel.hashCode^mapSize.hashCode^enableMultisampling.hashCode^backgroundColor.hashCode;
-        
+  @override
+  int get hashCode =>
+      latlon.hashCode ^
+      zoomLevel.hashCode ^
+      mapSize.hashCode ^
+      enableMultisampling.hashCode ^
+      backgroundColor.hashCode;
 
-                
-        @override
-        bool operator ==(Object other) =>
-            identical(this, other) ||
-            other is MapInitConfig &&
-                runtimeType == other.runtimeType
-                && latlon == other.latlon&& zoomLevel == other.zoomLevel&& mapSize == other.mapSize&& enableMultisampling == other.enableMultisampling&& backgroundColor == other.backgroundColor;
-        
-            }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MapInitConfig &&
+          runtimeType == other.runtimeType &&
+          latlon == other.latlon &&
+          zoomLevel == other.zoomLevel &&
+          mapSize == other.mapSize &&
+          enableMultisampling == other.enableMultisampling &&
+          backgroundColor == other.backgroundColor;
+}
 
 /// Physical size of the map in pixels.
-class MapSize  {
-                final int width;
-final int height;
+class MapSize {
+  final int width;
+  final int height;
 
-                const MapSize({required this.width ,required this.height ,});
+  const MapSize({required this.width, required this.height});
 
-                
-                
+  @override
+  int get hashCode => width.hashCode ^ height.hashCode;
 
-                
-        @override
-        int get hashCode => width.hashCode^height.hashCode;
-        
-
-                
-        @override
-        bool operator ==(Object other) =>
-            identical(this, other) ||
-            other is MapSize &&
-                runtimeType == other.runtimeType
-                && width == other.width&& height == other.height;
-        
-            }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MapSize &&
+          runtimeType == other.runtimeType &&
+          width == other.width &&
+          height == other.height;
+}
 
 /// Map viewport configuration including center, zoom, and rotation.
-class MapViewport  {
-                final double xMin;
-final double xMax;
-final double yMin;
-final double yMax;
+class MapViewport {
+  final double xMin;
+  final double xMax;
+  final double yMin;
+  final double yMax;
 
-                const MapViewport({required this.xMin ,required this.xMax ,required this.yMin ,required this.yMax ,});
+  const MapViewport({
+    required this.xMin,
+    required this.xMax,
+    required this.yMin,
+    required this.yMax,
+  });
 
-                
-                
+  @override
+  int get hashCode =>
+      xMin.hashCode ^ xMax.hashCode ^ yMin.hashCode ^ yMax.hashCode;
 
-                
-        @override
-        int get hashCode => xMin.hashCode^xMax.hashCode^yMin.hashCode^yMax.hashCode;
-        
-
-                
-        @override
-        bool operator ==(Object other) =>
-            identical(this, other) ||
-            other is MapViewport &&
-                runtimeType == other.runtimeType
-                && xMin == other.xMin&& xMax == other.xMax&& yMin == other.yMin&& yMax == other.yMax;
-        
-            }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MapViewport &&
+          runtimeType == other.runtimeType &&
+          xMin == other.xMin &&
+          xMax == other.xMax &&
+          yMin == other.yMin &&
+          yMax == other.yMax;
+}
 
 /// Mouse button enum.
 enum MouseButton {
-                    /// The button you click when you want to shoot.
-left,
-/// The button you click when you want to reload.
-middle,
-/// The button you click when you want to hit with a rifle handle.
-right,
-/// The button you click when you are a pro gamer and want to look cool.
-other,
-                    ;
-                    
-                }
+  /// The button you click when you want to shoot.
+  left,
+
+  /// The button you click when you want to reload.
+  middle,
+
+  /// The button you click when you want to hit with a rifle handle.
+  right,
+
+  /// The button you click when you are a pro gamer and want to look cool.
+  other,
+}
 
 /// Mouse button state.
 enum MouseButtonState {
-                    /// Button is pressed.
-pressed,
-/// Button is not pressed.
-released,
-                    ;
-                    
-                }
+  /// Button is pressed.
+  pressed,
+
+  /// Button is not pressed.
+  released,
+}
 
 /// State of all mouse buttons.
-class MouseButtonsState  {
-                /// State of the left mouse button.
-final MouseButtonState left;
-/// State of the middle mouse button.
-final MouseButtonState middle;
-/// State of the right mouse button.
-final MouseButtonState right;
+class MouseButtonsState {
+  /// State of the left mouse button.
+  final MouseButtonState left;
 
-                const MouseButtonsState({required this.left ,required this.middle ,required this.right ,});
+  /// State of the middle mouse button.
+  final MouseButtonState middle;
 
-                
-                
+  /// State of the right mouse button.
+  final MouseButtonState right;
 
-                
-        @override
-        int get hashCode => left.hashCode^middle.hashCode^right.hashCode;
-        
+  const MouseButtonsState({
+    required this.left,
+    required this.middle,
+    required this.right,
+  });
 
-                
-        @override
-        bool operator ==(Object other) =>
-            identical(this, other) ||
-            other is MouseButtonsState &&
-                runtimeType == other.runtimeType
-                && left == other.left&& middle == other.middle&& right == other.right;
-        
-            }
+  @override
+  int get hashCode => left.hashCode ^ middle.hashCode ^ right.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MouseButtonsState &&
+          runtimeType == other.runtimeType &&
+          left == other.left &&
+          middle == other.middle &&
+          right == other.right;
+}
 
 /// State of the mouse at the moment of the event.
-class MouseEvent  {
-                /// Pointer position on the screen in pixels from the top-left corner.
-final Point2 screenPointerPosition;
-/// State of the mouse buttons.
-final MouseButtonsState buttons;
+class MouseEvent {
+  /// Pointer position on the screen in pixels from the top-left corner.
+  final Point2 screenPointerPosition;
 
-                const MouseEvent({required this.screenPointerPosition ,required this.buttons ,});
+  /// State of the mouse buttons.
+  final MouseButtonsState buttons;
 
-                
-                
+  const MouseEvent({
+    required this.screenPointerPosition,
+    required this.buttons,
+  });
 
-                
-        @override
-        int get hashCode => screenPointerPosition.hashCode^buttons.hashCode;
-        
+  @override
+  int get hashCode => screenPointerPosition.hashCode ^ buttons.hashCode;
 
-                
-        @override
-        bool operator ==(Object other) =>
-            identical(this, other) ||
-            other is MouseEvent &&
-                runtimeType == other.runtimeType
-                && screenPointerPosition == other.screenPointerPosition&& buttons == other.buttons;
-        
-            }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MouseEvent &&
+          runtimeType == other.runtimeType &&
+          screenPointerPosition == other.screenPointerPosition &&
+          buttons == other.buttons;
+}
 
 /// Points with properties for colors
 /// Usage:
@@ -234,77 +247,58 @@ final MouseButtonsState buttons;
 ///       Color: (0.2,0.5,0.9,0.8),
 ///     ),
 ///   )
-class Point  {
-                final (double,double) coordinate;
-final PointStyle style;
+class Point {
+  final (double, double) coordinate;
+  final PointStyle style;
 
-                const Point({required this.coordinate ,required this.style ,});
+  const Point({required this.coordinate, required this.style});
 
-                
-                
+  @override
+  int get hashCode => coordinate.hashCode ^ style.hashCode;
 
-                
-        @override
-        int get hashCode => coordinate.hashCode^style.hashCode;
-        
-
-                
-        @override
-        bool operator ==(Object other) =>
-            identical(this, other) ||
-            other is Point &&
-                runtimeType == other.runtimeType
-                && coordinate == other.coordinate&& style == other.style;
-        
-            }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Point &&
+          runtimeType == other.runtimeType &&
+          coordinate == other.coordinate &&
+          style == other.style;
+}
 
 /// 2D point in cartesian coordinate space.
-class Point2  {
-                final double x;
-final double y;
+class Point2 {
+  final double x;
+  final double y;
 
-                const Point2({required this.x ,required this.y ,});
+  const Point2({required this.x, required this.y});
 
-                
-                
+  @override
+  int get hashCode => x.hashCode ^ y.hashCode;
 
-                
-        @override
-        int get hashCode => x.hashCode^y.hashCode;
-        
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Point2 &&
+          runtimeType == other.runtimeType &&
+          x == other.x &&
+          y == other.y;
+}
 
-                
-        @override
-        bool operator ==(Object other) =>
-            identical(this, other) ||
-            other is Point2 &&
-                runtimeType == other.runtimeType
-                && x == other.x&& y == other.y;
-        
-            }
+class PointStyle {
+  final Color fillColor;
 
-class PointStyle  {
-                final Color fillColor;
+  const PointStyle({required this.fillColor});
 
-                const PointStyle({required this.fillColor ,});
+  @override
+  int get hashCode => fillColor.hashCode;
 
-                
-                
-
-                
-        @override
-        int get hashCode => fillColor.hashCode;
-        
-
-                
-        @override
-        bool operator ==(Object other) =>
-            identical(this, other) ||
-            other is PointStyle &&
-                runtimeType == other.runtimeType
-                && fillColor == other.fillColor;
-        
-            }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PointStyle &&
+          runtimeType == other.runtimeType &&
+          fillColor == other.fillColor;
+}
 
 /// Closed geographic polygon with fill/stroke styling.
 /// Usage:
@@ -317,112 +311,126 @@ class PointStyle  {
 ///       strokeOffset: 0.0,
 ///     ),
 ///   )
-class Polygon  {
-                final List<(double,double)> points;
-final PolygonStyle style;
+class Polygon {
+  final List<(double, double)> points;
+  final PolygonStyle style;
 
-                const Polygon({required this.points ,required this.style ,});
+  const Polygon({required this.points, required this.style});
 
-                
-                
+  @override
+  int get hashCode => points.hashCode ^ style.hashCode;
 
-                
-        @override
-        int get hashCode => points.hashCode^style.hashCode;
-        
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Polygon &&
+          runtimeType == other.runtimeType &&
+          points == other.points &&
+          style == other.style;
+}
 
-                
-        @override
-        bool operator ==(Object other) =>
-            identical(this, other) ||
-            other is Polygon &&
-                runtimeType == other.runtimeType
-                && points == other.points&& style == other.style;
-        
-            }
+class PolygonStyle {
+  /// fillColor also as RGBA (0.0-1.0 range)
+  final Color fillColor;
 
-class PolygonStyle  {
-                /// fillColor also as RGBA (0.0-1.0 range)
-final Color fillColor;
-/// fillColor also as RGBA (0.0-1.0 range)
-final Color strokeColor;
-/// strokeWidth with (0.0-1.0 range)
-final double strokeWidth;
-/// strokeOffset with (0.0-1.0 range)
-final double strokeOffset;
+  /// fillColor also as RGBA (0.0-1.0 range)
+  final Color strokeColor;
 
-                const PolygonStyle({required this.fillColor ,required this.strokeColor ,required this.strokeWidth ,required this.strokeOffset ,});
+  /// strokeWidth with (0.0-1.0 range)
+  final double strokeWidth;
 
-                
-                
+  /// strokeOffset with (0.0-1.0 range)
+  final double strokeOffset;
 
-                
-        @override
-        int get hashCode => fillColor.hashCode^strokeColor.hashCode^strokeWidth.hashCode^strokeOffset.hashCode;
-        
+  const PolygonStyle({
+    required this.fillColor,
+    required this.strokeColor,
+    required this.strokeWidth,
+    required this.strokeOffset,
+  });
 
-                
-        @override
-        bool operator ==(Object other) =>
-            identical(this, other) ||
-            other is PolygonStyle &&
-                runtimeType == other.runtimeType
-                && fillColor == other.fillColor&& strokeColor == other.strokeColor&& strokeWidth == other.strokeWidth&& strokeOffset == other.strokeOffset;
-        
-            }
+  @override
+  int get hashCode =>
+      fillColor.hashCode ^
+      strokeColor.hashCode ^
+      strokeWidth.hashCode ^
+      strokeOffset.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PolygonStyle &&
+          runtimeType == other.runtimeType &&
+          fillColor == other.fillColor &&
+          strokeColor == other.strokeColor &&
+          strokeWidth == other.strokeWidth &&
+          strokeOffset == other.strokeOffset;
+}
 
 @freezed
-                sealed class UserEvent with _$UserEvent  {
-                    const UserEvent._();
+sealed class UserEvent with _$UserEvent {
+  const UserEvent._();
 
-                     /// A mouse button was pressed.
-const factory UserEvent.buttonPressed(  MouseButton field0,  MouseEvent field1,) = UserEvent_ButtonPressed;
- /// A mouse button was released.
-const factory UserEvent.buttonReleased(  MouseButton field0,  MouseEvent field1,) = UserEvent_ButtonReleased;
- /// A mouse button was clicked.
-const factory UserEvent.click(  MouseButton field0,  MouseEvent field1,) = UserEvent_Click;
- /// A double click was done.
-const factory UserEvent.doubleClick(  MouseButton field0,  MouseEvent field1,) = UserEvent_DoubleClick;
- /// Mouse pointer moved.
-const factory UserEvent.pointerMoved(  MouseEvent field0,) = UserEvent_PointerMoved;
- /// Drag started.
-const factory UserEvent.dragStarted(  MouseButton field0,  MouseEvent field1,) = UserEvent_DragStarted;
- /// Mouse pointer moved after drag started was consumed.
-const factory UserEvent.drag(  MouseButton field0,  Vector2 field1,  MouseEvent field2,) = UserEvent_Drag;
- /// Mouse button was released while dragging.
-const factory UserEvent.dragEnded(  MouseButton field0,  MouseEvent field1,) = UserEvent_DragEnded;
- /// Scroll event is called.
-const factory UserEvent.scroll(  double field0,  MouseEvent field1,) = UserEvent_Scroll;
- /// Zoom is called around a point.
-const factory UserEvent.zoom(  double field0,  Point2 field1,) = UserEvent_Zoom;
+  /// A mouse button was pressed.
+  const factory UserEvent.buttonPressed(MouseButton field0, MouseEvent field1) =
+      UserEvent_ButtonPressed;
 
-                    
+  /// A mouse button was released.
+  const factory UserEvent.buttonReleased(
+    MouseButton field0,
+    MouseEvent field1,
+  ) = UserEvent_ButtonReleased;
 
-                    
-                }
+  /// A mouse button was clicked.
+  const factory UserEvent.click(MouseButton field0, MouseEvent field1) =
+      UserEvent_Click;
+
+  /// A double click was done.
+  const factory UserEvent.doubleClick(MouseButton field0, MouseEvent field1) =
+      UserEvent_DoubleClick;
+
+  /// Mouse pointer moved.
+  const factory UserEvent.pointerMoved(MouseEvent field0) =
+      UserEvent_PointerMoved;
+
+  /// Drag started.
+  const factory UserEvent.dragStarted(MouseButton field0, MouseEvent field1) =
+      UserEvent_DragStarted;
+
+  /// Mouse pointer moved after drag started was consumed.
+  const factory UserEvent.drag(
+    MouseButton field0,
+    Vector2 field1,
+    MouseEvent field2,
+  ) = UserEvent_Drag;
+
+  /// Mouse button was released while dragging.
+  const factory UserEvent.dragEnded(MouseButton field0, MouseEvent field1) =
+      UserEvent_DragEnded;
+
+  /// Scroll event is called.
+  const factory UserEvent.scroll(double field0, MouseEvent field1) =
+      UserEvent_Scroll;
+
+  /// Zoom is called around a point.
+  const factory UserEvent.zoom(double field0, Point2 field1) = UserEvent_Zoom;
+}
 
 /// 2D vector in cartesian coordinate space.
-class Vector2  {
-                final double dx;
-final double dy;
+class Vector2 {
+  final double dx;
+  final double dy;
 
-                const Vector2({required this.dx ,required this.dy ,});
+  const Vector2({required this.dx, required this.dy});
 
-                
-                
+  @override
+  int get hashCode => dx.hashCode ^ dy.hashCode;
 
-                
-        @override
-        int get hashCode => dx.hashCode^dy.hashCode;
-        
-
-                
-        @override
-        bool operator ==(Object other) =>
-            identical(this, other) ||
-            other is Vector2 &&
-                runtimeType == other.runtimeType
-                && dx == other.dx&& dy == other.dy;
-        
-            }
-            
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Vector2 &&
+          runtimeType == other.runtimeType &&
+          dx == other.dx &&
+          dy == other.dy;
+}

@@ -13,7 +13,7 @@ use std::time::Duration;
 use tokio::sync::Mutex;
 use galileo_types::geo::impls::GeoPoint2d;
 use galileo_types::geometry_type::GeoSpace2d;
-use crate::api::dart_types::{Point, PointSymbol};
+use crate::api::dart_types::{Point, PointSymbol, Polygon, PolygonSymbol};
 
 use crate::api::dart_types::{MapInitConfig, MapSize, MapViewport};
 use crate::core::flutter::pixel_texture::{
@@ -213,6 +213,28 @@ impl MapSession {
         Ok(feature_id)
     }
 
+    pub async fn add_polygon_to_layer(&self, layer_id: u32, polygon: Polygon) -> anyhow::Result<FeatureId> {
+        let managed = self.managed_layers.lock().await;
+        let &index = managed
+            .get(&layer_id)
+            .ok_or_else(|| anyhow::anyhow!("Layer {} not found", layer_id))?;
+
+        let mut map = self.map.lock().await;
+        let layer = map
+            .layers_mut()
+            .get_mut(index)
+            .ok_or_else(|| anyhow::anyhow!("Layer at index {} missing", index))?
+            .as_any_mut()
+            .downcast_mut::<FeatureLayer<GeoPoint2d, Polygon, PolygonSymbol, GeoSpace2d>>()
+            .ok_or_else(|| anyhow::anyhow!("Layer {} type mismatch on downcast", layer_id))?;
+
+        let feature_id = layer.features_mut().add(polygon);
+        layer.update_feature(feature_id);
+        map.redraw();
+
+        Ok(feature_id)
+    }
+
     pub async fn remove_point_from_layer(&self, layer_id: u32, feature_id: FeatureId) -> anyhow::Result<bool> {
         let managed = self.managed_layers.lock().await;
         let &layer_index = managed
@@ -226,6 +248,31 @@ impl MapSession {
             .ok_or_else(|| anyhow::anyhow!("Layer at index {} missing", layer_index))?
             .as_any_mut()
             .downcast_mut::<FeatureLayer<GeoPoint2d, Point, PointSymbol, GeoSpace2d>>()
+            .ok_or_else(|| anyhow::anyhow!("Layer {} type mismatch on downcast", layer_id))?;
+
+        let removed = layer.features_mut().remove(feature_id);
+        layer.update_all_features();
+        map.redraw();
+        if removed.is_some() {
+            Ok(true)
+        } else {
+            Ok(false)
+        }
+    }
+
+    pub async fn remove_polygon_from_layer(&self, layer_id: u32, feature_id: FeatureId) -> anyhow::Result<bool> {
+        let managed = self.managed_layers.lock().await;
+        let &layer_index = managed
+            .get(&layer_id)
+            .ok_or_else(|| anyhow::anyhow!("Layer {} not found", layer_id))?;
+
+        let mut map = self.map.lock().await;
+        let layer = map
+            .layers_mut()
+            .get_mut(layer_index)
+            .ok_or_else(|| anyhow::anyhow!("Layer at index {} missing", layer_index))?
+            .as_any_mut()
+            .downcast_mut::<FeatureLayer<GeoPoint2d, Polygon, PolygonSymbol, GeoSpace2d>>()
             .ok_or_else(|| anyhow::anyhow!("Layer {} type mismatch on downcast", layer_id))?;
 
         let removed = layer.features_mut().remove(feature_id);
