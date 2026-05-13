@@ -8,2125 +8,1288 @@ import 'api/galileo_api.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
-import 'frb_generated.io.dart'
-    if (dart.library.js_interop) 'frb_generated.web.dart';
+import 'frb_generated.io.dart' if (dart.library.js_interop) 'frb_generated.web.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-/// Main entrypoint of the Rust API
-class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
-  @internal
-  static final instance = RustLib._();
 
-  RustLib._();
+                /// Main entrypoint of the Rust API
+                class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
+                  @internal
+                  static final instance = RustLib._();
 
-  /// Initialize flutter_rust_bridge
-  static Future<void> init({
-    RustLibApi? api,
-    BaseHandler? handler,
-    ExternalLibrary? externalLibrary,
-    bool forceSameCodegenVersion = true,
-  }) async {
-    await instance.initImpl(
-      api: api,
-      handler: handler,
-      externalLibrary: externalLibrary,
-      forceSameCodegenVersion: forceSameCodegenVersion,
-    );
-  }
+                  RustLib._();
 
-  /// Initialize flutter_rust_bridge in mock mode.
-  /// No libraries for FFI are loaded.
-  static void initMock({required RustLibApi api}) {
-    instance.initMockImpl(api: api);
-  }
+                  /// Initialize flutter_rust_bridge
+                  static Future<void> init({
+                    RustLibApi? api,
+                    BaseHandler? handler,
+                    ExternalLibrary? externalLibrary,
+                    bool forceSameCodegenVersion = true,
+                  }) async {
+                    await instance.initImpl(
+                      api: api,
+                      handler: handler,
+                      externalLibrary: externalLibrary,
+                      forceSameCodegenVersion: forceSameCodegenVersion,
+                    );
+                  }
 
-  /// Dispose flutter_rust_bridge
-  ///
-  /// The call to this function is optional, since flutter_rust_bridge (and everything else)
-  /// is automatically disposed when the app stops.
-  static void dispose() => instance.disposeImpl();
+                  /// Initialize flutter_rust_bridge in mock mode.
+                  /// No libraries for FFI are loaded.
+                  static void initMock({
+                    required RustLibApi api,
+                  }) {
+                    instance.initMockImpl(
+                      api: api,
+                    );
+                  }
 
-  @override
-  ApiImplConstructor<RustLibApiImpl, RustLibWire> get apiImplConstructor =>
-      RustLibApiImpl.new;
+                  /// Dispose flutter_rust_bridge
+                  ///
+                  /// The call to this function is optional, since flutter_rust_bridge (and everything else)
+                  /// is automatically disposed when the app stops.
+                  static void dispose() => instance.disposeImpl();
 
-  @override
-  WireConstructor<RustLibWire> get wireConstructor =>
-      RustLibWire.fromExternalLibrary;
+                  @override
+                  ApiImplConstructor<RustLibApiImpl, RustLibWire> get apiImplConstructor => RustLibApiImpl.new;
 
-  @override
-  Future<void> executeRustInitializers() async {
-    await api.crateApiGalileoApiInitGalileoFlutter();
-  }
+                  @override
+                  WireConstructor<RustLibWire> get wireConstructor => RustLibWire.fromExternalLibrary;
 
-  @override
-  ExternalLibraryLoaderConfig get defaultExternalLibraryLoaderConfig =>
-      kDefaultExternalLibraryLoaderConfig;
+                  @override
+                  Future<void> executeRustInitializers() async {
+                    await api.crateApiGalileoApiInitGalileoFlutter();
 
-  @override
-  String get codegenVersion => '2.11.1';
+                  }
 
-  @override
-  int get rustContentHash => 1385225485;
+                  @override
+                  ExternalLibraryLoaderConfig get defaultExternalLibraryLoaderConfig => kDefaultExternalLibraryLoaderConfig;
 
-  static const kDefaultExternalLibraryLoaderConfig =
-      ExternalLibraryLoaderConfig(
-        stem: 'galileo_flutter',
-        ioDirectory: 'rust/target/release/',
-        webPrefix: 'pkg/',
-      );
-}
+                  @override
+                  String get codegenVersion => '2.11.1';
 
-abstract class RustLibApi extends BaseApi {
-  Future<int> crateApiGalileoApiAddPointFeatureLayer({
-    required int sessionId,
-    required List<Point> initialPoints,
-  });
+                  @override
+                  int get rustContentHash => 1385225485;
 
-  Future<int> crateApiGalileoApiAddPointToLayer({
-    required int sessionId,
-    required int layerId,
-    required Point point,
-  });
+                  static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
+                    stem: 'galileo_flutter',
+                    ioDirectory: 'rust/target/release/',
+                    webPrefix: 'pkg/',
+                  );
+                }
+                
 
-  Future<int> crateApiGalileoApiAddPolygonFeatureLayer({
-    required int sessionId,
-    required List<Polygon> initialPolygons,
-  });
+                abstract class RustLibApi extends BaseApi {
+                  Future<int> crateApiGalileoApiAddPointFeatureLayer({required int sessionId , required List<Point> initialPoints });
 
-  Future<int> crateApiGalileoApiAddPolygonToLayer({
-    required int sessionId,
-    required int layerId,
-    required Polygon polygon,
-  });
+Future<int> crateApiGalileoApiAddPointToLayer({required int sessionId , required int layerId , required Point point });
 
-  Future<void> crateApiGalileoApiAddSessionLayer({
-    required int sessionId,
-    required LayerConfig layerConfig,
-  });
+Future<int> crateApiGalileoApiAddPolygonFeatureLayer({required int sessionId , required List<Polygon> initialPolygons });
 
-  Future<CreateNewSessionResponse> crateApiGalileoApiCreateNewMapSession({
-    required PlatformInt64 engineHandle,
-    required MapInitConfig config,
-  });
+Future<int> crateApiGalileoApiAddPolygonToLayer({required int sessionId , required int layerId , required Polygon polygon });
 
-  Future<void> crateApiGalileoApiDestroyAllEngineSessions({
-    required PlatformInt64 engineId,
-  });
+Future<void> crateApiGalileoApiAddSessionLayer({required int sessionId , required LayerConfig layerConfig });
 
-  Future<void> crateApiGalileoApiDestroySession({required int sessionId});
+Future<CreateNewSessionResponse> crateApiGalileoApiCreateNewMapSession({required PlatformInt64 engineHandle , required MapInitConfig config });
 
-  Future<void> crateApiGalileoApiGalileoFlutterInit({
-    required PlatformInt64 ffiPtr,
-  });
+Future<void> crateApiGalileoApiDestroyAllEngineSessions({required PlatformInt64 engineId });
 
-  Future<MapViewport?> crateApiGalileoApiGetMapViewport({
-    required int sessionId,
-  });
+Future<void> crateApiGalileoApiDestroySession({required int sessionId });
 
-  Future<void> crateApiGalileoApiHandleEventForSession({
-    required int sessionId,
-    required UserEvent event,
-  });
+Future<void> crateApiGalileoApiGalileoFlutterInit({required PlatformInt64 ffiPtr });
 
-  Future<void> crateApiGalileoApiInitGalileoFlutter();
+Future<MapViewport?> crateApiGalileoApiGetMapViewport({required int sessionId });
 
-  Future<MapInitConfig> crateApiDartTypesMapInitConfigDefault();
+Future<void> crateApiGalileoApiHandleEventForSession({required int sessionId , required UserEvent event });
 
-  Future<void> crateApiGalileoApiMarkSessionAlive({required int sessionId});
+Future<void> crateApiGalileoApiInitGalileoFlutter();
 
-  Future<bool> crateApiGalileoApiRemovePointFromLayer({
-    required int sessionId,
-    required int layerId,
-    required int index,
-  });
+Future<MapInitConfig> crateApiDartTypesMapInitConfigDefault();
 
-  Future<bool> crateApiGalileoApiRemovePolygonFromLayer({
-    required int sessionId,
-    required int layerId,
-    required int index,
-  });
+Future<void> crateApiGalileoApiMarkSessionAlive({required int sessionId });
 
-  Future<void> crateApiGalileoApiRequestMapRedraw({required int sessionId});
+Future<bool> crateApiGalileoApiRemovePointFromLayer({required int sessionId , required int layerId , required int index });
 
-  Future<void> crateApiGalileoApiResizeSession({
-    required int sessionId,
-    required MapSize newSize,
-  });
+Future<bool> crateApiGalileoApiRemovePolygonFromLayer({required int sessionId , required int layerId , required int index });
 
-  Future<void> crateApiGalileoApiSetTileCachePath({String? path});
-}
+Future<void> crateApiGalileoApiRequestMapRedraw({required int sessionId });
 
-class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
-  RustLibApiImpl({
-    required super.handler,
-    required super.wire,
-    required super.generalizedFrbRustBinding,
-    required super.portManager,
-  });
+Future<void> crateApiGalileoApiResizeSession({required int sessionId , required MapSize newSize });
 
-  @override
-  Future<int> crateApiGalileoApiAddPointFeatureLayer({
-    required int sessionId,
-    required List<Point> initialPoints,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_u_32(sessionId, serializer);
-          sse_encode_list_point(initialPoints, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 1,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+Future<void> crateApiGalileoApiSetTileCachePath({String? path });
+
+
+                }
+                
+
+                class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
+                  RustLibApiImpl({
+                    required super.handler,
+                    required super.wire,
+                    required super.generalizedFrbRustBinding,
+                    required super.portManager,
+                  });
+
+                  @override Future<int> crateApiGalileoApiAddPointFeatureLayer({required int sessionId , required List<Point> initialPoints })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_32(sessionId, serializer);
+sse_encode_list_point(initialPoints, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_u_32,
           decodeErrorData: sse_decode_AnyhowException,
-        ),
-        constMeta: kCrateApiGalileoApiAddPointFeatureLayerConstMeta,
-        argValues: [sessionId, initialPoints],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiAddPointFeatureLayerConstMeta,
+            argValues: [sessionId, initialPoints],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiAddPointFeatureLayerConstMeta =>
-      const TaskConstMeta(
-        debugName: "add_point_feature_layer",
-        argNames: ["sessionId", "initialPoints"],
-      );
 
-  @override
-  Future<int> crateApiGalileoApiAddPointToLayer({
-    required int sessionId,
-    required int layerId,
-    required Point point,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_u_32(sessionId, serializer);
-          sse_encode_u_32(layerId, serializer);
-          sse_encode_box_autoadd_point(point, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 2,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiAddPointFeatureLayerConstMeta => const TaskConstMeta(
+            debugName: "add_point_feature_layer",
+            argNames: ["sessionId", "initialPoints"],
+        );
+        
+
+@override Future<int> crateApiGalileoApiAddPointToLayer({required int sessionId , required int layerId , required Point point })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_32(sessionId, serializer);
+sse_encode_u_32(layerId, serializer);
+sse_encode_box_autoadd_point(point, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_u_32,
           decodeErrorData: sse_decode_AnyhowException,
-        ),
-        constMeta: kCrateApiGalileoApiAddPointToLayerConstMeta,
-        argValues: [sessionId, layerId, point],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiAddPointToLayerConstMeta,
+            argValues: [sessionId, layerId, point],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiAddPointToLayerConstMeta =>
-      const TaskConstMeta(
-        debugName: "add_point_to_layer",
-        argNames: ["sessionId", "layerId", "point"],
-      );
 
-  @override
-  Future<int> crateApiGalileoApiAddPolygonFeatureLayer({
-    required int sessionId,
-    required List<Polygon> initialPolygons,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_u_32(sessionId, serializer);
-          sse_encode_list_polygon(initialPolygons, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 3,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiAddPointToLayerConstMeta => const TaskConstMeta(
+            debugName: "add_point_to_layer",
+            argNames: ["sessionId", "layerId", "point"],
+        );
+        
+
+@override Future<int> crateApiGalileoApiAddPolygonFeatureLayer({required int sessionId , required List<Polygon> initialPolygons })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_32(sessionId, serializer);
+sse_encode_list_polygon(initialPolygons, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_u_32,
           decodeErrorData: sse_decode_AnyhowException,
-        ),
-        constMeta: kCrateApiGalileoApiAddPolygonFeatureLayerConstMeta,
-        argValues: [sessionId, initialPolygons],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiAddPolygonFeatureLayerConstMeta,
+            argValues: [sessionId, initialPolygons],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiAddPolygonFeatureLayerConstMeta =>
-      const TaskConstMeta(
-        debugName: "add_polygon_feature_layer",
-        argNames: ["sessionId", "initialPolygons"],
-      );
 
-  @override
-  Future<int> crateApiGalileoApiAddPolygonToLayer({
-    required int sessionId,
-    required int layerId,
-    required Polygon polygon,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_u_32(sessionId, serializer);
-          sse_encode_u_32(layerId, serializer);
-          sse_encode_box_autoadd_polygon(polygon, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 4,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiAddPolygonFeatureLayerConstMeta => const TaskConstMeta(
+            debugName: "add_polygon_feature_layer",
+            argNames: ["sessionId", "initialPolygons"],
+        );
+        
+
+@override Future<int> crateApiGalileoApiAddPolygonToLayer({required int sessionId , required int layerId , required Polygon polygon })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_32(sessionId, serializer);
+sse_encode_u_32(layerId, serializer);
+sse_encode_box_autoadd_polygon(polygon, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_u_32,
           decodeErrorData: sse_decode_AnyhowException,
-        ),
-        constMeta: kCrateApiGalileoApiAddPolygonToLayerConstMeta,
-        argValues: [sessionId, layerId, polygon],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiAddPolygonToLayerConstMeta,
+            argValues: [sessionId, layerId, polygon],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiAddPolygonToLayerConstMeta =>
-      const TaskConstMeta(
-        debugName: "add_polygon_to_layer",
-        argNames: ["sessionId", "layerId", "polygon"],
-      );
 
-  @override
-  Future<void> crateApiGalileoApiAddSessionLayer({
-    required int sessionId,
-    required LayerConfig layerConfig,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_u_32(sessionId, serializer);
-          sse_encode_box_autoadd_layer_config(layerConfig, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 5,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiAddPolygonToLayerConstMeta => const TaskConstMeta(
+            debugName: "add_polygon_to_layer",
+            argNames: ["sessionId", "layerId", "polygon"],
+        );
+        
+
+@override Future<void> crateApiGalileoApiAddSessionLayer({required int sessionId , required LayerConfig layerConfig })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_32(sessionId, serializer);
+sse_encode_box_autoadd_layer_config(layerConfig, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_unit,
           decodeErrorData: sse_decode_AnyhowException,
-        ),
-        constMeta: kCrateApiGalileoApiAddSessionLayerConstMeta,
-        argValues: [sessionId, layerConfig],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiAddSessionLayerConstMeta,
+            argValues: [sessionId, layerConfig],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiAddSessionLayerConstMeta =>
-      const TaskConstMeta(
-        debugName: "add_session_layer",
-        argNames: ["sessionId", "layerConfig"],
-      );
 
-  @override
-  Future<CreateNewSessionResponse> crateApiGalileoApiCreateNewMapSession({
-    required PlatformInt64 engineHandle,
-    required MapInitConfig config,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_i_64(engineHandle, serializer);
-          sse_encode_box_autoadd_map_init_config(config, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 6,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiAddSessionLayerConstMeta => const TaskConstMeta(
+            debugName: "add_session_layer",
+            argNames: ["sessionId", "layerConfig"],
+        );
+        
+
+@override Future<CreateNewSessionResponse> crateApiGalileoApiCreateNewMapSession({required PlatformInt64 engineHandle , required MapInitConfig config })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_i_64(engineHandle, serializer);
+sse_encode_box_autoadd_map_init_config(config, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_create_new_session_response,
           decodeErrorData: sse_decode_AnyhowException,
-        ),
-        constMeta: kCrateApiGalileoApiCreateNewMapSessionConstMeta,
-        argValues: [engineHandle, config],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiCreateNewMapSessionConstMeta,
+            argValues: [engineHandle, config],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiCreateNewMapSessionConstMeta =>
-      const TaskConstMeta(
-        debugName: "create_new_map_session",
-        argNames: ["engineHandle", "config"],
-      );
 
-  @override
-  Future<void> crateApiGalileoApiDestroyAllEngineSessions({
-    required PlatformInt64 engineId,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_i_64(engineId, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 7,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiCreateNewMapSessionConstMeta => const TaskConstMeta(
+            debugName: "create_new_map_session",
+            argNames: ["engineHandle", "config"],
+        );
+        
+
+@override Future<void> crateApiGalileoApiDestroyAllEngineSessions({required PlatformInt64 engineId })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_i_64(engineId, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_unit,
           decodeErrorData: null,
-        ),
-        constMeta: kCrateApiGalileoApiDestroyAllEngineSessionsConstMeta,
-        argValues: [engineId],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiDestroyAllEngineSessionsConstMeta,
+            argValues: [engineId],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiDestroyAllEngineSessionsConstMeta =>
-      const TaskConstMeta(
-        debugName: "destroy_all_engine_sessions",
-        argNames: ["engineId"],
-      );
 
-  @override
-  Future<void> crateApiGalileoApiDestroySession({required int sessionId}) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_u_32(sessionId, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 8,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiDestroyAllEngineSessionsConstMeta => const TaskConstMeta(
+            debugName: "destroy_all_engine_sessions",
+            argNames: ["engineId"],
+        );
+        
+
+@override Future<void> crateApiGalileoApiDestroySession({required int sessionId })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_32(sessionId, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_unit,
           decodeErrorData: null,
-        ),
-        constMeta: kCrateApiGalileoApiDestroySessionConstMeta,
-        argValues: [sessionId],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiDestroySessionConstMeta,
+            argValues: [sessionId],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiDestroySessionConstMeta =>
-      const TaskConstMeta(
-        debugName: "destroy_session",
-        argNames: ["sessionId"],
-      );
 
-  @override
-  Future<void> crateApiGalileoApiGalileoFlutterInit({
-    required PlatformInt64 ffiPtr,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_i_64(ffiPtr, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 9,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiDestroySessionConstMeta => const TaskConstMeta(
+            debugName: "destroy_session",
+            argNames: ["sessionId"],
+        );
+        
+
+@override Future<void> crateApiGalileoApiGalileoFlutterInit({required PlatformInt64 ffiPtr })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_i_64(ffiPtr, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_unit,
           decodeErrorData: null,
-        ),
-        constMeta: kCrateApiGalileoApiGalileoFlutterInitConstMeta,
-        argValues: [ffiPtr],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiGalileoFlutterInitConstMeta,
+            argValues: [ffiPtr],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiGalileoFlutterInitConstMeta =>
-      const TaskConstMeta(
-        debugName: "galileo_flutter_init",
-        argNames: ["ffiPtr"],
-      );
 
-  @override
-  Future<MapViewport?> crateApiGalileoApiGetMapViewport({
-    required int sessionId,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_u_32(sessionId, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 10,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiGalileoFlutterInitConstMeta => const TaskConstMeta(
+            debugName: "galileo_flutter_init",
+            argNames: ["ffiPtr"],
+        );
+        
+
+@override Future<MapViewport?> crateApiGalileoApiGetMapViewport({required int sessionId })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_32(sessionId, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_opt_box_autoadd_map_viewport,
           decodeErrorData: null,
-        ),
-        constMeta: kCrateApiGalileoApiGetMapViewportConstMeta,
-        argValues: [sessionId],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiGetMapViewportConstMeta,
+            argValues: [sessionId],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiGetMapViewportConstMeta =>
-      const TaskConstMeta(
-        debugName: "get_map_viewport",
-        argNames: ["sessionId"],
-      );
 
-  @override
-  Future<void> crateApiGalileoApiHandleEventForSession({
-    required int sessionId,
-    required UserEvent event,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_u_32(sessionId, serializer);
-          sse_encode_box_autoadd_user_event(event, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 11,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiGetMapViewportConstMeta => const TaskConstMeta(
+            debugName: "get_map_viewport",
+            argNames: ["sessionId"],
+        );
+        
+
+@override Future<void> crateApiGalileoApiHandleEventForSession({required int sessionId , required UserEvent event })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_32(sessionId, serializer);
+sse_encode_box_autoadd_user_event(event, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_unit,
           decodeErrorData: null,
-        ),
-        constMeta: kCrateApiGalileoApiHandleEventForSessionConstMeta,
-        argValues: [sessionId, event],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiHandleEventForSessionConstMeta,
+            argValues: [sessionId, event],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiHandleEventForSessionConstMeta =>
-      const TaskConstMeta(
-        debugName: "handle_event_for_session",
-        argNames: ["sessionId", "event"],
-      );
 
-  @override
-  Future<void> crateApiGalileoApiInitGalileoFlutter() {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 12,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiHandleEventForSessionConstMeta => const TaskConstMeta(
+            debugName: "handle_event_for_session",
+            argNames: ["sessionId", "event"],
+        );
+        
+
+@override Future<void> crateApiGalileoApiInitGalileoFlutter()  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_unit,
           decodeErrorData: null,
-        ),
-        constMeta: kCrateApiGalileoApiInitGalileoFlutterConstMeta,
-        argValues: [],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiInitGalileoFlutterConstMeta,
+            argValues: [],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiInitGalileoFlutterConstMeta =>
-      const TaskConstMeta(debugName: "init_galileo_flutter", argNames: []);
 
-  @override
-  Future<MapInitConfig> crateApiDartTypesMapInitConfigDefault() {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 13,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiInitGalileoFlutterConstMeta => const TaskConstMeta(
+            debugName: "init_galileo_flutter",
+            argNames: [],
+        );
+        
+
+@override Future<MapInitConfig> crateApiDartTypesMapInitConfigDefault()  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_map_init_config,
           decodeErrorData: null,
-        ),
-        constMeta: kCrateApiDartTypesMapInitConfigDefaultConstMeta,
-        argValues: [],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiDartTypesMapInitConfigDefaultConstMeta,
+            argValues: [],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiDartTypesMapInitConfigDefaultConstMeta =>
-      const TaskConstMeta(debugName: "map_init_config_default", argNames: []);
 
-  @override
-  Future<void> crateApiGalileoApiMarkSessionAlive({required int sessionId}) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_u_32(sessionId, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 14,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiDartTypesMapInitConfigDefaultConstMeta => const TaskConstMeta(
+            debugName: "map_init_config_default",
+            argNames: [],
+        );
+        
+
+@override Future<void> crateApiGalileoApiMarkSessionAlive({required int sessionId })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_32(sessionId, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_unit,
           decodeErrorData: null,
-        ),
-        constMeta: kCrateApiGalileoApiMarkSessionAliveConstMeta,
-        argValues: [sessionId],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiMarkSessionAliveConstMeta,
+            argValues: [sessionId],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiMarkSessionAliveConstMeta =>
-      const TaskConstMeta(
-        debugName: "mark_session_alive",
-        argNames: ["sessionId"],
-      );
 
-  @override
-  Future<bool> crateApiGalileoApiRemovePointFromLayer({
-    required int sessionId,
-    required int layerId,
-    required int index,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_u_32(sessionId, serializer);
-          sse_encode_u_32(layerId, serializer);
-          sse_encode_u_32(index, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 15,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiMarkSessionAliveConstMeta => const TaskConstMeta(
+            debugName: "mark_session_alive",
+            argNames: ["sessionId"],
+        );
+        
+
+@override Future<bool> crateApiGalileoApiRemovePointFromLayer({required int sessionId , required int layerId , required int index })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_32(sessionId, serializer);
+sse_encode_u_32(layerId, serializer);
+sse_encode_u_32(index, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_bool,
           decodeErrorData: sse_decode_AnyhowException,
-        ),
-        constMeta: kCrateApiGalileoApiRemovePointFromLayerConstMeta,
-        argValues: [sessionId, layerId, index],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiRemovePointFromLayerConstMeta,
+            argValues: [sessionId, layerId, index],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiRemovePointFromLayerConstMeta =>
-      const TaskConstMeta(
-        debugName: "remove_point_from_layer",
-        argNames: ["sessionId", "layerId", "index"],
-      );
 
-  @override
-  Future<bool> crateApiGalileoApiRemovePolygonFromLayer({
-    required int sessionId,
-    required int layerId,
-    required int index,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_u_32(sessionId, serializer);
-          sse_encode_u_32(layerId, serializer);
-          sse_encode_u_32(index, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 16,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiRemovePointFromLayerConstMeta => const TaskConstMeta(
+            debugName: "remove_point_from_layer",
+            argNames: ["sessionId", "layerId", "index"],
+        );
+        
+
+@override Future<bool> crateApiGalileoApiRemovePolygonFromLayer({required int sessionId , required int layerId , required int index })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_32(sessionId, serializer);
+sse_encode_u_32(layerId, serializer);
+sse_encode_u_32(index, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_bool,
           decodeErrorData: sse_decode_AnyhowException,
-        ),
-        constMeta: kCrateApiGalileoApiRemovePolygonFromLayerConstMeta,
-        argValues: [sessionId, layerId, index],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiRemovePolygonFromLayerConstMeta,
+            argValues: [sessionId, layerId, index],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiRemovePolygonFromLayerConstMeta =>
-      const TaskConstMeta(
-        debugName: "remove_polygon_from_layer",
-        argNames: ["sessionId", "layerId", "index"],
-      );
 
-  @override
-  Future<void> crateApiGalileoApiRequestMapRedraw({required int sessionId}) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_u_32(sessionId, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 17,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiRemovePolygonFromLayerConstMeta => const TaskConstMeta(
+            debugName: "remove_polygon_from_layer",
+            argNames: ["sessionId", "layerId", "index"],
+        );
+        
+
+@override Future<void> crateApiGalileoApiRequestMapRedraw({required int sessionId })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_32(sessionId, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 17, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_unit,
           decodeErrorData: sse_decode_AnyhowException,
-        ),
-        constMeta: kCrateApiGalileoApiRequestMapRedrawConstMeta,
-        argValues: [sessionId],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiRequestMapRedrawConstMeta,
+            argValues: [sessionId],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiRequestMapRedrawConstMeta =>
-      const TaskConstMeta(
-        debugName: "request_map_redraw",
-        argNames: ["sessionId"],
-      );
 
-  @override
-  Future<void> crateApiGalileoApiResizeSession({
-    required int sessionId,
-    required MapSize newSize,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_u_32(sessionId, serializer);
-          sse_encode_box_autoadd_map_size(newSize, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 18,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiRequestMapRedrawConstMeta => const TaskConstMeta(
+            debugName: "request_map_redraw",
+            argNames: ["sessionId"],
+        );
+        
+
+@override Future<void> crateApiGalileoApiResizeSession({required int sessionId , required MapSize newSize })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_32(sessionId, serializer);
+sse_encode_box_autoadd_map_size(newSize, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 18, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_unit,
           decodeErrorData: sse_decode_AnyhowException,
-        ),
-        constMeta: kCrateApiGalileoApiResizeSessionConstMeta,
-        argValues: [sessionId, newSize],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiResizeSessionConstMeta,
+            argValues: [sessionId, newSize],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiResizeSessionConstMeta =>
-      const TaskConstMeta(
-        debugName: "resize_session",
-        argNames: ["sessionId", "newSize"],
-      );
 
-  @override
-  Future<void> crateApiGalileoApiSetTileCachePath({String? path}) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_opt_String(path, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 19,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiGalileoApiResizeSessionConstMeta => const TaskConstMeta(
+            debugName: "resize_session",
+            argNames: ["sessionId", "newSize"],
+        );
+        
+
+@override Future<void> crateApiGalileoApiSetTileCachePath({String? path })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_opt_String(path, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 19, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_unit,
           decodeErrorData: null,
-        ),
-        constMeta: kCrateApiGalileoApiSetTileCachePathConstMeta,
-        argValues: [path],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiGalileoApiSetTileCachePathConstMeta,
+            argValues: [path],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiGalileoApiSetTileCachePathConstMeta =>
-      const TaskConstMeta(debugName: "set_tile_cache_path", argNames: ["path"]);
 
-  @protected
-  AnyhowException dco_decode_AnyhowException(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return AnyhowException(raw as String);
-  }
-
-  @protected
-  String dco_decode_String(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as String;
-  }
-
-  @protected
-  bool dco_decode_bool(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as bool;
-  }
-
-  @protected
-  LayerConfig dco_decode_box_autoadd_layer_config(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_layer_config(raw);
-  }
-
-  @protected
-  MapInitConfig dco_decode_box_autoadd_map_init_config(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_map_init_config(raw);
-  }
-
-  @protected
-  MapSize dco_decode_box_autoadd_map_size(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_map_size(raw);
-  }
-
-  @protected
-  MapViewport dco_decode_box_autoadd_map_viewport(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_map_viewport(raw);
-  }
-
-  @protected
-  MouseEvent dco_decode_box_autoadd_mouse_event(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_mouse_event(raw);
-  }
-
-  @protected
-  Point dco_decode_box_autoadd_point(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_point(raw);
-  }
-
-  @protected
-  Point2 dco_decode_box_autoadd_point_2(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_point_2(raw);
-  }
-
-  @protected
-  Polygon dco_decode_box_autoadd_polygon(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_polygon(raw);
-  }
-
-  @protected
-  UserEvent dco_decode_box_autoadd_user_event(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_user_event(raw);
-  }
-
-  @protected
-  Vector2 dco_decode_box_autoadd_vector_2(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_vector_2(raw);
-  }
-
-  @protected
-  Color dco_decode_color(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return Color(
-      r: dco_decode_f_64(arr[0]),
-      g: dco_decode_f_64(arr[1]),
-      b: dco_decode_f_64(arr[2]),
-      a: dco_decode_f_64(arr[3]),
-    );
-  }
-
-  @protected
-  CreateNewSessionResponse dco_decode_create_new_session_response(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return CreateNewSessionResponse(
-      sessionId: dco_decode_u_32(arr[0]),
-      textureId: dco_decode_i_64(arr[1]),
-    );
-  }
-
-  @protected
-  double dco_decode_f_32(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as double;
-  }
-
-  @protected
-  double dco_decode_f_64(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as double;
-  }
-
-  @protected
-  int dco_decode_i_32(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as int;
-  }
-
-  @protected
-  PlatformInt64 dco_decode_i_64(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dcoDecodeI64(raw);
-  }
-
-  @protected
-  LayerConfig dco_decode_layer_config(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    switch (raw[0]) {
-      case 0:
-        return LayerConfig_Osm();
-      case 1:
-        return LayerConfig_RasterTiles(
-          urlTemplate: dco_decode_String(raw[1]),
-          attribution: dco_decode_opt_String(raw[2]),
+        TaskConstMeta get kCrateApiGalileoApiSetTileCachePathConstMeta => const TaskConstMeta(
+            debugName: "set_tile_cache_path",
+            argNames: ["path"],
         );
-      case 2:
-        return LayerConfig_VectorTiles(
-          urlTemplate: dco_decode_String(raw[1]),
-          styleJson: dco_decode_String(raw[2]),
-          attribution: dco_decode_opt_String(raw[3]),
-        );
-      case 3:
-        return LayerConfig_PolygonLayer(
-          features: dco_decode_list_polygon(raw[1]),
-        );
-      case 4:
-        return LayerConfig_PointLayer(features: dco_decode_list_point(raw[1]));
-      default:
-        throw Exception("unreachable");
-    }
-  }
-
-  @protected
-  List<Point> dco_decode_list_point(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_point).toList();
-  }
-
-  @protected
-  List<Polygon> dco_decode_list_polygon(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_polygon).toList();
-  }
-
-  @protected
-  Uint8List dco_decode_list_prim_u_8_strict(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as Uint8List;
-  }
-
-  @protected
-  List<(double, double)> dco_decode_list_record_f_64_f_64(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_record_f_64_f_64).toList();
-  }
-
-  @protected
-  MapInitConfig dco_decode_map_init_config(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 5)
-      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
-    return MapInitConfig(
-      latlon: dco_decode_record_f_64_f_64(arr[0]),
-      zoomLevel: dco_decode_u_32(arr[1]),
-      mapSize: dco_decode_map_size(arr[2]),
-      enableMultisampling: dco_decode_bool(arr[3]),
-      backgroundColor: dco_decode_record_f_32_f_32_f_32_f_32(arr[4]),
-    );
-  }
-
-  @protected
-  MapSize dco_decode_map_size(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return MapSize(
-      width: dco_decode_u_32(arr[0]),
-      height: dco_decode_u_32(arr[1]),
-    );
-  }
-
-  @protected
-  MapViewport dco_decode_map_viewport(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return MapViewport(
-      xMin: dco_decode_f_64(arr[0]),
-      xMax: dco_decode_f_64(arr[1]),
-      yMin: dco_decode_f_64(arr[2]),
-      yMax: dco_decode_f_64(arr[3]),
-    );
-  }
-
-  @protected
-  MouseButton dco_decode_mouse_button(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return MouseButton.values[raw as int];
-  }
-
-  @protected
-  MouseButtonState dco_decode_mouse_button_state(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return MouseButtonState.values[raw as int];
-  }
-
-  @protected
-  MouseButtonsState dco_decode_mouse_buttons_state(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
-    return MouseButtonsState(
-      left: dco_decode_mouse_button_state(arr[0]),
-      middle: dco_decode_mouse_button_state(arr[1]),
-      right: dco_decode_mouse_button_state(arr[2]),
-    );
-  }
-
-  @protected
-  MouseEvent dco_decode_mouse_event(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return MouseEvent(
-      screenPointerPosition: dco_decode_point_2(arr[0]),
-      buttons: dco_decode_mouse_buttons_state(arr[1]),
-    );
-  }
-
-  @protected
-  String? dco_decode_opt_String(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_String(raw);
-  }
-
-  @protected
-  MapViewport? dco_decode_opt_box_autoadd_map_viewport(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_box_autoadd_map_viewport(raw);
-  }
-
-  @protected
-  Point dco_decode_point(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return Point(
-      coordinate: dco_decode_record_f_64_f_64(arr[0]),
-      style: dco_decode_point_style(arr[1]),
-    );
-  }
-
-  @protected
-  Point2 dco_decode_point_2(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return Point2(x: dco_decode_f_64(arr[0]), y: dco_decode_f_64(arr[1]));
-  }
-
-  @protected
-  PointStyle dco_decode_point_style(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return PointStyle(
-      fillColor: dco_decode_color(arr[0]),
-      size: dco_decode_f_32(arr[1]),
-    );
-  }
-
-  @protected
-  Polygon dco_decode_polygon(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return Polygon(
-      points: dco_decode_list_record_f_64_f_64(arr[0]),
-      style: dco_decode_polygon_style(arr[1]),
-    );
-  }
-
-  @protected
-  PolygonStyle dco_decode_polygon_style(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return PolygonStyle(
-      fillColor: dco_decode_color(arr[0]),
-      strokeColor: dco_decode_color(arr[1]),
-      strokeWidth: dco_decode_f_64(arr[2]),
-      strokeOffset: dco_decode_f_64(arr[3]),
-    );
-  }
-
-  @protected
-  (double, double, double, double) dco_decode_record_f_32_f_32_f_32_f_32(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 4) {
-      throw Exception('Expected 4 elements, got ${arr.length}');
-    }
-    return (
-      dco_decode_f_32(arr[0]),
-      dco_decode_f_32(arr[1]),
-      dco_decode_f_32(arr[2]),
-      dco_decode_f_32(arr[3]),
-    );
-  }
-
-  @protected
-  (double, double) dco_decode_record_f_64_f_64(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2) {
-      throw Exception('Expected 2 elements, got ${arr.length}');
-    }
-    return (dco_decode_f_64(arr[0]), dco_decode_f_64(arr[1]));
-  }
-
-  @protected
-  int dco_decode_u_32(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as int;
-  }
-
-  @protected
-  int dco_decode_u_8(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as int;
-  }
-
-  @protected
-  void dco_decode_unit(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return;
-  }
-
-  @protected
-  UserEvent dco_decode_user_event(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    switch (raw[0]) {
-      case 0:
-        return UserEvent_ButtonPressed(
-          dco_decode_mouse_button(raw[1]),
-          dco_decode_box_autoadd_mouse_event(raw[2]),
-        );
-      case 1:
-        return UserEvent_ButtonReleased(
-          dco_decode_mouse_button(raw[1]),
-          dco_decode_box_autoadd_mouse_event(raw[2]),
-        );
-      case 2:
-        return UserEvent_Click(
-          dco_decode_mouse_button(raw[1]),
-          dco_decode_box_autoadd_mouse_event(raw[2]),
-        );
-      case 3:
-        return UserEvent_DoubleClick(
-          dco_decode_mouse_button(raw[1]),
-          dco_decode_box_autoadd_mouse_event(raw[2]),
-        );
-      case 4:
-        return UserEvent_PointerMoved(
-          dco_decode_box_autoadd_mouse_event(raw[1]),
-        );
-      case 5:
-        return UserEvent_DragStarted(
-          dco_decode_mouse_button(raw[1]),
-          dco_decode_box_autoadd_mouse_event(raw[2]),
-        );
-      case 6:
-        return UserEvent_Drag(
-          dco_decode_mouse_button(raw[1]),
-          dco_decode_box_autoadd_vector_2(raw[2]),
-          dco_decode_box_autoadd_mouse_event(raw[3]),
-        );
-      case 7:
-        return UserEvent_DragEnded(
-          dco_decode_mouse_button(raw[1]),
-          dco_decode_box_autoadd_mouse_event(raw[2]),
-        );
-      case 8:
-        return UserEvent_Scroll(
-          dco_decode_f_64(raw[1]),
-          dco_decode_box_autoadd_mouse_event(raw[2]),
-        );
-      case 9:
-        return UserEvent_Zoom(
-          dco_decode_f_64(raw[1]),
-          dco_decode_box_autoadd_point_2(raw[2]),
-        );
-      default:
-        throw Exception("unreachable");
-    }
-  }
-
-  @protected
-  Vector2 dco_decode_vector_2(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return Vector2(dx: dco_decode_f_64(arr[0]), dy: dco_decode_f_64(arr[1]));
-  }
-
-  @protected
-  AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_String(deserializer);
-    return AnyhowException(inner);
-  }
-
-  @protected
-  String sse_decode_String(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_list_prim_u_8_strict(deserializer);
-    return utf8.decoder.convert(inner);
-  }
-
-  @protected
-  bool sse_decode_bool(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getUint8() != 0;
-  }
-
-  @protected
-  LayerConfig sse_decode_box_autoadd_layer_config(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_layer_config(deserializer));
-  }
-
-  @protected
-  MapInitConfig sse_decode_box_autoadd_map_init_config(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_map_init_config(deserializer));
-  }
-
-  @protected
-  MapSize sse_decode_box_autoadd_map_size(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_map_size(deserializer));
-  }
-
-  @protected
-  MapViewport sse_decode_box_autoadd_map_viewport(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_map_viewport(deserializer));
-  }
-
-  @protected
-  MouseEvent sse_decode_box_autoadd_mouse_event(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_mouse_event(deserializer));
-  }
-
-  @protected
-  Point sse_decode_box_autoadd_point(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_point(deserializer));
-  }
-
-  @protected
-  Point2 sse_decode_box_autoadd_point_2(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_point_2(deserializer));
-  }
-
-  @protected
-  Polygon sse_decode_box_autoadd_polygon(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_polygon(deserializer));
-  }
-
-  @protected
-  UserEvent sse_decode_box_autoadd_user_event(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_user_event(deserializer));
-  }
-
-  @protected
-  Vector2 sse_decode_box_autoadd_vector_2(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_vector_2(deserializer));
-  }
-
-  @protected
-  Color sse_decode_color(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_r = sse_decode_f_64(deserializer);
-    var var_g = sse_decode_f_64(deserializer);
-    var var_b = sse_decode_f_64(deserializer);
-    var var_a = sse_decode_f_64(deserializer);
-    return Color(r: var_r, g: var_g, b: var_b, a: var_a);
-  }
-
-  @protected
-  CreateNewSessionResponse sse_decode_create_new_session_response(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_sessionId = sse_decode_u_32(deserializer);
-    var var_textureId = sse_decode_i_64(deserializer);
-    return CreateNewSessionResponse(
-      sessionId: var_sessionId,
-      textureId: var_textureId,
-    );
-  }
-
-  @protected
-  double sse_decode_f_32(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getFloat32();
-  }
-
-  @protected
-  double sse_decode_f_64(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getFloat64();
-  }
-
-  @protected
-  int sse_decode_i_32(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getInt32();
-  }
-
-  @protected
-  PlatformInt64 sse_decode_i_64(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getPlatformInt64();
-  }
-
-  @protected
-  LayerConfig sse_decode_layer_config(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var tag_ = sse_decode_i_32(deserializer);
-    switch (tag_) {
-      case 0:
-        return LayerConfig_Osm();
-      case 1:
-        var var_urlTemplate = sse_decode_String(deserializer);
-        var var_attribution = sse_decode_opt_String(deserializer);
-        return LayerConfig_RasterTiles(
-          urlTemplate: var_urlTemplate,
-          attribution: var_attribution,
-        );
-      case 2:
-        var var_urlTemplate = sse_decode_String(deserializer);
-        var var_styleJson = sse_decode_String(deserializer);
-        var var_attribution = sse_decode_opt_String(deserializer);
-        return LayerConfig_VectorTiles(
-          urlTemplate: var_urlTemplate,
-          styleJson: var_styleJson,
-          attribution: var_attribution,
-        );
-      case 3:
-        var var_features = sse_decode_list_polygon(deserializer);
-        return LayerConfig_PolygonLayer(features: var_features);
-      case 4:
-        var var_features = sse_decode_list_point(deserializer);
-        return LayerConfig_PointLayer(features: var_features);
-      default:
-        throw UnimplementedError('');
-    }
-  }
-
-  @protected
-  List<Point> sse_decode_list_point(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <Point>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_point(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  List<Polygon> sse_decode_list_polygon(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <Polygon>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_polygon(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var len_ = sse_decode_i_32(deserializer);
-    return deserializer.buffer.getUint8List(len_);
-  }
-
-  @protected
-  List<(double, double)> sse_decode_list_record_f_64_f_64(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <(double, double)>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_record_f_64_f_64(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  MapInitConfig sse_decode_map_init_config(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_latlon = sse_decode_record_f_64_f_64(deserializer);
-    var var_zoomLevel = sse_decode_u_32(deserializer);
-    var var_mapSize = sse_decode_map_size(deserializer);
-    var var_enableMultisampling = sse_decode_bool(deserializer);
-    var var_backgroundColor = sse_decode_record_f_32_f_32_f_32_f_32(
-      deserializer,
-    );
-    return MapInitConfig(
-      latlon: var_latlon,
-      zoomLevel: var_zoomLevel,
-      mapSize: var_mapSize,
-      enableMultisampling: var_enableMultisampling,
-      backgroundColor: var_backgroundColor,
-    );
-  }
-
-  @protected
-  MapSize sse_decode_map_size(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_width = sse_decode_u_32(deserializer);
-    var var_height = sse_decode_u_32(deserializer);
-    return MapSize(width: var_width, height: var_height);
-  }
-
-  @protected
-  MapViewport sse_decode_map_viewport(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_xMin = sse_decode_f_64(deserializer);
-    var var_xMax = sse_decode_f_64(deserializer);
-    var var_yMin = sse_decode_f_64(deserializer);
-    var var_yMax = sse_decode_f_64(deserializer);
-    return MapViewport(
-      xMin: var_xMin,
-      xMax: var_xMax,
-      yMin: var_yMin,
-      yMax: var_yMax,
-    );
-  }
-
-  @protected
-  MouseButton sse_decode_mouse_button(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_i_32(deserializer);
-    return MouseButton.values[inner];
-  }
-
-  @protected
-  MouseButtonState sse_decode_mouse_button_state(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_i_32(deserializer);
-    return MouseButtonState.values[inner];
-  }
-
-  @protected
-  MouseButtonsState sse_decode_mouse_buttons_state(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_left = sse_decode_mouse_button_state(deserializer);
-    var var_middle = sse_decode_mouse_button_state(deserializer);
-    var var_right = sse_decode_mouse_button_state(deserializer);
-    return MouseButtonsState(
-      left: var_left,
-      middle: var_middle,
-      right: var_right,
-    );
-  }
-
-  @protected
-  MouseEvent sse_decode_mouse_event(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_screenPointerPosition = sse_decode_point_2(deserializer);
-    var var_buttons = sse_decode_mouse_buttons_state(deserializer);
-    return MouseEvent(
-      screenPointerPosition: var_screenPointerPosition,
-      buttons: var_buttons,
-    );
-  }
-
-  @protected
-  String? sse_decode_opt_String(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_String(deserializer));
-    } else {
-      return null;
-    }
-  }
-
-  @protected
-  MapViewport? sse_decode_opt_box_autoadd_map_viewport(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_box_autoadd_map_viewport(deserializer));
-    } else {
-      return null;
-    }
-  }
-
-  @protected
-  Point sse_decode_point(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_coordinate = sse_decode_record_f_64_f_64(deserializer);
-    var var_style = sse_decode_point_style(deserializer);
-    return Point(coordinate: var_coordinate, style: var_style);
-  }
-
-  @protected
-  Point2 sse_decode_point_2(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_x = sse_decode_f_64(deserializer);
-    var var_y = sse_decode_f_64(deserializer);
-    return Point2(x: var_x, y: var_y);
-  }
-
-  @protected
-  PointStyle sse_decode_point_style(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_fillColor = sse_decode_color(deserializer);
-    var var_size = sse_decode_f_32(deserializer);
-    return PointStyle(fillColor: var_fillColor, size: var_size);
-  }
-
-  @protected
-  Polygon sse_decode_polygon(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_points = sse_decode_list_record_f_64_f_64(deserializer);
-    var var_style = sse_decode_polygon_style(deserializer);
-    return Polygon(points: var_points, style: var_style);
-  }
-
-  @protected
-  PolygonStyle sse_decode_polygon_style(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_fillColor = sse_decode_color(deserializer);
-    var var_strokeColor = sse_decode_color(deserializer);
-    var var_strokeWidth = sse_decode_f_64(deserializer);
-    var var_strokeOffset = sse_decode_f_64(deserializer);
-    return PolygonStyle(
-      fillColor: var_fillColor,
-      strokeColor: var_strokeColor,
-      strokeWidth: var_strokeWidth,
-      strokeOffset: var_strokeOffset,
-    );
-  }
-
-  @protected
-  (double, double, double, double) sse_decode_record_f_32_f_32_f_32_f_32(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_field0 = sse_decode_f_32(deserializer);
-    var var_field1 = sse_decode_f_32(deserializer);
-    var var_field2 = sse_decode_f_32(deserializer);
-    var var_field3 = sse_decode_f_32(deserializer);
-    return (var_field0, var_field1, var_field2, var_field3);
-  }
-
-  @protected
-  (double, double) sse_decode_record_f_64_f_64(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_field0 = sse_decode_f_64(deserializer);
-    var var_field1 = sse_decode_f_64(deserializer);
-    return (var_field0, var_field1);
-  }
-
-  @protected
-  int sse_decode_u_32(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getUint32();
-  }
-
-  @protected
-  int sse_decode_u_8(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getUint8();
-  }
-
-  @protected
-  void sse_decode_unit(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-  }
-
-  @protected
-  UserEvent sse_decode_user_event(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var tag_ = sse_decode_i_32(deserializer);
-    switch (tag_) {
-      case 0:
-        var var_field0 = sse_decode_mouse_button(deserializer);
-        var var_field1 = sse_decode_box_autoadd_mouse_event(deserializer);
-        return UserEvent_ButtonPressed(var_field0, var_field1);
-      case 1:
-        var var_field0 = sse_decode_mouse_button(deserializer);
-        var var_field1 = sse_decode_box_autoadd_mouse_event(deserializer);
-        return UserEvent_ButtonReleased(var_field0, var_field1);
-      case 2:
-        var var_field0 = sse_decode_mouse_button(deserializer);
-        var var_field1 = sse_decode_box_autoadd_mouse_event(deserializer);
-        return UserEvent_Click(var_field0, var_field1);
-      case 3:
-        var var_field0 = sse_decode_mouse_button(deserializer);
-        var var_field1 = sse_decode_box_autoadd_mouse_event(deserializer);
-        return UserEvent_DoubleClick(var_field0, var_field1);
-      case 4:
-        var var_field0 = sse_decode_box_autoadd_mouse_event(deserializer);
-        return UserEvent_PointerMoved(var_field0);
-      case 5:
-        var var_field0 = sse_decode_mouse_button(deserializer);
-        var var_field1 = sse_decode_box_autoadd_mouse_event(deserializer);
-        return UserEvent_DragStarted(var_field0, var_field1);
-      case 6:
-        var var_field0 = sse_decode_mouse_button(deserializer);
-        var var_field1 = sse_decode_box_autoadd_vector_2(deserializer);
-        var var_field2 = sse_decode_box_autoadd_mouse_event(deserializer);
-        return UserEvent_Drag(var_field0, var_field1, var_field2);
-      case 7:
-        var var_field0 = sse_decode_mouse_button(deserializer);
-        var var_field1 = sse_decode_box_autoadd_mouse_event(deserializer);
-        return UserEvent_DragEnded(var_field0, var_field1);
-      case 8:
-        var var_field0 = sse_decode_f_64(deserializer);
-        var var_field1 = sse_decode_box_autoadd_mouse_event(deserializer);
-        return UserEvent_Scroll(var_field0, var_field1);
-      case 9:
-        var var_field0 = sse_decode_f_64(deserializer);
-        var var_field1 = sse_decode_box_autoadd_point_2(deserializer);
-        return UserEvent_Zoom(var_field0, var_field1);
-      default:
-        throw UnimplementedError('');
-    }
-  }
-
-  @protected
-  Vector2 sse_decode_vector_2(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_dx = sse_decode_f_64(deserializer);
-    var var_dy = sse_decode_f_64(deserializer);
-    return Vector2(dx: var_dx, dy: var_dy);
-  }
-
-  @protected
-  void sse_encode_AnyhowException(
-    AnyhowException self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_String(self.message, serializer);
-  }
-
-  @protected
-  void sse_encode_String(String self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_prim_u_8_strict(utf8.encoder.convert(self), serializer);
-  }
-
-  @protected
-  void sse_encode_bool(bool self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putUint8(self ? 1 : 0);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_layer_config(
-    LayerConfig self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_layer_config(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_map_init_config(
-    MapInitConfig self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_map_init_config(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_map_size(MapSize self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_map_size(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_map_viewport(
-    MapViewport self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_map_viewport(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_mouse_event(
-    MouseEvent self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_mouse_event(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_point(Point self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_point(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_point_2(Point2 self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_point_2(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_polygon(Polygon self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_polygon(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_user_event(
-    UserEvent self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_user_event(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_vector_2(Vector2 self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_vector_2(self, serializer);
-  }
-
-  @protected
-  void sse_encode_color(Color self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_f_64(self.r, serializer);
-    sse_encode_f_64(self.g, serializer);
-    sse_encode_f_64(self.b, serializer);
-    sse_encode_f_64(self.a, serializer);
-  }
-
-  @protected
-  void sse_encode_create_new_session_response(
-    CreateNewSessionResponse self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_u_32(self.sessionId, serializer);
-    sse_encode_i_64(self.textureId, serializer);
-  }
-
-  @protected
-  void sse_encode_f_32(double self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putFloat32(self);
-  }
-
-  @protected
-  void sse_encode_f_64(double self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putFloat64(self);
-  }
-
-  @protected
-  void sse_encode_i_32(int self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putInt32(self);
-  }
-
-  @protected
-  void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putPlatformInt64(self);
-  }
-
-  @protected
-  void sse_encode_layer_config(LayerConfig self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    switch (self) {
-      case LayerConfig_Osm():
-        sse_encode_i_32(0, serializer);
-      case LayerConfig_RasterTiles(
-        urlTemplate: final urlTemplate,
-        attribution: final attribution,
-      ):
-        sse_encode_i_32(1, serializer);
-        sse_encode_String(urlTemplate, serializer);
-        sse_encode_opt_String(attribution, serializer);
-      case LayerConfig_VectorTiles(
-        urlTemplate: final urlTemplate,
-        styleJson: final styleJson,
-        attribution: final attribution,
-      ):
-        sse_encode_i_32(2, serializer);
-        sse_encode_String(urlTemplate, serializer);
-        sse_encode_String(styleJson, serializer);
-        sse_encode_opt_String(attribution, serializer);
-      case LayerConfig_PolygonLayer(features: final features):
-        sse_encode_i_32(3, serializer);
-        sse_encode_list_polygon(features, serializer);
-      case LayerConfig_PointLayer(features: final features):
-        sse_encode_i_32(4, serializer);
-        sse_encode_list_point(features, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_point(List<Point> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_point(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_polygon(List<Polygon> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_polygon(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_prim_u_8_strict(
-    Uint8List self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    serializer.buffer.putUint8List(self);
-  }
-
-  @protected
-  void sse_encode_list_record_f_64_f_64(
-    List<(double, double)> self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_record_f_64_f_64(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_map_init_config(
-    MapInitConfig self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_record_f_64_f_64(self.latlon, serializer);
-    sse_encode_u_32(self.zoomLevel, serializer);
-    sse_encode_map_size(self.mapSize, serializer);
-    sse_encode_bool(self.enableMultisampling, serializer);
-    sse_encode_record_f_32_f_32_f_32_f_32(self.backgroundColor, serializer);
-  }
-
-  @protected
-  void sse_encode_map_size(MapSize self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_u_32(self.width, serializer);
-    sse_encode_u_32(self.height, serializer);
-  }
-
-  @protected
-  void sse_encode_map_viewport(MapViewport self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_f_64(self.xMin, serializer);
-    sse_encode_f_64(self.xMax, serializer);
-    sse_encode_f_64(self.yMin, serializer);
-    sse_encode_f_64(self.yMax, serializer);
-  }
-
-  @protected
-  void sse_encode_mouse_button(MouseButton self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.index, serializer);
-  }
-
-  @protected
-  void sse_encode_mouse_button_state(
-    MouseButtonState self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.index, serializer);
-  }
-
-  @protected
-  void sse_encode_mouse_buttons_state(
-    MouseButtonsState self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_mouse_button_state(self.left, serializer);
-    sse_encode_mouse_button_state(self.middle, serializer);
-    sse_encode_mouse_button_state(self.right, serializer);
-  }
-
-  @protected
-  void sse_encode_mouse_event(MouseEvent self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_point_2(self.screenPointerPosition, serializer);
-    sse_encode_mouse_buttons_state(self.buttons, serializer);
-  }
-
-  @protected
-  void sse_encode_opt_String(String? self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_String(self, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_opt_box_autoadd_map_viewport(
-    MapViewport? self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_box_autoadd_map_viewport(self, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_point(Point self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_record_f_64_f_64(self.coordinate, serializer);
-    sse_encode_point_style(self.style, serializer);
-  }
-
-  @protected
-  void sse_encode_point_2(Point2 self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_f_64(self.x, serializer);
-    sse_encode_f_64(self.y, serializer);
-  }
-
-  @protected
-  void sse_encode_point_style(PointStyle self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_color(self.fillColor, serializer);
-    sse_encode_f_32(self.size, serializer);
-  }
-
-  @protected
-  void sse_encode_polygon(Polygon self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_record_f_64_f_64(self.points, serializer);
-    sse_encode_polygon_style(self.style, serializer);
-  }
-
-  @protected
-  void sse_encode_polygon_style(PolygonStyle self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_color(self.fillColor, serializer);
-    sse_encode_color(self.strokeColor, serializer);
-    sse_encode_f_64(self.strokeWidth, serializer);
-    sse_encode_f_64(self.strokeOffset, serializer);
-  }
-
-  @protected
-  void sse_encode_record_f_32_f_32_f_32_f_32(
-    (double, double, double, double) self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_f_32(self.$1, serializer);
-    sse_encode_f_32(self.$2, serializer);
-    sse_encode_f_32(self.$3, serializer);
-    sse_encode_f_32(self.$4, serializer);
-  }
-
-  @protected
-  void sse_encode_record_f_64_f_64(
-    (double, double) self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_f_64(self.$1, serializer);
-    sse_encode_f_64(self.$2, serializer);
-  }
-
-  @protected
-  void sse_encode_u_32(int self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putUint32(self);
-  }
-
-  @protected
-  void sse_encode_u_8(int self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putUint8(self);
-  }
-
-  @protected
-  void sse_encode_unit(void self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-  }
-
-  @protected
-  void sse_encode_user_event(UserEvent self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    switch (self) {
-      case UserEvent_ButtonPressed(field0: final field0, field1: final field1):
-        sse_encode_i_32(0, serializer);
-        sse_encode_mouse_button(field0, serializer);
-        sse_encode_box_autoadd_mouse_event(field1, serializer);
-      case UserEvent_ButtonReleased(field0: final field0, field1: final field1):
-        sse_encode_i_32(1, serializer);
-        sse_encode_mouse_button(field0, serializer);
-        sse_encode_box_autoadd_mouse_event(field1, serializer);
-      case UserEvent_Click(field0: final field0, field1: final field1):
-        sse_encode_i_32(2, serializer);
-        sse_encode_mouse_button(field0, serializer);
-        sse_encode_box_autoadd_mouse_event(field1, serializer);
-      case UserEvent_DoubleClick(field0: final field0, field1: final field1):
-        sse_encode_i_32(3, serializer);
-        sse_encode_mouse_button(field0, serializer);
-        sse_encode_box_autoadd_mouse_event(field1, serializer);
-      case UserEvent_PointerMoved(field0: final field0):
-        sse_encode_i_32(4, serializer);
-        sse_encode_box_autoadd_mouse_event(field0, serializer);
-      case UserEvent_DragStarted(field0: final field0, field1: final field1):
-        sse_encode_i_32(5, serializer);
-        sse_encode_mouse_button(field0, serializer);
-        sse_encode_box_autoadd_mouse_event(field1, serializer);
-      case UserEvent_Drag(
-        field0: final field0,
-        field1: final field1,
-        field2: final field2,
-      ):
-        sse_encode_i_32(6, serializer);
-        sse_encode_mouse_button(field0, serializer);
-        sse_encode_box_autoadd_vector_2(field1, serializer);
-        sse_encode_box_autoadd_mouse_event(field2, serializer);
-      case UserEvent_DragEnded(field0: final field0, field1: final field1):
-        sse_encode_i_32(7, serializer);
-        sse_encode_mouse_button(field0, serializer);
-        sse_encode_box_autoadd_mouse_event(field1, serializer);
-      case UserEvent_Scroll(field0: final field0, field1: final field1):
-        sse_encode_i_32(8, serializer);
-        sse_encode_f_64(field0, serializer);
-        sse_encode_box_autoadd_mouse_event(field1, serializer);
-      case UserEvent_Zoom(field0: final field0, field1: final field1):
-        sse_encode_i_32(9, serializer);
-        sse_encode_f_64(field0, serializer);
-        sse_encode_box_autoadd_point_2(field1, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_vector_2(Vector2 self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_f_64(self.dx, serializer);
-    sse_encode_f_64(self.dy, serializer);
-  }
-}
+        
+
+
+
+                  @protected AnyhowException dco_decode_AnyhowException(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return AnyhowException(raw as String); }
+
+@protected String dco_decode_String(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as String; }
+
+@protected bool dco_decode_bool(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as bool; }
+
+@protected LayerConfig dco_decode_box_autoadd_layer_config(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_layer_config(raw); }
+
+@protected MapInitConfig dco_decode_box_autoadd_map_init_config(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_map_init_config(raw); }
+
+@protected MapSize dco_decode_box_autoadd_map_size(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_map_size(raw); }
+
+@protected MapViewport dco_decode_box_autoadd_map_viewport(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_map_viewport(raw); }
+
+@protected MouseEvent dco_decode_box_autoadd_mouse_event(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_mouse_event(raw); }
+
+@protected Point dco_decode_box_autoadd_point(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_point(raw); }
+
+@protected Point2 dco_decode_box_autoadd_point_2(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_point_2(raw); }
+
+@protected Polygon dco_decode_box_autoadd_polygon(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_polygon(raw); }
+
+@protected UserEvent dco_decode_box_autoadd_user_event(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_user_event(raw); }
+
+@protected Vector2 dco_decode_box_autoadd_vector_2(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_vector_2(raw); }
+
+@protected Color dco_decode_color(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+                return Color(r: dco_decode_f_64(arr[0]),
+g: dco_decode_f_64(arr[1]),
+b: dco_decode_f_64(arr[2]),
+a: dco_decode_f_64(arr[3]),); }
+
+@protected CreateNewSessionResponse dco_decode_create_new_session_response(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return CreateNewSessionResponse(sessionId: dco_decode_u_32(arr[0]),
+textureId: dco_decode_i_64(arr[1]),); }
+
+@protected double dco_decode_f_32(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as double; }
+
+@protected double dco_decode_f_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as double; }
+
+@protected int dco_decode_i_32(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as int; }
+
+@protected PlatformInt64 dco_decode_i_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dcoDecodeI64(raw); }
+
+@protected LayerConfig dco_decode_layer_config(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+switch (raw[0]) {
+                case 0: return LayerConfig_Osm();
+case 1: return LayerConfig_RasterTiles(urlTemplate: dco_decode_String(raw[1]),attribution: dco_decode_opt_String(raw[2]),);
+case 2: return LayerConfig_VectorTiles(urlTemplate: dco_decode_String(raw[1]),styleJson: dco_decode_String(raw[2]),attribution: dco_decode_opt_String(raw[3]),);
+case 3: return LayerConfig_PolygonLayer(features: dco_decode_list_polygon(raw[1]),);
+case 4: return LayerConfig_PointLayer(features: dco_decode_list_point(raw[1]),);
+                default: throw Exception("unreachable");
+            } }
+
+@protected List<Point> dco_decode_list_point(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_point).toList(); }
+
+@protected List<Polygon> dco_decode_list_polygon(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_polygon).toList(); }
+
+@protected Uint8List dco_decode_list_prim_u_8_strict(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as Uint8List; }
+
+@protected List<(double,double)> dco_decode_list_record_f_64_f_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_record_f_64_f_64).toList(); }
+
+@protected MapInitConfig dco_decode_map_init_config(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 5) throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+                return MapInitConfig(latlon: dco_decode_record_f_64_f_64(arr[0]),
+zoomLevel: dco_decode_u_32(arr[1]),
+mapSize: dco_decode_map_size(arr[2]),
+enableMultisampling: dco_decode_bool(arr[3]),
+backgroundColor: dco_decode_record_f_32_f_32_f_32_f_32(arr[4]),); }
+
+@protected MapSize dco_decode_map_size(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return MapSize(width: dco_decode_u_32(arr[0]),
+height: dco_decode_u_32(arr[1]),); }
+
+@protected MapViewport dco_decode_map_viewport(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+                return MapViewport(xMin: dco_decode_f_64(arr[0]),
+xMax: dco_decode_f_64(arr[1]),
+yMin: dco_decode_f_64(arr[2]),
+yMax: dco_decode_f_64(arr[3]),); }
+
+@protected MouseButton dco_decode_mouse_button(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return MouseButton.values[raw as int]; }
+
+@protected MouseButtonState dco_decode_mouse_button_state(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return MouseButtonState.values[raw as int]; }
+
+@protected MouseButtonsState dco_decode_mouse_buttons_state(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+                return MouseButtonsState(left: dco_decode_mouse_button_state(arr[0]),
+middle: dco_decode_mouse_button_state(arr[1]),
+right: dco_decode_mouse_button_state(arr[2]),); }
+
+@protected MouseEvent dco_decode_mouse_event(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return MouseEvent(screenPointerPosition: dco_decode_point_2(arr[0]),
+buttons: dco_decode_mouse_buttons_state(arr[1]),); }
+
+@protected String? dco_decode_opt_String(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw == null ? null : dco_decode_String(raw); }
+
+@protected MapViewport? dco_decode_opt_box_autoadd_map_viewport(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw == null ? null : dco_decode_box_autoadd_map_viewport(raw); }
+
+@protected Point dco_decode_point(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return Point(coordinate: dco_decode_record_f_64_f_64(arr[0]),
+style: dco_decode_point_style(arr[1]),); }
+
+@protected Point2 dco_decode_point_2(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return Point2(x: dco_decode_f_64(arr[0]),
+y: dco_decode_f_64(arr[1]),); }
+
+@protected PointStyle dco_decode_point_style(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return PointStyle(fillColor: dco_decode_color(arr[0]),
+size: dco_decode_f_32(arr[1]),); }
+
+@protected Polygon dco_decode_polygon(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return Polygon(points: dco_decode_list_record_f_64_f_64(arr[0]),
+style: dco_decode_polygon_style(arr[1]),); }
+
+@protected PolygonStyle dco_decode_polygon_style(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+                return PolygonStyle(fillColor: dco_decode_color(arr[0]),
+strokeColor: dco_decode_color(arr[1]),
+strokeWidth: dco_decode_f_64(arr[2]),
+strokeOffset: dco_decode_f_64(arr[3]),); }
+
+@protected (double,double,double,double) dco_decode_record_f_32_f_32_f_32_f_32(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+            if (arr.length != 4) {
+                throw Exception('Expected 4 elements, got ${arr.length}');
+            }
+            return (dco_decode_f_32(arr[0]),dco_decode_f_32(arr[1]),dco_decode_f_32(arr[2]),dco_decode_f_32(arr[3]),); }
+
+@protected (double,double) dco_decode_record_f_64_f_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+            if (arr.length != 2) {
+                throw Exception('Expected 2 elements, got ${arr.length}');
+            }
+            return (dco_decode_f_64(arr[0]),dco_decode_f_64(arr[1]),); }
+
+@protected int dco_decode_u_32(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as int; }
+
+@protected int dco_decode_u_8(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as int; }
+
+@protected void dco_decode_unit(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return; }
+
+@protected UserEvent dco_decode_user_event(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+switch (raw[0]) {
+                case 0: return UserEvent_ButtonPressed(dco_decode_mouse_button(raw[1]),dco_decode_box_autoadd_mouse_event(raw[2]),);
+case 1: return UserEvent_ButtonReleased(dco_decode_mouse_button(raw[1]),dco_decode_box_autoadd_mouse_event(raw[2]),);
+case 2: return UserEvent_Click(dco_decode_mouse_button(raw[1]),dco_decode_box_autoadd_mouse_event(raw[2]),);
+case 3: return UserEvent_DoubleClick(dco_decode_mouse_button(raw[1]),dco_decode_box_autoadd_mouse_event(raw[2]),);
+case 4: return UserEvent_PointerMoved(dco_decode_box_autoadd_mouse_event(raw[1]),);
+case 5: return UserEvent_DragStarted(dco_decode_mouse_button(raw[1]),dco_decode_box_autoadd_mouse_event(raw[2]),);
+case 6: return UserEvent_Drag(dco_decode_mouse_button(raw[1]),dco_decode_box_autoadd_vector_2(raw[2]),dco_decode_box_autoadd_mouse_event(raw[3]),);
+case 7: return UserEvent_DragEnded(dco_decode_mouse_button(raw[1]),dco_decode_box_autoadd_mouse_event(raw[2]),);
+case 8: return UserEvent_Scroll(dco_decode_f_64(raw[1]),dco_decode_box_autoadd_mouse_event(raw[2]),);
+case 9: return UserEvent_Zoom(dco_decode_f_64(raw[1]),dco_decode_box_autoadd_point_2(raw[2]),);
+                default: throw Exception("unreachable");
+            } }
+
+@protected Vector2 dco_decode_vector_2(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return Vector2(dx: dco_decode_f_64(arr[0]),
+dy: dco_decode_f_64(arr[1]),); }
+
+@protected AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_String(deserializer);
+        return AnyhowException(inner); }
+
+@protected String sse_decode_String(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_list_prim_u_8_strict(deserializer);
+        return utf8.decoder.convert(inner); }
+
+@protected bool sse_decode_bool(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getUint8() != 0; }
+
+@protected LayerConfig sse_decode_box_autoadd_layer_config(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_layer_config(deserializer)); }
+
+@protected MapInitConfig sse_decode_box_autoadd_map_init_config(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_map_init_config(deserializer)); }
+
+@protected MapSize sse_decode_box_autoadd_map_size(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_map_size(deserializer)); }
+
+@protected MapViewport sse_decode_box_autoadd_map_viewport(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_map_viewport(deserializer)); }
+
+@protected MouseEvent sse_decode_box_autoadd_mouse_event(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_mouse_event(deserializer)); }
+
+@protected Point sse_decode_box_autoadd_point(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_point(deserializer)); }
+
+@protected Point2 sse_decode_box_autoadd_point_2(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_point_2(deserializer)); }
+
+@protected Polygon sse_decode_box_autoadd_polygon(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_polygon(deserializer)); }
+
+@protected UserEvent sse_decode_box_autoadd_user_event(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_user_event(deserializer)); }
+
+@protected Vector2 sse_decode_box_autoadd_vector_2(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_vector_2(deserializer)); }
+
+@protected Color sse_decode_color(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_r = sse_decode_f_64(deserializer);
+var var_g = sse_decode_f_64(deserializer);
+var var_b = sse_decode_f_64(deserializer);
+var var_a = sse_decode_f_64(deserializer);
+return Color(r: var_r, g: var_g, b: var_b, a: var_a); }
+
+@protected CreateNewSessionResponse sse_decode_create_new_session_response(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_sessionId = sse_decode_u_32(deserializer);
+var var_textureId = sse_decode_i_64(deserializer);
+return CreateNewSessionResponse(sessionId: var_sessionId, textureId: var_textureId); }
+
+@protected double sse_decode_f_32(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getFloat32(); }
+
+@protected double sse_decode_f_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getFloat64(); }
+
+@protected int sse_decode_i_32(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getInt32(); }
+
+@protected PlatformInt64 sse_decode_i_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getPlatformInt64(); }
+
+@protected LayerConfig sse_decode_layer_config(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            var tag_ = sse_decode_i_32(deserializer);
+            switch (tag_) { case 0: return LayerConfig_Osm();case 1: var var_urlTemplate = sse_decode_String(deserializer);
+var var_attribution = sse_decode_opt_String(deserializer);
+return LayerConfig_RasterTiles(urlTemplate: var_urlTemplate, attribution: var_attribution);case 2: var var_urlTemplate = sse_decode_String(deserializer);
+var var_styleJson = sse_decode_String(deserializer);
+var var_attribution = sse_decode_opt_String(deserializer);
+return LayerConfig_VectorTiles(urlTemplate: var_urlTemplate, styleJson: var_styleJson, attribution: var_attribution);case 3: var var_features = sse_decode_list_polygon(deserializer);
+return LayerConfig_PolygonLayer(features: var_features);case 4: var var_features = sse_decode_list_point(deserializer);
+return LayerConfig_PointLayer(features: var_features); default: throw UnimplementedError(''); }
+             }
+
+@protected List<Point> sse_decode_list_point(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <Point>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_point(deserializer)); }
+        return ans_;
+         }
+
+@protected List<Polygon> sse_decode_list_polygon(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <Polygon>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_polygon(deserializer)); }
+        return ans_;
+         }
+
+@protected Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var len_ = sse_decode_i_32(deserializer);
+                return deserializer.buffer.getUint8List(len_); }
+
+@protected List<(double,double)> sse_decode_list_record_f_64_f_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <(double,double)>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_record_f_64_f_64(deserializer)); }
+        return ans_;
+         }
+
+@protected MapInitConfig sse_decode_map_init_config(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_latlon = sse_decode_record_f_64_f_64(deserializer);
+var var_zoomLevel = sse_decode_u_32(deserializer);
+var var_mapSize = sse_decode_map_size(deserializer);
+var var_enableMultisampling = sse_decode_bool(deserializer);
+var var_backgroundColor = sse_decode_record_f_32_f_32_f_32_f_32(deserializer);
+return MapInitConfig(latlon: var_latlon, zoomLevel: var_zoomLevel, mapSize: var_mapSize, enableMultisampling: var_enableMultisampling, backgroundColor: var_backgroundColor); }
+
+@protected MapSize sse_decode_map_size(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_width = sse_decode_u_32(deserializer);
+var var_height = sse_decode_u_32(deserializer);
+return MapSize(width: var_width, height: var_height); }
+
+@protected MapViewport sse_decode_map_viewport(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_xMin = sse_decode_f_64(deserializer);
+var var_xMax = sse_decode_f_64(deserializer);
+var var_yMin = sse_decode_f_64(deserializer);
+var var_yMax = sse_decode_f_64(deserializer);
+return MapViewport(xMin: var_xMin, xMax: var_xMax, yMin: var_yMin, yMax: var_yMax); }
+
+@protected MouseButton sse_decode_mouse_button(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_i_32(deserializer);
+        return MouseButton.values[inner]; }
+
+@protected MouseButtonState sse_decode_mouse_button_state(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_i_32(deserializer);
+        return MouseButtonState.values[inner]; }
+
+@protected MouseButtonsState sse_decode_mouse_buttons_state(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_left = sse_decode_mouse_button_state(deserializer);
+var var_middle = sse_decode_mouse_button_state(deserializer);
+var var_right = sse_decode_mouse_button_state(deserializer);
+return MouseButtonsState(left: var_left, middle: var_middle, right: var_right); }
+
+@protected MouseEvent sse_decode_mouse_event(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_screenPointerPosition = sse_decode_point_2(deserializer);
+var var_buttons = sse_decode_mouse_buttons_state(deserializer);
+return MouseEvent(screenPointerPosition: var_screenPointerPosition, buttons: var_buttons); }
+
+@protected String? sse_decode_opt_String(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            if (sse_decode_bool(deserializer)) {
+                return (sse_decode_String(deserializer));
+            } else {
+                return null;
+            }
+             }
+
+@protected MapViewport? sse_decode_opt_box_autoadd_map_viewport(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            if (sse_decode_bool(deserializer)) {
+                return (sse_decode_box_autoadd_map_viewport(deserializer));
+            } else {
+                return null;
+            }
+             }
+
+@protected Point sse_decode_point(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_coordinate = sse_decode_record_f_64_f_64(deserializer);
+var var_style = sse_decode_point_style(deserializer);
+return Point(coordinate: var_coordinate, style: var_style); }
+
+@protected Point2 sse_decode_point_2(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_x = sse_decode_f_64(deserializer);
+var var_y = sse_decode_f_64(deserializer);
+return Point2(x: var_x, y: var_y); }
+
+@protected PointStyle sse_decode_point_style(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_fillColor = sse_decode_color(deserializer);
+var var_size = sse_decode_f_32(deserializer);
+return PointStyle(fillColor: var_fillColor, size: var_size); }
+
+@protected Polygon sse_decode_polygon(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_points = sse_decode_list_record_f_64_f_64(deserializer);
+var var_style = sse_decode_polygon_style(deserializer);
+return Polygon(points: var_points, style: var_style); }
+
+@protected PolygonStyle sse_decode_polygon_style(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_fillColor = sse_decode_color(deserializer);
+var var_strokeColor = sse_decode_color(deserializer);
+var var_strokeWidth = sse_decode_f_64(deserializer);
+var var_strokeOffset = sse_decode_f_64(deserializer);
+return PolygonStyle(fillColor: var_fillColor, strokeColor: var_strokeColor, strokeWidth: var_strokeWidth, strokeOffset: var_strokeOffset); }
+
+@protected (double,double,double,double) sse_decode_record_f_32_f_32_f_32_f_32(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_field0 = sse_decode_f_32(deserializer);
+var var_field1 = sse_decode_f_32(deserializer);
+var var_field2 = sse_decode_f_32(deserializer);
+var var_field3 = sse_decode_f_32(deserializer);
+return (var_field0, var_field1, var_field2, var_field3); }
+
+@protected (double,double) sse_decode_record_f_64_f_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_field0 = sse_decode_f_64(deserializer);
+var var_field1 = sse_decode_f_64(deserializer);
+return (var_field0, var_field1); }
+
+@protected int sse_decode_u_32(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getUint32(); }
+
+@protected int sse_decode_u_8(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getUint8(); }
+
+@protected void sse_decode_unit(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+ }
+
+@protected UserEvent sse_decode_user_event(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            var tag_ = sse_decode_i_32(deserializer);
+            switch (tag_) { case 0: var var_field0 = sse_decode_mouse_button(deserializer);
+var var_field1 = sse_decode_box_autoadd_mouse_event(deserializer);
+return UserEvent_ButtonPressed(var_field0, var_field1);case 1: var var_field0 = sse_decode_mouse_button(deserializer);
+var var_field1 = sse_decode_box_autoadd_mouse_event(deserializer);
+return UserEvent_ButtonReleased(var_field0, var_field1);case 2: var var_field0 = sse_decode_mouse_button(deserializer);
+var var_field1 = sse_decode_box_autoadd_mouse_event(deserializer);
+return UserEvent_Click(var_field0, var_field1);case 3: var var_field0 = sse_decode_mouse_button(deserializer);
+var var_field1 = sse_decode_box_autoadd_mouse_event(deserializer);
+return UserEvent_DoubleClick(var_field0, var_field1);case 4: var var_field0 = sse_decode_box_autoadd_mouse_event(deserializer);
+return UserEvent_PointerMoved(var_field0);case 5: var var_field0 = sse_decode_mouse_button(deserializer);
+var var_field1 = sse_decode_box_autoadd_mouse_event(deserializer);
+return UserEvent_DragStarted(var_field0, var_field1);case 6: var var_field0 = sse_decode_mouse_button(deserializer);
+var var_field1 = sse_decode_box_autoadd_vector_2(deserializer);
+var var_field2 = sse_decode_box_autoadd_mouse_event(deserializer);
+return UserEvent_Drag(var_field0, var_field1, var_field2);case 7: var var_field0 = sse_decode_mouse_button(deserializer);
+var var_field1 = sse_decode_box_autoadd_mouse_event(deserializer);
+return UserEvent_DragEnded(var_field0, var_field1);case 8: var var_field0 = sse_decode_f_64(deserializer);
+var var_field1 = sse_decode_box_autoadd_mouse_event(deserializer);
+return UserEvent_Scroll(var_field0, var_field1);case 9: var var_field0 = sse_decode_f_64(deserializer);
+var var_field1 = sse_decode_box_autoadd_point_2(deserializer);
+return UserEvent_Zoom(var_field0, var_field1); default: throw UnimplementedError(''); }
+             }
+
+@protected Vector2 sse_decode_vector_2(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_dx = sse_decode_f_64(deserializer);
+var var_dy = sse_decode_f_64(deserializer);
+return Vector2(dx: var_dx, dy: var_dy); }
+
+@protected void sse_encode_AnyhowException(AnyhowException self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_String(self.message, serializer); }
+
+@protected void sse_encode_String(String self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_list_prim_u_8_strict(utf8.encoder.convert(self), serializer); }
+
+@protected void sse_encode_bool(bool self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putUint8(self ? 1 : 0); }
+
+@protected void sse_encode_box_autoadd_layer_config(LayerConfig self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_layer_config(self, serializer); }
+
+@protected void sse_encode_box_autoadd_map_init_config(MapInitConfig self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_map_init_config(self, serializer); }
+
+@protected void sse_encode_box_autoadd_map_size(MapSize self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_map_size(self, serializer); }
+
+@protected void sse_encode_box_autoadd_map_viewport(MapViewport self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_map_viewport(self, serializer); }
+
+@protected void sse_encode_box_autoadd_mouse_event(MouseEvent self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_mouse_event(self, serializer); }
+
+@protected void sse_encode_box_autoadd_point(Point self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_point(self, serializer); }
+
+@protected void sse_encode_box_autoadd_point_2(Point2 self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_point_2(self, serializer); }
+
+@protected void sse_encode_box_autoadd_polygon(Polygon self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_polygon(self, serializer); }
+
+@protected void sse_encode_box_autoadd_user_event(UserEvent self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_user_event(self, serializer); }
+
+@protected void sse_encode_box_autoadd_vector_2(Vector2 self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_vector_2(self, serializer); }
+
+@protected void sse_encode_color(Color self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_f_64(self.r, serializer);
+sse_encode_f_64(self.g, serializer);
+sse_encode_f_64(self.b, serializer);
+sse_encode_f_64(self.a, serializer);
+ }
+
+@protected void sse_encode_create_new_session_response(CreateNewSessionResponse self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_32(self.sessionId, serializer);
+sse_encode_i_64(self.textureId, serializer);
+ }
+
+@protected void sse_encode_f_32(double self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putFloat32(self); }
+
+@protected void sse_encode_f_64(double self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putFloat64(self); }
+
+@protected void sse_encode_i_32(int self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putInt32(self); }
+
+@protected void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putPlatformInt64(self); }
+
+@protected void sse_encode_layer_config(LayerConfig self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+switch (self) { case LayerConfig_Osm(): sse_encode_i_32(0, serializer); case LayerConfig_RasterTiles(urlTemplate: final urlTemplate,attribution: final attribution): sse_encode_i_32(1, serializer); sse_encode_String(urlTemplate, serializer);
+sse_encode_opt_String(attribution, serializer);
+case LayerConfig_VectorTiles(urlTemplate: final urlTemplate,styleJson: final styleJson,attribution: final attribution): sse_encode_i_32(2, serializer); sse_encode_String(urlTemplate, serializer);
+sse_encode_String(styleJson, serializer);
+sse_encode_opt_String(attribution, serializer);
+case LayerConfig_PolygonLayer(features: final features): sse_encode_i_32(3, serializer); sse_encode_list_polygon(features, serializer);
+case LayerConfig_PointLayer(features: final features): sse_encode_i_32(4, serializer); sse_encode_list_point(features, serializer);
+  } }
+
+@protected void sse_encode_list_point(List<Point> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_point(item, serializer); } }
+
+@protected void sse_encode_list_polygon(List<Polygon> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_polygon(item, serializer); } }
+
+@protected void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+                    serializer.buffer.putUint8List(self); }
+
+@protected void sse_encode_list_record_f_64_f_64(List<(double,double)> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_record_f_64_f_64(item, serializer); } }
+
+@protected void sse_encode_map_init_config(MapInitConfig self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_record_f_64_f_64(self.latlon, serializer);
+sse_encode_u_32(self.zoomLevel, serializer);
+sse_encode_map_size(self.mapSize, serializer);
+sse_encode_bool(self.enableMultisampling, serializer);
+sse_encode_record_f_32_f_32_f_32_f_32(self.backgroundColor, serializer);
+ }
+
+@protected void sse_encode_map_size(MapSize self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_32(self.width, serializer);
+sse_encode_u_32(self.height, serializer);
+ }
+
+@protected void sse_encode_map_viewport(MapViewport self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_f_64(self.xMin, serializer);
+sse_encode_f_64(self.xMax, serializer);
+sse_encode_f_64(self.yMin, serializer);
+sse_encode_f_64(self.yMax, serializer);
+ }
+
+@protected void sse_encode_mouse_button(MouseButton self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.index, serializer); }
+
+@protected void sse_encode_mouse_button_state(MouseButtonState self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.index, serializer); }
+
+@protected void sse_encode_mouse_buttons_state(MouseButtonsState self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_mouse_button_state(self.left, serializer);
+sse_encode_mouse_button_state(self.middle, serializer);
+sse_encode_mouse_button_state(self.right, serializer);
+ }
+
+@protected void sse_encode_mouse_event(MouseEvent self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_point_2(self.screenPointerPosition, serializer);
+sse_encode_mouse_buttons_state(self.buttons, serializer);
+ }
+
+@protected void sse_encode_opt_String(String? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+                sse_encode_bool(self != null, serializer);
+                if (self != null) {
+                    sse_encode_String(self, serializer);
+                }
+                 }
+
+@protected void sse_encode_opt_box_autoadd_map_viewport(MapViewport? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+                sse_encode_bool(self != null, serializer);
+                if (self != null) {
+                    sse_encode_box_autoadd_map_viewport(self, serializer);
+                }
+                 }
+
+@protected void sse_encode_point(Point self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_record_f_64_f_64(self.coordinate, serializer);
+sse_encode_point_style(self.style, serializer);
+ }
+
+@protected void sse_encode_point_2(Point2 self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_f_64(self.x, serializer);
+sse_encode_f_64(self.y, serializer);
+ }
+
+@protected void sse_encode_point_style(PointStyle self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_color(self.fillColor, serializer);
+sse_encode_f_32(self.size, serializer);
+ }
+
+@protected void sse_encode_polygon(Polygon self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_list_record_f_64_f_64(self.points, serializer);
+sse_encode_polygon_style(self.style, serializer);
+ }
+
+@protected void sse_encode_polygon_style(PolygonStyle self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_color(self.fillColor, serializer);
+sse_encode_color(self.strokeColor, serializer);
+sse_encode_f_64(self.strokeWidth, serializer);
+sse_encode_f_64(self.strokeOffset, serializer);
+ }
+
+@protected void sse_encode_record_f_32_f_32_f_32_f_32((double,double,double,double) self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_f_32(self.$1, serializer);
+sse_encode_f_32(self.$2, serializer);
+sse_encode_f_32(self.$3, serializer);
+sse_encode_f_32(self.$4, serializer);
+ }
+
+@protected void sse_encode_record_f_64_f_64((double,double) self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_f_64(self.$1, serializer);
+sse_encode_f_64(self.$2, serializer);
+ }
+
+@protected void sse_encode_u_32(int self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putUint32(self); }
+
+@protected void sse_encode_u_8(int self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putUint8(self); }
+
+@protected void sse_encode_unit(void self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+ }
+
+@protected void sse_encode_user_event(UserEvent self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+switch (self) { case UserEvent_ButtonPressed(field0: final field0,field1: final field1): sse_encode_i_32(0, serializer); sse_encode_mouse_button(field0, serializer);
+sse_encode_box_autoadd_mouse_event(field1, serializer);
+case UserEvent_ButtonReleased(field0: final field0,field1: final field1): sse_encode_i_32(1, serializer); sse_encode_mouse_button(field0, serializer);
+sse_encode_box_autoadd_mouse_event(field1, serializer);
+case UserEvent_Click(field0: final field0,field1: final field1): sse_encode_i_32(2, serializer); sse_encode_mouse_button(field0, serializer);
+sse_encode_box_autoadd_mouse_event(field1, serializer);
+case UserEvent_DoubleClick(field0: final field0,field1: final field1): sse_encode_i_32(3, serializer); sse_encode_mouse_button(field0, serializer);
+sse_encode_box_autoadd_mouse_event(field1, serializer);
+case UserEvent_PointerMoved(field0: final field0): sse_encode_i_32(4, serializer); sse_encode_box_autoadd_mouse_event(field0, serializer);
+case UserEvent_DragStarted(field0: final field0,field1: final field1): sse_encode_i_32(5, serializer); sse_encode_mouse_button(field0, serializer);
+sse_encode_box_autoadd_mouse_event(field1, serializer);
+case UserEvent_Drag(field0: final field0,field1: final field1,field2: final field2): sse_encode_i_32(6, serializer); sse_encode_mouse_button(field0, serializer);
+sse_encode_box_autoadd_vector_2(field1, serializer);
+sse_encode_box_autoadd_mouse_event(field2, serializer);
+case UserEvent_DragEnded(field0: final field0,field1: final field1): sse_encode_i_32(7, serializer); sse_encode_mouse_button(field0, serializer);
+sse_encode_box_autoadd_mouse_event(field1, serializer);
+case UserEvent_Scroll(field0: final field0,field1: final field1): sse_encode_i_32(8, serializer); sse_encode_f_64(field0, serializer);
+sse_encode_box_autoadd_mouse_event(field1, serializer);
+case UserEvent_Zoom(field0: final field0,field1: final field1): sse_encode_i_32(9, serializer); sse_encode_f_64(field0, serializer);
+sse_encode_box_autoadd_point_2(field1, serializer);
+  } }
+
+@protected void sse_encode_vector_2(Vector2 self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_f_64(self.dx, serializer);
+sse_encode_f_64(self.dy, serializer);
+ }
+                }
+                

@@ -162,10 +162,7 @@ class PendingPolygonPainter extends CustomPainter {
   final List<(double, double)> vertices;
   final ViewportBounds viewport;
 
-  const PendingPolygonPainter({
-    required this.vertices,
-    required this.viewport,
-  });
+  const PendingPolygonPainter({required this.vertices, required this.viewport});
 
   @override
   void paint(Canvas canvas, Size size) {
