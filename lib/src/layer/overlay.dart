@@ -49,11 +49,11 @@ class MapOverlayFlowDelegate extends FlowDelegate {
        zoomScale = controller.zoomScale,
        super(repaint: controller);
 
-	// Should constrain the size of the child with their own hieght and width
-	@override
-	  BoxConstraints getConstraintsForChild(int i, BoxConstraints constraints) {
-		 return BoxConstraints.loose(Size(overlays[i].width, overlays[i].height));
-	  }
+  // Should constrain the size of the child with their own height and width
+  @override
+  BoxConstraints getConstraintsForChild(int i, BoxConstraints constraints) {
+    return BoxConstraints.loose(Size(overlays[i].width, overlays[i].height));
+  }
 
   @override
   void paintChildren(FlowPaintingContext context) {
