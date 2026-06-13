@@ -149,6 +149,9 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
       }
     }).catchError((e) {
       _isFetchingViewport = false;
+      if (_needsViewportUpdate && mounted) {
+        _scheduleViewportUpdate();
+      }
     });
   }
 
