@@ -228,7 +228,7 @@ pub async fn add_session_layer(
             let layer = FeatureLayer::new(features, PointSymbol {}, Crs::EPSG3857);
             session.add_layer(layer).await;
         }
-        LayerConfig::WidgetLayer =>{
+        LayerConfig::WidgetLayer => {
             // Handled by flutter
         }
     }

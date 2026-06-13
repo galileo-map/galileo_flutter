@@ -139,20 +139,23 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
     _isFetchingViewport = true;
     _needsViewportUpdate = false;
 
-    widget.controller.getViewport().then((vp) {
-      _isFetchingViewport = false;
-      if (vp != null && mounted) {
-        widget.onViewportChanged!(vp);
-      }
-      if (_needsViewportUpdate && mounted) {
-        _scheduleViewportUpdate();
-      }
-    }).catchError((e) {
-      _isFetchingViewport = false;
-      if (_needsViewportUpdate && mounted) {
-        _scheduleViewportUpdate();
-      }
-    });
+    widget.controller
+        .getViewport()
+        .then((vp) {
+          _isFetchingViewport = false;
+          if (vp != null && mounted) {
+            widget.onViewportChanged!(vp);
+          }
+          if (_needsViewportUpdate && mounted) {
+            _scheduleViewportUpdate();
+          }
+        })
+        .catchError((e) {
+          _isFetchingViewport = false;
+          if (_needsViewportUpdate && mounted) {
+            _scheduleViewportUpdate();
+          }
+        });
   }
 
   double get _devicePixelRatio {
@@ -429,34 +432,46 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
     return false;
   }
 
-_handleKeyNavigation(LogicalKeyboardKey key) {
-  final centerX = widget.controller.size.width / _devicePixelRatio / 2;
-  final centerY = widget.controller.size.height / _devicePixelRatio / 2;
-  final center = Offset(centerX, centerY);
-  const step = 20.0;
+  _handleKeyNavigation(LogicalKeyboardKey key) {
+    final centerX = widget.controller.size.width / _devicePixelRatio / 2;
+    final centerY = widget.controller.size.height / _devicePixelRatio / 2;
+    final center = Offset(centerX, centerY);
+    const step = 20.0;
 
-  switch (key) {
-    case LogicalKeyboardKey.arrowUp:
-      _sendPanEvent(const Offset(0, step), center);
-    case LogicalKeyboardKey.arrowDown:
-      _sendPanEvent(const Offset(0, -step), center);
-    case LogicalKeyboardKey.arrowLeft:
-      _sendPanEvent(const Offset(step, 0), center);
-    case LogicalKeyboardKey.arrowRight:
-      _sendPanEvent(const Offset(-step, 0), center);
-    case LogicalKeyboardKey.equal:
-    case LogicalKeyboardKey.numpadAdd:
-      widget.controller.handleEvent(
-        UserEvent.zoom(0.9, Point2(x: centerX * _devicePixelRatio, y: centerY * _devicePixelRatio)),
-      );
-    case LogicalKeyboardKey.minus:
-    case LogicalKeyboardKey.numpadSubtract:
-      widget.controller.handleEvent(
-        UserEvent.zoom(1.1, Point2(x: centerX * _devicePixelRatio, y: centerY * _devicePixelRatio)),
-      );
+    switch (key) {
+      case LogicalKeyboardKey.arrowUp:
+        _sendPanEvent(const Offset(0, step), center);
+      case LogicalKeyboardKey.arrowDown:
+        _sendPanEvent(const Offset(0, -step), center);
+      case LogicalKeyboardKey.arrowLeft:
+        _sendPanEvent(const Offset(step, 0), center);
+      case LogicalKeyboardKey.arrowRight:
+        _sendPanEvent(const Offset(-step, 0), center);
+      case LogicalKeyboardKey.equal:
+      case LogicalKeyboardKey.numpadAdd:
+        widget.controller.handleEvent(
+          UserEvent.zoom(
+            0.9,
+            Point2(
+              x: centerX * _devicePixelRatio,
+              y: centerY * _devicePixelRatio,
+            ),
+          ),
+        );
+      case LogicalKeyboardKey.minus:
+      case LogicalKeyboardKey.numpadSubtract:
+        widget.controller.handleEvent(
+          UserEvent.zoom(
+            1.1,
+            Point2(
+              x: centerX * _devicePixelRatio,
+              y: centerY * _devicePixelRatio,
+            ),
+          ),
+        );
+    }
+    _scheduleViewportUpdate();
   }
-  _scheduleViewportUpdate();
-}
 
   @override
   Widget build(BuildContext context) {

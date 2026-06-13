@@ -12,10 +12,7 @@ import 'package:galileo_flutter/src/overlay/polygon_draw_controller.dart';
 class PolygonDrawOverlay extends StatefulWidget {
   final PolygonDrawController? controller;
 
-  const PolygonDrawOverlay({
-    super.key,
-    required this.controller,
-  });
+  const PolygonDrawOverlay({super.key, required this.controller});
 
   @override
   State<PolygonDrawOverlay> createState() => _PolygonDrawOverlayState();
@@ -82,11 +79,7 @@ class PolygonEditOverlay extends StatelessWidget {
   /// Called after any pointer event so the parent can call `setState`.
   final VoidCallback? onChanged;
 
-  const PolygonEditOverlay({
-    super.key,
-    required this.editor,
-    this.onChanged,
-  });
+  const PolygonEditOverlay({super.key, required this.editor, this.onChanged});
 
   Size _mapSize(BuildContext context) {
     final rb = context.findRenderObject() as RenderBox?;
@@ -108,8 +101,7 @@ class PolygonEditOverlay extends StatelessWidget {
 
         return Listener(
           behavior: HitTestBehavior.opaque,
-          onPointerDown: (e) =>
-              ed.handlePointerDown(e, _mapSize(context)),
+          onPointerDown: (e) => ed.handlePointerDown(e, _mapSize(context)),
           onPointerMove: (e) {
             ed.handlePointerMove(e, _mapSize(context));
             onChanged?.call();

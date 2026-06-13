@@ -14,7 +14,7 @@ class PolygonDrawController extends ChangeNotifier {
   List<(double, double)> _pendingVertices = [];
 
   /// Layer controller
-	LayerController get layer_controller => _layer_controller;
+  LayerController get layer_controller => _layer_controller;
 
   /// Unmodifiable view of the vertices placed so far.
   List<(double, double)> get pendingVertices =>
@@ -33,15 +33,16 @@ class PolygonDrawController extends ChangeNotifier {
   String _statusMessage = '';
   String get statusMessage => _statusMessage;
 
-  PolygonDrawController(this._features,this._layer_controller);
+  PolygonDrawController(this._features, this._layer_controller);
 
   /// Add a vertex at the given lat/lon.
   void addVertex(double lat, double lon) {
     _pendingVertices.add((lat, lon));
     final n = _pendingVertices.length;
-    _statusMessage = n < 3
-        ? 'Vertex $n placed — tap ${3 - n} more to enable finishing'
-        : '$n vertices — tap "Finish" to create polygon or keep adding';
+    _statusMessage =
+        n < 3
+            ? 'Vertex $n placed — tap ${3 - n} more to enable finishing'
+            : '$n vertices — tap "Finish" to create polygon or keep adding';
     notifyListeners();
   }
 
@@ -50,9 +51,10 @@ class PolygonDrawController extends ChangeNotifier {
     if (_pendingVertices.isEmpty) return;
     _pendingVertices.removeLast();
     final n = _pendingVertices.length;
-    _statusMessage = n == 0
-        ? 'Tap map to start drawing a polygon'
-        : n < 3
+    _statusMessage =
+        n == 0
+            ? 'Tap map to start drawing a polygon'
+            : n < 3
             ? 'Vertex $n placed — tap ${3 - n} more to enable finishing'
             : '$n vertices — tap "Finish" to create polygon or keep adding';
     notifyListeners();
@@ -70,7 +72,8 @@ class PolygonDrawController extends ChangeNotifier {
   Future<void> finish({PolygonStyle? style}) async {
     if (_pendingVertices.length < 3) return;
 
-    final effectiveStyle = style ??
+    final effectiveStyle =
+        style ??
         const PolygonStyle(
           fillColor: Color(r: 0.2, g: 0.5, b: 0.9, a: 0.8),
           strokeColor: Color(r: 1.0, g: 1.0, b: 1.0, a: 1.0),
@@ -78,10 +81,9 @@ class PolygonDrawController extends ChangeNotifier {
           strokeOffset: 0.0,
         );
 
-    await _features.addPolygon(Polygon(
-      points: List.from(_pendingVertices),
-      style: effectiveStyle,
-    ));
+    await _features.addPolygon(
+      Polygon(points: List.from(_pendingVertices), style: effectiveStyle),
+    );
 
     _pendingVertices = [];
     _statusMessage =

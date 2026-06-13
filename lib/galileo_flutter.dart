@@ -4,8 +4,7 @@ import 'dart:ffi' as ffi;
 
 import 'package:path_provider/path_provider.dart';
 
-export 'package:galileo_flutter/src/map/widget.dart'
-    show GalileoMapWidget;
+export 'package:galileo_flutter/src/map/widget.dart' show GalileoMapWidget;
 
 import 'src/rust/api/galileo_api.dart' as rlib;
 import 'src/rust/frb_generated.dart' as rlib_gen;
@@ -20,7 +19,7 @@ export 'package:galileo_flutter/src/rust/api/dart_types.dart'
         PolygonStyle,
         Color,
         Point2,
-		  MapPosition,
+        MapPosition,
         Point,
         PointStyle;
 export 'package:galileo_flutter/src/map/widget.dart';

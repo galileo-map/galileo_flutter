@@ -18,9 +18,9 @@ const _kMapConfig = MapInitConfig(
   zoomLevel: 10,
 );
 
-enum DrawMode { 
-	point,
-	//polygon 
+enum DrawMode {
+  point,
+  //polygon
 }
 
 Future<void> main() async {
@@ -55,7 +55,7 @@ class GalileoMapPage extends StatefulWidget {
 }
 
 class _GalileoMapPageState extends State<GalileoMapPage> {
-  String _statusMessage     = 'Loading...';
+  String _statusMessage = 'Loading...';
   String _layerConfigString = 'osm_tile_layer';
 
   GalileoMapController? _controller;
@@ -64,10 +64,10 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
   FeatureLayerManager? _features;
   bool _layerReady = false;
 
- // late final PolygonEditor _polygonEditor = PolygonEditor(
- //  onStatusMessage:    (msg) => setState(() => _statusMessage = msg),
- //  onSelectionChanged: (_)   => setState(() {}),
- // );
+  // late final PolygonEditor _polygonEditor = PolygonEditor(
+  //  onStatusMessage:    (msg) => setState(() => _statusMessage = msg),
+  //  onSelectionChanged: (_)   => setState(() {}),
+  // );
 
   DrawMode _drawMode = DrawMode.point;
 
@@ -83,7 +83,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
   void initState() {
     super.initState();
     _controllerFuture = GalileoMapController.create(
-      size:   _kMapSize,
+      size: _kMapSize,
       config: _kMapConfig,
       layers: [LayerConfig.osm()],
     );
@@ -100,8 +100,10 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     final vp = await _controller?.getViewport();
     if (vp == null || !mounted) return;
     final bounds = ViewportBounds(
-      xMin: vp.xMin, xMax: vp.xMax,
-      yMin: vp.yMin, yMax: vp.yMax,
+      xMin: vp.xMin,
+      xMax: vp.xMax,
+      yMin: vp.yMin,
+      yMax: vp.yMax,
     );
     setState(() => _cachedViewport = bounds);
     //_polygonEditor.updateViewport(bounds);
@@ -110,19 +112,21 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
 
   Future<void> _switchLayer(LayerConfig newLayer) async {
     setState(() {
-      _layerReady    = false;
+      _layerReady = false;
       _statusMessage = 'Loading...';
     });
 
     _controller?.dispose();
-    _controller      = null;
+    _controller = null;
     _features?.dispose();
-    _features        = null;
+    _features = null;
     // _pendingVertices = [];
-    _cachedViewport  = null;
+    _cachedViewport = null;
 
     final f = GalileoMapController.create(
-      size: _kMapSize, config: _kMapConfig, layers: [newLayer],
+      size: _kMapSize,
+      config: _kMapConfig,
+      layers: [newLayer],
     );
     setState(() => _controllerFuture = f);
 
@@ -138,16 +142,16 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
   Future<void> _initManagedLayer(GalileoMapController ctrl) async {
     setState(() => _controller = ctrl);
 
-   final manager = FeatureLayerManager(
-     layerController: ctrl.layer_controller,
-     polygonEditController:   null,
-   );
-   await manager.initialize();
+    final manager = FeatureLayerManager(
+      layerController: ctrl.layer_controller,
+      polygonEditController: null,
+    );
+    await manager.initialize();
 
     if (!mounted) return;
     setState(() {
-      _features      = manager;
-      _layerReady    = true;
+      _features = manager;
+      _layerReady = true;
       _statusMessage = 'Tap map to add features';
     });
 
@@ -187,13 +191,15 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     if (viewport == null || !mounted) return;
 
     final vp = ViewportBounds(
-      xMin: viewport.xMin, xMax: viewport.xMax,
-      yMin: viewport.yMin, yMax: viewport.yMax,
+      xMin: viewport.xMin,
+      xMax: viewport.xMax,
+      yMin: viewport.yMin,
+      yMax: viewport.yMax,
     );
     setState(() => _cachedViewport = vp);
-   // _polygonEditor.updateViewport(vp);
+    // _polygonEditor.updateViewport(vp);
 
-    final screenPos  = Offset(x, y);
+    final screenPos = Offset(x, y);
     final (lat, lon) = MapProjection.screenToLatLon(screenPos, size, vp);
 
     if (_drawMode == DrawMode.point) {
@@ -201,17 +207,20 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
       return;
     }
 
-  //  if (_isDrawingPolygon) {
-  //    await _addPendingVertex(lat, lon);
-  //    return;
-  //  }
+    //  if (_isDrawingPolygon) {
+    //    await _addPendingVertex(lat, lon);
+    //    return;
+    //  }
 
-   //  final hit = await _polygonEditor.trySelectAt(screenPos, size, vp);
+    //  final hit = await _polygonEditor.trySelectAt(screenPos, size, vp);
     // if (!hit) await _addPendingVertex(lat, lon);
   }
 
   Future<void> _addPoint(
-      FeatureLayerManager features, double lat, double lon) async {
+    FeatureLayerManager features,
+    double lat,
+    double lon,
+  ) async {
     final point = Point(
       coordinate: (lat, lon),
       style: PointStyle(
@@ -234,8 +243,9 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     if (features == null || features.pointCount == 0) return;
     await features.removeLastPoint();
     if (mounted) {
-      setState(() =>
-          _statusMessage = 'Removed point — total: ${features.pointCount}');
+      setState(
+        () => _statusMessage = 'Removed point — total: ${features.pointCount}',
+      );
     }
   }
 
@@ -337,15 +347,20 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                       Text(
                         'Status: $_statusMessage',
                         style: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.bold),
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         // _isDrawingPolygon
                         //     ? 'Keep tapping to add vertices — use the buttons to finish or cancel'
-                        //     : 
+                        //     :
                         'Tap to add feature · drag to pan · +/− to zoom',
-                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
                       ),
                     ],
                   ),
@@ -360,33 +375,42 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                       case 'osm_tile_layer':
                         await _switchLayer(LayerConfig.osm());
                       case 'vector_tile_layer_1':
-                        final style = await rootBundle
-                            .loadString('assets/vt_style.json');
+                        final style = await rootBundle.loadString(
+                          'assets/vt_style.json',
+                        );
                         if (!mounted) return;
-                        await _switchLayer(LayerConfig.vectorTiles(
-                          urlTemplate: MAP_TILER_URL_TEMPLATE,
-                          styleJson: style,
-                        ));
+                        await _switchLayer(
+                          LayerConfig.vectorTiles(
+                            urlTemplate: MAP_TILER_URL_TEMPLATE,
+                            styleJson: style,
+                          ),
+                        );
                       case 'vector_tile_layer_2':
-                        final style = await rootBundle
-                            .loadString('assets/simple_style.json');
+                        final style = await rootBundle.loadString(
+                          'assets/simple_style.json',
+                        );
                         if (!mounted) return;
-                        await _switchLayer(LayerConfig.vectorTiles(
-                          urlTemplate: MAP_TILER_URL_TEMPLATE,
-                          styleJson: style,
-                        ));
+                        await _switchLayer(
+                          LayerConfig.vectorTiles(
+                            urlTemplate: MAP_TILER_URL_TEMPLATE,
+                            styleJson: style,
+                          ),
+                        );
                     }
                   },
                   items: const [
                     DropdownMenuItem(
-                        value: 'osm_tile_layer',
-                        child: Text('OSM Tile Layer')),
+                      value: 'osm_tile_layer',
+                      child: Text('OSM Tile Layer'),
+                    ),
                     DropdownMenuItem(
-                        value: 'vector_tile_layer_1',
-                        child: Text('Vector Tile Style 1')),
+                      value: 'vector_tile_layer_1',
+                      child: Text('Vector Tile Style 1'),
+                    ),
                     DropdownMenuItem(
-                        value: 'vector_tile_layer_2',
-                        child: Text('Vector Tile Style 2')),
+                      value: 'vector_tile_layer_2',
+                      child: Text('Vector Tile Style 2'),
+                    ),
                   ],
                 ),
               ],
@@ -398,19 +422,22 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
-                const Text('Draw mode:',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  'Draw mode:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(width: 12),
                 SegmentedButton<DrawMode>(
                   segments: const [
                     ButtonSegment(
-                        value: DrawMode.point,
-                        label: Text('Point'),
-                        icon: Icon(Icons.location_on)),
-                   //ButtonSegment(
-                   //    value: DrawMode.polygon,
-                   //    label: Text('Polygon'),
-                   //    icon: Icon(Icons.pentagon_outlined)),
+                      value: DrawMode.point,
+                      label: Text('Point'),
+                      icon: Icon(Icons.location_on),
+                    ),
+                    //ButtonSegment(
+                    //    value: DrawMode.polygon,
+                    //    label: Text('Polygon'),
+                    //    icon: Icon(Icons.pentagon_outlined)),
                   ],
                   selected: {_drawMode},
                   onSelectionChanged: (s) {
@@ -420,10 +447,11 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                 ),
                 const Spacer(),
                 CountChip(
-                    icon:  Icons.location_on,
-                    color: const ui.Color(0xFFF44336),
-                    count: features?.pointCount ?? 0,
-                    label: 'pts'),
+                  icon: Icons.location_on,
+                  color: const ui.Color(0xFFF44336),
+                  count: features?.pointCount ?? 0,
+                  label: 'pts',
+                ),
                 // const SizedBox(width: 8),
                 // CountChip(
                 //     icon:  Icons.pentagon_outlined,
@@ -476,11 +504,9 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
           //       ],
           //     ),
           //   ),
-
           Expanded(
             child: Container(
-              decoration:
-                  BoxDecoration(border: Border.all(color: Colors.grey)),
+              decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
               child: FutureBuilder(
                 future: _controllerFuture,
                 builder: (ctx, res) {
@@ -497,88 +523,108 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                   }
 
                   return Builder(
-                    builder: (mapCtx) => Listener(
-                      onPointerDown: (e) =>
-                          _pointerDownPosition = e.localPosition,
-                      onPointerUp: (e) {
-                        final rb = mapCtx.findRenderObject() as RenderBox;
-                        final size = rb.size;
-                        final down = _pointerDownPosition;
-                        if (down != null &&
-                            (e.localPosition - down).distance <
-                                _tapThreshold) {
-                          _addFeatureAtScreenPos(
-                              e.localPosition.dx,
-                              e.localPosition.dy,
-                              size);
-                        }
-                        _pointerDownPosition = null;
-                      },
-                      onPointerCancel: (_) => _pointerDownPosition = null,
-                      child: GalileoMapWidget.fromController(
-                        key:            ObjectKey(controller),
-                        controller:     controller!,
-                        config:         _kMapConfig,
-                        layers:         const [],
-                        enableKeyboard: true,
-                        autoDispose:    false,
-                        onViewportChanged: (vp) async {
-                          final bounds = ViewportBounds(
-                            xMin: vp.xMin, xMax: vp.xMax,
-                            yMin: vp.yMin, yMax: vp.yMax,
-                          );
-                          if (!mounted) return;
-                          setState(() => _cachedViewport = bounds);
-                         // _polygonEditor.updateViewport(bounds);
-                          await _controller?.layer_controller.updateViewport(vp);
-                        },
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              top: 10,
-                              right: 10,
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.9),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const SizedBox(height: 4),
-                                    const Text('• Tap to add feature',
-                                        style: TextStyle(fontSize: 10)),
-                                    const Text('• Drag to pan',
-                                        style: TextStyle(fontSize: 10)),
-                                    const Text('• Pinch to zoom',
-                                        style: TextStyle(fontSize: 10)),
-                                    const Text('• Arrow keys to pan',
-                                        style: TextStyle(fontSize: 10)),
-                                    const Text('• +/- to zoom',
-                                        style: TextStyle(fontSize: 10)),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                        'Points: ${features?.pointCount ?? 0}',
-                                        style: const TextStyle(
+                    builder:
+                        (mapCtx) => Listener(
+                          onPointerDown:
+                              (e) => _pointerDownPosition = e.localPosition,
+                          onPointerUp: (e) {
+                            final rb = mapCtx.findRenderObject() as RenderBox;
+                            final size = rb.size;
+                            final down = _pointerDownPosition;
+                            if (down != null &&
+                                (e.localPosition - down).distance <
+                                    _tapThreshold) {
+                              _addFeatureAtScreenPos(
+                                e.localPosition.dx,
+                                e.localPosition.dy,
+                                size,
+                              );
+                            }
+                            _pointerDownPosition = null;
+                          },
+                          onPointerCancel: (_) => _pointerDownPosition = null,
+                          child: GalileoMapWidget.fromController(
+                            key: ObjectKey(controller),
+                            controller: controller!,
+                            config: _kMapConfig,
+                            layers: const [],
+                            enableKeyboard: true,
+                            autoDispose: false,
+                            onViewportChanged: (vp) async {
+                              final bounds = ViewportBounds(
+                                xMin: vp.xMin,
+                                xMax: vp.xMax,
+                                yMin: vp.yMin,
+                                yMax: vp.yMax,
+                              );
+                              if (!mounted) return;
+                              setState(() => _cachedViewport = bounds);
+                              // _polygonEditor.updateViewport(bounds);
+                              await _controller?.layer_controller
+                                  .updateViewport(vp);
+                            },
+                            child: Stack(
+                              children: [
+                                Positioned(
+                                  top: 10,
+                                  right: 10,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.9,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const SizedBox(height: 4),
+                                        const Text(
+                                          '• Tap to add feature',
+                                          style: TextStyle(fontSize: 10),
+                                        ),
+                                        const Text(
+                                          '• Drag to pan',
+                                          style: TextStyle(fontSize: 10),
+                                        ),
+                                        const Text(
+                                          '• Pinch to zoom',
+                                          style: TextStyle(fontSize: 10),
+                                        ),
+                                        const Text(
+                                          '• Arrow keys to pan',
+                                          style: TextStyle(fontSize: 10),
+                                        ),
+                                        const Text(
+                                          '• +/- to zoom',
+                                          style: TextStyle(fontSize: 10),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Points: ${features?.pointCount ?? 0}',
+                                          style: const TextStyle(
                                             fontSize: 10,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.red)),
-                                    // Text(
-                                    //     'Polygons: ${features?.polygonCount ?? 0}',
-                                    //     style: const TextStyle(
-                                    //         fontSize: 10,
-                                    //         fontWeight: FontWeight.bold,
-                                    //         color: Colors.blue)),
-                                  ],
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                        // Text(
+                                        //     'Polygons: ${features?.polygonCount ?? 0}',
+                                        //     style: const TextStyle(
+                                        //         fontSize: 10,
+                                        //         fontWeight: FontWeight.bold,
+                                        //         color: Colors.blue)),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
                   );
                 },
               ),
@@ -596,19 +642,21 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                   children: [
                     const Icon(Icons.location_on, color: Colors.red, size: 18),
                     const SizedBox(width: 6),
-                    const Text('Points:',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    const Text(
+                      'Points:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     const SizedBox(width: 8),
                     ElevatedButton.icon(
                       onPressed:
                           (_layerReady && (features?.pointCount ?? 0) > 0)
                               ? _removeLastPoint
                               : null,
-                      icon:  const Icon(Icons.wrong_location, size: 16),
-                      label: Text(
-                          'Remove Last (${features?.pointCount ?? 0})'),
+                      icon: const Icon(Icons.wrong_location, size: 16),
+                      label: Text('Remove Last (${features?.pointCount ?? 0})'),
                       style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.red),
+                        foregroundColor: Colors.red,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     ElevatedButton.icon(
@@ -616,10 +664,11 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                           (_layerReady && (features?.pointCount ?? 0) > 0)
                               ? _clearAllPoints
                               : null,
-                      icon:  const Icon(Icons.clear, size: 16),
+                      icon: const Icon(Icons.clear, size: 16),
                       label: const Text('Clear All'),
                       style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.red),
+                        foregroundColor: Colors.red,
+                      ),
                     ),
                   ],
                 ),
@@ -664,23 +713,26 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('About'),
-            content: Text(
-              'Galileo Flutter Demo\n'
-              'Session ID: ${_controller?.sessionId ?? "none"}\n'
-              'Points on map: ${features?.pointCount ?? 0}\n'
-              // 'Polygons on map: ${features?.polygonCount ?? 0}',
+        onPressed:
+            () => showDialog(
+              context: context,
+              builder:
+                  (context) => AlertDialog(
+                    title: const Text('About'),
+                    content: Text(
+                      'Galileo Flutter Demo\n'
+                      'Session ID: ${_controller?.sessionId ?? "none"}\n'
+                      'Points on map: ${features?.pointCount ?? 0}\n',
+                      // 'Polygons on map: ${features?.polygonCount ?? 0}',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
             ),
-            actions: [
-              TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK')),
-            ],
-          ),
-        ),
         child: const Icon(Icons.info),
       ),
     );

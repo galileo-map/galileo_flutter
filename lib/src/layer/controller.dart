@@ -4,7 +4,6 @@ import 'package:galileo_flutter/src/rust/api/galileo_api.dart' as rlib;
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:galileo_flutter/src/overlay/overlay_widget.dart';
 
-
 class LayerController extends ChangeNotifier {
   final Map<String, int> _layer_names = {};
   final Map<String, FeatureEditController> _editors = {};
@@ -66,12 +65,12 @@ class LayerController extends ChangeNotifier {
   /// Add a layer to the map
   Future<void> addLayer(LayerConfig layer) async {
     try {
-   await layer.maybeWhen(
-      widgetLayer: () async {},
-      orElse: () async {
-        await rlib.addSessionLayer(sessionId: sessionId, layerConfig: layer);
-      },
-    );
+      await layer.maybeWhen(
+        widgetLayer: () async {},
+        orElse: () async {
+          await rlib.addSessionLayer(sessionId: sessionId, layerConfig: layer);
+        },
+      );
     } catch (e) {
       if (kDebugMode) {
         debugPrint('Error adding layer: $e');

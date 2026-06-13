@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 enum OverlayType {
   /// Size stays constant in screen pixels.
   static,
+
   /// Size is scaled on the basis of zoom level.
   relative,
 }
@@ -32,10 +33,6 @@ class OverlayWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: child,
-    );
+    return SizedBox(width: width, height: height, child: child);
   }
 }

@@ -18,7 +18,6 @@ impl Geometry for Polygon {
         &self,
         projection: &P,
     ) -> Option<Geom<P::OutPoint>> {
-
         if self.points.len() < 3 {
             return None;
         }

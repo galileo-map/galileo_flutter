@@ -41,7 +41,7 @@ pub struct MapSize {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct MapInitConfig {
-    pub latlon: (f64,f64),
+    pub latlon: (f64, f64),
     pub zoom_level: u32,
     pub map_size: MapSize,
     /// Frames per second for the render loop (default: 30)
@@ -107,7 +107,7 @@ pub enum LayerConfig {
 ///   )
 #[derive(Clone, Debug, PartialEq)]
 pub struct Polygon {
-    pub points: Vec<(f64,f64)>,
+    pub points: Vec<(f64, f64)>,
     pub style: PolygonStyle,
 }
 
@@ -137,7 +137,7 @@ pub struct PolygonSymbol {}
 ///   )
 #[derive(Clone, Debug, PartialEq)]
 pub struct Point {
-    pub coordinate: (f64,f64),
+    pub coordinate: (f64, f64),
     pub style: PointStyle,
 }
 
