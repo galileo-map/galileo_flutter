@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:galileo_flutter/src/galileo_feature_editor.dart';
+import 'package:galileo_flutter/src/feature/editor.dart';
 import 'package:galileo_flutter/src/overlay/polygon_draw_controller.dart';
 
 /// Overlay widget for drawing a new polygon.

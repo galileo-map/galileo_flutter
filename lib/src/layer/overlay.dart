@@ -1,6 +1,6 @@
 import 'package:galileo_flutter/src/overlay/overlay_widget.dart';
 import 'package:galileo_flutter/src/layer/controller.dart';
-import 'package:galileo_flutter/src/galileo_feature_editor.dart';
+import 'package:galileo_flutter/src/feature/editor.dart';
 import 'package:galileo_flutter/src/rust/api/dart_types.dart';
 
 import 'package:flutter/widgets.dart';

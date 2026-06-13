@@ -18,6 +18,10 @@ impl Geometry for Polygon {
         &self,
         projection: &P,
     ) -> Option<Geom<P::OutPoint>> {
+
+        if self.points.len() < 3 {
+            return None;
+        }
         let ring: Vec<GeoPoint2d> = self
             .points
             .iter()

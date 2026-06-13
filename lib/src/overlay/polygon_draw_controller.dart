@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
-import 'package:galileo_flutter/src/galileo_feature_editor.dart';
+import 'package:galileo_flutter/src/feature/editor.dart';
 
 /// Controller that manages the pending-vertex state for drawing a new polygon.
 ///
