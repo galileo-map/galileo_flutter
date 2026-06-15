@@ -67,7 +67,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => 56949982;
+  int get rustContentHash => 1385225485;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -78,6 +78,28 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
+  Future<int> crateApiGalileoApiAddPointFeatureLayer({
+    required int sessionId,
+    required List<Point> initialPoints,
+  });
+
+  Future<int> crateApiGalileoApiAddPointToLayer({
+    required int sessionId,
+    required int layerId,
+    required Point point,
+  });
+
+  Future<int> crateApiGalileoApiAddPolygonFeatureLayer({
+    required int sessionId,
+    required List<Polygon> initialPolygons,
+  });
+
+  Future<int> crateApiGalileoApiAddPolygonToLayer({
+    required int sessionId,
+    required int layerId,
+    required Polygon polygon,
+  });
+
   Future<void> crateApiGalileoApiAddSessionLayer({
     required int sessionId,
     required LayerConfig layerConfig,
@@ -113,6 +135,18 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateApiGalileoApiMarkSessionAlive({required int sessionId});
 
+  Future<bool> crateApiGalileoApiRemovePointFromLayer({
+    required int sessionId,
+    required int layerId,
+    required int index,
+  });
+
+  Future<bool> crateApiGalileoApiRemovePolygonFromLayer({
+    required int sessionId,
+    required int layerId,
+    required int index,
+  });
+
   Future<void> crateApiGalileoApiRequestMapRedraw({required int sessionId});
 
   Future<void> crateApiGalileoApiResizeSession({
@@ -132,6 +166,150 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
+  Future<int> crateApiGalileoApiAddPointFeatureLayer({
+    required int sessionId,
+    required List<Point> initialPoints,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_u_32(sessionId, serializer);
+          sse_encode_list_point(initialPoints, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 1,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_u_32,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiGalileoApiAddPointFeatureLayerConstMeta,
+        argValues: [sessionId, initialPoints],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiGalileoApiAddPointFeatureLayerConstMeta =>
+      const TaskConstMeta(
+        debugName: "add_point_feature_layer",
+        argNames: ["sessionId", "initialPoints"],
+      );
+
+  @override
+  Future<int> crateApiGalileoApiAddPointToLayer({
+    required int sessionId,
+    required int layerId,
+    required Point point,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_u_32(sessionId, serializer);
+          sse_encode_u_32(layerId, serializer);
+          sse_encode_box_autoadd_point(point, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 2,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_u_32,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiGalileoApiAddPointToLayerConstMeta,
+        argValues: [sessionId, layerId, point],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiGalileoApiAddPointToLayerConstMeta =>
+      const TaskConstMeta(
+        debugName: "add_point_to_layer",
+        argNames: ["sessionId", "layerId", "point"],
+      );
+
+  @override
+  Future<int> crateApiGalileoApiAddPolygonFeatureLayer({
+    required int sessionId,
+    required List<Polygon> initialPolygons,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_u_32(sessionId, serializer);
+          sse_encode_list_polygon(initialPolygons, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 3,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_u_32,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiGalileoApiAddPolygonFeatureLayerConstMeta,
+        argValues: [sessionId, initialPolygons],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiGalileoApiAddPolygonFeatureLayerConstMeta =>
+      const TaskConstMeta(
+        debugName: "add_polygon_feature_layer",
+        argNames: ["sessionId", "initialPolygons"],
+      );
+
+  @override
+  Future<int> crateApiGalileoApiAddPolygonToLayer({
+    required int sessionId,
+    required int layerId,
+    required Polygon polygon,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_u_32(sessionId, serializer);
+          sse_encode_u_32(layerId, serializer);
+          sse_encode_box_autoadd_polygon(polygon, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 4,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_u_32,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiGalileoApiAddPolygonToLayerConstMeta,
+        argValues: [sessionId, layerId, polygon],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiGalileoApiAddPolygonToLayerConstMeta =>
+      const TaskConstMeta(
+        debugName: "add_polygon_to_layer",
+        argNames: ["sessionId", "layerId", "polygon"],
+      );
+
+  @override
   Future<void> crateApiGalileoApiAddSessionLayer({
     required int sessionId,
     required LayerConfig layerConfig,
@@ -145,7 +323,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 1,
+            funcId: 5,
             port: port_,
           );
         },
@@ -180,7 +358,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 2,
+            funcId: 6,
             port: port_,
           );
         },
@@ -213,7 +391,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 3,
+            funcId: 7,
             port: port_,
           );
         },
@@ -244,7 +422,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 4,
+            funcId: 8,
             port: port_,
           );
         },
@@ -277,7 +455,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 5,
+            funcId: 9,
             port: port_,
           );
         },
@@ -310,7 +488,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 6,
+            funcId: 10,
             port: port_,
           );
         },
@@ -345,7 +523,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 7,
+            funcId: 11,
             port: port_,
           );
         },
@@ -375,7 +553,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 8,
+            funcId: 12,
             port: port_,
           );
         },
@@ -402,7 +580,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 9,
+            funcId: 13,
             port: port_,
           );
         },
@@ -430,7 +608,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 10,
+            funcId: 14,
             port: port_,
           );
         },
@@ -452,6 +630,80 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<bool> crateApiGalileoApiRemovePointFromLayer({
+    required int sessionId,
+    required int layerId,
+    required int index,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_u_32(sessionId, serializer);
+          sse_encode_u_32(layerId, serializer);
+          sse_encode_u_32(index, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 15,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_bool,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiGalileoApiRemovePointFromLayerConstMeta,
+        argValues: [sessionId, layerId, index],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiGalileoApiRemovePointFromLayerConstMeta =>
+      const TaskConstMeta(
+        debugName: "remove_point_from_layer",
+        argNames: ["sessionId", "layerId", "index"],
+      );
+
+  @override
+  Future<bool> crateApiGalileoApiRemovePolygonFromLayer({
+    required int sessionId,
+    required int layerId,
+    required int index,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_u_32(sessionId, serializer);
+          sse_encode_u_32(layerId, serializer);
+          sse_encode_u_32(index, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 16,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_bool,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiGalileoApiRemovePolygonFromLayerConstMeta,
+        argValues: [sessionId, layerId, index],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiGalileoApiRemovePolygonFromLayerConstMeta =>
+      const TaskConstMeta(
+        debugName: "remove_polygon_from_layer",
+        argNames: ["sessionId", "layerId", "index"],
+      );
+
+  @override
   Future<void> crateApiGalileoApiRequestMapRedraw({required int sessionId}) {
     return handler.executeNormal(
       NormalTask(
@@ -461,7 +713,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 11,
+            funcId: 17,
             port: port_,
           );
         },
@@ -496,7 +748,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 12,
+            funcId: 18,
             port: port_,
           );
         },
@@ -527,7 +779,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 13,
+            funcId: 19,
             port: port_,
           );
         },
@@ -594,9 +846,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Point dco_decode_box_autoadd_point(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_point(raw);
+  }
+
+  @protected
   Point2 dco_decode_box_autoadd_point_2(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_point_2(raw);
+  }
+
+  @protected
+  Polygon dco_decode_box_autoadd_polygon(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_polygon(raw);
   }
 
   @protected
@@ -609,6 +873,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   Vector2 dco_decode_box_autoadd_vector_2(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_vector_2(raw);
+  }
+
+  @protected
+  Color dco_decode_color(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return Color(
+      r: dco_decode_f_64(arr[0]),
+      g: dco_decode_f_64(arr[1]),
+      b: dco_decode_f_64(arr[2]),
+      a: dco_decode_f_64(arr[3]),
+    );
   }
 
   @protected
@@ -664,15 +942,41 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           styleJson: dco_decode_String(raw[2]),
           attribution: dco_decode_opt_String(raw[3]),
         );
+      case 3:
+        return LayerConfig_PolygonLayer(
+          features: dco_decode_list_polygon(raw[1]),
+        );
+      case 4:
+        return LayerConfig_PointLayer(features: dco_decode_list_point(raw[1]));
+      case 5:
+        return LayerConfig_WidgetLayer();
       default:
         throw Exception("unreachable");
     }
   }
 
   @protected
+  List<Point> dco_decode_list_point(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_point).toList();
+  }
+
+  @protected
+  List<Polygon> dco_decode_list_polygon(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_polygon).toList();
+  }
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as Uint8List;
+  }
+
+  @protected
+  List<(double, double)> dco_decode_list_record_f_64_f_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_record_f_64_f_64).toList();
   }
 
   @protected
@@ -766,12 +1070,62 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Point dco_decode_point(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return Point(
+      coordinate: dco_decode_record_f_64_f_64(arr[0]),
+      style: dco_decode_point_style(arr[1]),
+    );
+  }
+
+  @protected
   Point2 dco_decode_point_2(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
     if (arr.length != 2)
       throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
     return Point2(x: dco_decode_f_64(arr[0]), y: dco_decode_f_64(arr[1]));
+  }
+
+  @protected
+  PointStyle dco_decode_point_style(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return PointStyle(
+      fillColor: dco_decode_color(arr[0]),
+      size: dco_decode_f_32(arr[1]),
+    );
+  }
+
+  @protected
+  Polygon dco_decode_polygon(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return Polygon(
+      points: dco_decode_list_record_f_64_f_64(arr[0]),
+      style: dco_decode_polygon_style(arr[1]),
+    );
+  }
+
+  @protected
+  PolygonStyle dco_decode_polygon_style(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return PolygonStyle(
+      fillColor: dco_decode_color(arr[0]),
+      strokeColor: dco_decode_color(arr[1]),
+      strokeWidth: dco_decode_f_64(arr[2]),
+      strokeOffset: dco_decode_f_64(arr[3]),
+    );
   }
 
   @protected
@@ -944,9 +1298,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Point sse_decode_box_autoadd_point(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_point(deserializer));
+  }
+
+  @protected
   Point2 sse_decode_box_autoadd_point_2(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_point_2(deserializer));
+  }
+
+  @protected
+  Polygon sse_decode_box_autoadd_polygon(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_polygon(deserializer));
   }
 
   @protected
@@ -959,6 +1325,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   Vector2 sse_decode_box_autoadd_vector_2(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_vector_2(deserializer));
+  }
+
+  @protected
+  Color sse_decode_color(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_r = sse_decode_f_64(deserializer);
+    var var_g = sse_decode_f_64(deserializer);
+    var var_b = sse_decode_f_64(deserializer);
+    var var_a = sse_decode_f_64(deserializer);
+    return Color(r: var_r, g: var_g, b: var_b, a: var_a);
   }
 
   @protected
@@ -1022,9 +1398,41 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           styleJson: var_styleJson,
           attribution: var_attribution,
         );
+      case 3:
+        var var_features = sse_decode_list_polygon(deserializer);
+        return LayerConfig_PolygonLayer(features: var_features);
+      case 4:
+        var var_features = sse_decode_list_point(deserializer);
+        return LayerConfig_PointLayer(features: var_features);
+      case 5:
+        return LayerConfig_WidgetLayer();
       default:
         throw UnimplementedError('');
     }
+  }
+
+  @protected
+  List<Point> sse_decode_list_point(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <Point>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_point(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<Polygon> sse_decode_list_polygon(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <Polygon>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_polygon(deserializer));
+    }
+    return ans_;
   }
 
   @protected
@@ -1032,6 +1440,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var len_ = sse_decode_i_32(deserializer);
     return deserializer.buffer.getUint8List(len_);
+  }
+
+  @protected
+  List<(double, double)> sse_decode_list_record_f_64_f_64(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <(double, double)>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_record_f_64_f_64(deserializer));
+    }
+    return ans_;
   }
 
   @protected
@@ -1141,11 +1563,50 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Point sse_decode_point(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_coordinate = sse_decode_record_f_64_f_64(deserializer);
+    var var_style = sse_decode_point_style(deserializer);
+    return Point(coordinate: var_coordinate, style: var_style);
+  }
+
+  @protected
   Point2 sse_decode_point_2(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_x = sse_decode_f_64(deserializer);
     var var_y = sse_decode_f_64(deserializer);
     return Point2(x: var_x, y: var_y);
+  }
+
+  @protected
+  PointStyle sse_decode_point_style(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_fillColor = sse_decode_color(deserializer);
+    var var_size = sse_decode_f_32(deserializer);
+    return PointStyle(fillColor: var_fillColor, size: var_size);
+  }
+
+  @protected
+  Polygon sse_decode_polygon(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_points = sse_decode_list_record_f_64_f_64(deserializer);
+    var var_style = sse_decode_polygon_style(deserializer);
+    return Polygon(points: var_points, style: var_style);
+  }
+
+  @protected
+  PolygonStyle sse_decode_polygon_style(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_fillColor = sse_decode_color(deserializer);
+    var var_strokeColor = sse_decode_color(deserializer);
+    var var_strokeWidth = sse_decode_f_64(deserializer);
+    var var_strokeOffset = sse_decode_f_64(deserializer);
+    return PolygonStyle(
+      fillColor: var_fillColor,
+      strokeColor: var_strokeColor,
+      strokeWidth: var_strokeWidth,
+      strokeOffset: var_strokeOffset,
+    );
   }
 
   @protected
@@ -1308,9 +1769,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_point(Point self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_point(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_point_2(Point2 self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_point_2(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_polygon(Polygon self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_polygon(self, serializer);
   }
 
   @protected
@@ -1326,6 +1799,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_box_autoadd_vector_2(Vector2 self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_vector_2(self, serializer);
+  }
+
+  @protected
+  void sse_encode_color(Color self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_f_64(self.r, serializer);
+    sse_encode_f_64(self.g, serializer);
+    sse_encode_f_64(self.b, serializer);
+    sse_encode_f_64(self.a, serializer);
   }
 
   @protected
@@ -1384,6 +1866,32 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(urlTemplate, serializer);
         sse_encode_String(styleJson, serializer);
         sse_encode_opt_String(attribution, serializer);
+      case LayerConfig_PolygonLayer(features: final features):
+        sse_encode_i_32(3, serializer);
+        sse_encode_list_polygon(features, serializer);
+      case LayerConfig_PointLayer(features: final features):
+        sse_encode_i_32(4, serializer);
+        sse_encode_list_point(features, serializer);
+      case LayerConfig_WidgetLayer():
+        sse_encode_i_32(5, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_point(List<Point> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_point(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_polygon(List<Polygon> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_polygon(item, serializer);
     }
   }
 
@@ -1395,6 +1903,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     serializer.buffer.putUint8List(self);
+  }
+
+  @protected
+  void sse_encode_list_record_f_64_f_64(
+    List<(double, double)> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_record_f_64_f_64(item, serializer);
+    }
   }
 
   @protected
@@ -1483,10 +2003,40 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_point(Point self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_record_f_64_f_64(self.coordinate, serializer);
+    sse_encode_point_style(self.style, serializer);
+  }
+
+  @protected
   void sse_encode_point_2(Point2 self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_f_64(self.x, serializer);
     sse_encode_f_64(self.y, serializer);
+  }
+
+  @protected
+  void sse_encode_point_style(PointStyle self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_color(self.fillColor, serializer);
+    sse_encode_f_32(self.size, serializer);
+  }
+
+  @protected
+  void sse_encode_polygon(Polygon self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_record_f_64_f_64(self.points, serializer);
+    sse_encode_polygon_style(self.style, serializer);
+  }
+
+  @protected
+  void sse_encode_polygon_style(PolygonStyle self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_color(self.fillColor, serializer);
+    sse_encode_color(self.strokeColor, serializer);
+    sse_encode_f_64(self.strokeWidth, serializer);
+    sse_encode_f_64(self.strokeOffset, serializer);
   }
 
   @protected

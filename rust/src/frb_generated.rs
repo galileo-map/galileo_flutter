@@ -37,7 +37,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 56949982;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1385225485;
 
 // Section: executor
 
@@ -45,6 +45,176 @@ flutter_rust_bridge::frb_generated_default_handler!();
 
 // Section: wire_funcs
 
+fn wire__crate__api__galileo_api__add_point_feature_layer_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "add_point_feature_layer",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_session_id = <u32>::sse_decode(&mut deserializer);
+            let api_initial_points =
+                <Vec<crate::api::dart_types::Point>>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || async move {
+                        let output_ok = crate::api::galileo_api::add_point_feature_layer(
+                            api_session_id,
+                            api_initial_points,
+                        )
+                        .await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__galileo_api__add_point_to_layer_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "add_point_to_layer",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_session_id = <u32>::sse_decode(&mut deserializer);
+            let api_layer_id = <u32>::sse_decode(&mut deserializer);
+            let api_point = <crate::api::dart_types::Point>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || async move {
+                        let output_ok = crate::api::galileo_api::add_point_to_layer(
+                            api_session_id,
+                            api_layer_id,
+                            api_point,
+                        )
+                        .await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__galileo_api__add_polygon_feature_layer_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "add_polygon_feature_layer",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_session_id = <u32>::sse_decode(&mut deserializer);
+            let api_initial_polygons =
+                <Vec<crate::api::dart_types::Polygon>>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || async move {
+                        let output_ok = crate::api::galileo_api::add_polygon_feature_layer(
+                            api_session_id,
+                            api_initial_polygons,
+                        )
+                        .await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__galileo_api__add_polygon_to_layer_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "add_polygon_to_layer",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_session_id = <u32>::sse_decode(&mut deserializer);
+            let api_layer_id = <u32>::sse_decode(&mut deserializer);
+            let api_polygon = <crate::api::dart_types::Polygon>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || async move {
+                        let output_ok = crate::api::galileo_api::add_polygon_to_layer(
+                            api_session_id,
+                            api_layer_id,
+                            api_polygon,
+                        )
+                        .await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
 fn wire__crate__api__galileo_api__add_session_layer_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -419,6 +589,92 @@ fn wire__crate__api__galileo_api__mark_session_alive_impl(
         },
     )
 }
+fn wire__crate__api__galileo_api__remove_point_from_layer_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "remove_point_from_layer",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_session_id = <u32>::sse_decode(&mut deserializer);
+            let api_layer_id = <u32>::sse_decode(&mut deserializer);
+            let api_index = <u32>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || async move {
+                        let output_ok = crate::api::galileo_api::remove_point_from_layer(
+                            api_session_id,
+                            api_layer_id,
+                            api_index,
+                        )
+                        .await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__galileo_api__remove_polygon_from_layer_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "remove_polygon_from_layer",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_session_id = <u32>::sse_decode(&mut deserializer);
+            let api_layer_id = <u32>::sse_decode(&mut deserializer);
+            let api_index = <u32>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || async move {
+                        let output_ok = crate::api::galileo_api::remove_polygon_from_layer(
+                            api_session_id,
+                            api_layer_id,
+                            api_index,
+                        )
+                        .await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
 fn wire__crate__api__galileo_api__request_map_redraw_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -556,6 +812,22 @@ impl SseDecode for bool {
     }
 }
 
+impl SseDecode for crate::api::dart_types::Color {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_r = <f64>::sse_decode(deserializer);
+        let mut var_g = <f64>::sse_decode(deserializer);
+        let mut var_b = <f64>::sse_decode(deserializer);
+        let mut var_a = <f64>::sse_decode(deserializer);
+        return crate::api::dart_types::Color {
+            r: var_r,
+            g: var_g,
+            b: var_b,
+            a: var_a,
+        };
+    }
+}
+
 impl SseDecode for crate::api::galileo_api::CreateNewSessionResponse {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -622,10 +894,51 @@ impl SseDecode for crate::api::dart_types::LayerConfig {
                     attribution: var_attribution,
                 };
             }
+            3 => {
+                let mut var_features =
+                    <Vec<crate::api::dart_types::Polygon>>::sse_decode(deserializer);
+                return crate::api::dart_types::LayerConfig::PolygonLayer {
+                    features: var_features,
+                };
+            }
+            4 => {
+                let mut var_features =
+                    <Vec<crate::api::dart_types::Point>>::sse_decode(deserializer);
+                return crate::api::dart_types::LayerConfig::PointLayer {
+                    features: var_features,
+                };
+            }
+            5 => {
+                return crate::api::dart_types::LayerConfig::WidgetLayer;
+            }
             _ => {
                 unimplemented!("");
             }
         }
+    }
+}
+
+impl SseDecode for Vec<crate::api::dart_types::Point> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::dart_types::Point>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::dart_types::Polygon> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::dart_types::Polygon>::sse_decode(deserializer));
+        }
+        return ans_;
     }
 }
 
@@ -636,6 +949,18 @@ impl SseDecode for Vec<u8> {
         let mut ans_ = vec![];
         for idx_ in 0..len_ {
             ans_.push(<u8>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<(f64, f64)> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<(f64, f64)>::sse_decode(deserializer));
         }
         return ans_;
     }
@@ -764,12 +1089,64 @@ impl SseDecode for Option<crate::api::dart_types::MapViewport> {
     }
 }
 
+impl SseDecode for crate::api::dart_types::Point {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_coordinate = <(f64, f64)>::sse_decode(deserializer);
+        let mut var_style = <crate::api::dart_types::PointStyle>::sse_decode(deserializer);
+        return crate::api::dart_types::Point {
+            coordinate: var_coordinate,
+            style: var_style,
+        };
+    }
+}
+
 impl SseDecode for crate::api::dart_types::Point2 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_x = <f64>::sse_decode(deserializer);
         let mut var_y = <f64>::sse_decode(deserializer);
         return crate::api::dart_types::Point2 { x: var_x, y: var_y };
+    }
+}
+
+impl SseDecode for crate::api::dart_types::PointStyle {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_fillColor = <crate::api::dart_types::Color>::sse_decode(deserializer);
+        let mut var_size = <f32>::sse_decode(deserializer);
+        return crate::api::dart_types::PointStyle {
+            fill_color: var_fillColor,
+            size: var_size,
+        };
+    }
+}
+
+impl SseDecode for crate::api::dart_types::Polygon {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_points = <Vec<(f64, f64)>>::sse_decode(deserializer);
+        let mut var_style = <crate::api::dart_types::PolygonStyle>::sse_decode(deserializer);
+        return crate::api::dart_types::Polygon {
+            points: var_points,
+            style: var_style,
+        };
+    }
+}
+
+impl SseDecode for crate::api::dart_types::PolygonStyle {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_fillColor = <crate::api::dart_types::Color>::sse_decode(deserializer);
+        let mut var_strokeColor = <crate::api::dart_types::Color>::sse_decode(deserializer);
+        let mut var_strokeWidth = <f64>::sse_decode(deserializer);
+        let mut var_strokeOffset = <f64>::sse_decode(deserializer);
+        return crate::api::dart_types::PolygonStyle {
+            fill_color: var_fillColor,
+            stroke_color: var_strokeColor,
+            stroke_width: var_strokeWidth,
+            stroke_offset: var_strokeOffset,
+        };
     }
 }
 
@@ -902,63 +1279,99 @@ fn pde_ffi_dispatcher_primary_impl(
 ) {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        1 => {
+        1 => wire__crate__api__galileo_api__add_point_feature_layer_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        2 => wire__crate__api__galileo_api__add_point_to_layer_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        3 => wire__crate__api__galileo_api__add_polygon_feature_layer_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        4 => wire__crate__api__galileo_api__add_polygon_to_layer_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        5 => {
             wire__crate__api__galileo_api__add_session_layer_impl(port, ptr, rust_vec_len, data_len)
         }
-        2 => wire__crate__api__galileo_api__create_new_map_session_impl(
+        6 => wire__crate__api__galileo_api__create_new_map_session_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        3 => wire__crate__api__galileo_api__destroy_all_engine_sessions_impl(
+        7 => wire__crate__api__galileo_api__destroy_all_engine_sessions_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        4 => wire__crate__api__galileo_api__destroy_session_impl(port, ptr, rust_vec_len, data_len),
-        5 => wire__crate__api__galileo_api__galileo_flutter_init_impl(
+        8 => wire__crate__api__galileo_api__destroy_session_impl(port, ptr, rust_vec_len, data_len),
+        9 => wire__crate__api__galileo_api__galileo_flutter_init_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        6 => {
+        10 => {
             wire__crate__api__galileo_api__get_map_viewport_impl(port, ptr, rust_vec_len, data_len)
         }
-        7 => wire__crate__api__galileo_api__handle_event_for_session_impl(
+        11 => wire__crate__api__galileo_api__handle_event_for_session_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        8 => wire__crate__api__galileo_api__init_galileo_flutter_impl(
+        12 => wire__crate__api__galileo_api__init_galileo_flutter_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        9 => wire__crate__api__dart_types__map_init_config_default_impl(
+        13 => wire__crate__api__dart_types__map_init_config_default_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        10 => wire__crate__api__galileo_api__mark_session_alive_impl(
+        14 => wire__crate__api__galileo_api__mark_session_alive_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        11 => wire__crate__api__galileo_api__request_map_redraw_impl(
+        15 => wire__crate__api__galileo_api__remove_point_from_layer_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        12 => wire__crate__api__galileo_api__resize_session_impl(port, ptr, rust_vec_len, data_len),
-        13 => wire__crate__api__galileo_api__set_tile_cache_path_impl(
+        16 => wire__crate__api__galileo_api__remove_polygon_from_layer_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        17 => wire__crate__api__galileo_api__request_map_redraw_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        18 => wire__crate__api__galileo_api__resize_session_impl(port, ptr, rust_vec_len, data_len),
+        19 => wire__crate__api__galileo_api__set_tile_cache_path_impl(
             port,
             ptr,
             rust_vec_len,
@@ -982,6 +1395,26 @@ fn pde_ffi_dispatcher_sync_impl(
 
 // Section: rust2dart
 
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::dart_types::Color {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.r.into_into_dart().into_dart(),
+            self.g.into_into_dart().into_dart(),
+            self.b.into_into_dart().into_dart(),
+            self.a.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::dart_types::Color {}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::dart_types::Color>
+    for crate::api::dart_types::Color
+{
+    fn into_into_dart(self) -> crate::api::dart_types::Color {
+        self
+    }
+}
 // Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::galileo_api::CreateNewSessionResponse {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
@@ -1028,6 +1461,13 @@ impl flutter_rust_bridge::IntoDart for crate::api::dart_types::LayerConfig {
                 attribution.into_into_dart().into_dart(),
             ]
             .into_dart(),
+            crate::api::dart_types::LayerConfig::PolygonLayer { features } => {
+                [3.into_dart(), features.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::dart_types::LayerConfig::PointLayer { features } => {
+                [4.into_dart(), features.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::dart_types::LayerConfig::WidgetLayer => [5.into_dart()].into_dart(),
             _ => {
                 unimplemented!("");
             }
@@ -1201,6 +1641,24 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::dart_types::MouseEvent>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::dart_types::Point {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.coordinate.into_into_dart().into_dart(),
+            self.style.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::dart_types::Point {}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::dart_types::Point>
+    for crate::api::dart_types::Point
+{
+    fn into_into_dart(self) -> crate::api::dart_types::Point {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::dart_types::Point2 {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -1218,6 +1676,71 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::dart_types::Point2>
     for crate::api::dart_types::Point2
 {
     fn into_into_dart(self) -> crate::api::dart_types::Point2 {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::dart_types::PointStyle {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.fill_color.into_into_dart().into_dart(),
+            self.size.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::dart_types::PointStyle
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::dart_types::PointStyle>
+    for crate::api::dart_types::PointStyle
+{
+    fn into_into_dart(self) -> crate::api::dart_types::PointStyle {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::dart_types::Polygon {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.points.into_into_dart().into_dart(),
+            self.style.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::dart_types::Polygon
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::dart_types::Polygon>
+    for crate::api::dart_types::Polygon
+{
+    fn into_into_dart(self) -> crate::api::dart_types::Polygon {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::dart_types::PolygonStyle {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.fill_color.into_into_dart().into_dart(),
+            self.stroke_color.into_into_dart().into_dart(),
+            self.stroke_width.into_into_dart().into_dart(),
+            self.stroke_offset.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::dart_types::PolygonStyle
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::dart_types::PolygonStyle>
+    for crate::api::dart_types::PolygonStyle
+{
+    fn into_into_dart(self) -> crate::api::dart_types::PolygonStyle {
         self
     }
 }
@@ -1343,6 +1866,16 @@ impl SseEncode for bool {
     }
 }
 
+impl SseEncode for crate::api::dart_types::Color {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <f64>::sse_encode(self.r, serializer);
+        <f64>::sse_encode(self.g, serializer);
+        <f64>::sse_encode(self.b, serializer);
+        <f64>::sse_encode(self.a, serializer);
+    }
+}
+
 impl SseEncode for crate::api::galileo_api::CreateNewSessionResponse {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1404,9 +1937,40 @@ impl SseEncode for crate::api::dart_types::LayerConfig {
                 <String>::sse_encode(style_json, serializer);
                 <Option<String>>::sse_encode(attribution, serializer);
             }
+            crate::api::dart_types::LayerConfig::PolygonLayer { features } => {
+                <i32>::sse_encode(3, serializer);
+                <Vec<crate::api::dart_types::Polygon>>::sse_encode(features, serializer);
+            }
+            crate::api::dart_types::LayerConfig::PointLayer { features } => {
+                <i32>::sse_encode(4, serializer);
+                <Vec<crate::api::dart_types::Point>>::sse_encode(features, serializer);
+            }
+            crate::api::dart_types::LayerConfig::WidgetLayer => {
+                <i32>::sse_encode(5, serializer);
+            }
             _ => {
                 unimplemented!("");
             }
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::dart_types::Point> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::dart_types::Point>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::dart_types::Polygon> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::dart_types::Polygon>::sse_encode(item, serializer);
         }
     }
 }
@@ -1417,6 +1981,16 @@ impl SseEncode for Vec<u8> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <u8>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<(f64, f64)> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <(f64, f64)>::sse_encode(item, serializer);
         }
     }
 }
@@ -1521,11 +2095,45 @@ impl SseEncode for Option<crate::api::dart_types::MapViewport> {
     }
 }
 
+impl SseEncode for crate::api::dart_types::Point {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <(f64, f64)>::sse_encode(self.coordinate, serializer);
+        <crate::api::dart_types::PointStyle>::sse_encode(self.style, serializer);
+    }
+}
+
 impl SseEncode for crate::api::dart_types::Point2 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <f64>::sse_encode(self.x, serializer);
         <f64>::sse_encode(self.y, serializer);
+    }
+}
+
+impl SseEncode for crate::api::dart_types::PointStyle {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::dart_types::Color>::sse_encode(self.fill_color, serializer);
+        <f32>::sse_encode(self.size, serializer);
+    }
+}
+
+impl SseEncode for crate::api::dart_types::Polygon {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<(f64, f64)>>::sse_encode(self.points, serializer);
+        <crate::api::dart_types::PolygonStyle>::sse_encode(self.style, serializer);
+    }
+}
+
+impl SseEncode for crate::api::dart_types::PolygonStyle {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::dart_types::Color>::sse_encode(self.fill_color, serializer);
+        <crate::api::dart_types::Color>::sse_encode(self.stroke_color, serializer);
+        <f64>::sse_encode(self.stroke_width, serializer);
+        <f64>::sse_encode(self.stroke_offset, serializer);
     }
 }
 

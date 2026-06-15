@@ -52,6 +52,62 @@ Future<void> addSessionLayer({
   layerConfig: layerConfig,
 );
 
+Future<int> addPointFeatureLayer({
+  required int sessionId,
+  required List<Point> initialPoints,
+}) => RustLib.instance.api.crateApiGalileoApiAddPointFeatureLayer(
+  sessionId: sessionId,
+  initialPoints: initialPoints,
+);
+
+Future<int> addPolygonFeatureLayer({
+  required int sessionId,
+  required List<Polygon> initialPolygons,
+}) => RustLib.instance.api.crateApiGalileoApiAddPolygonFeatureLayer(
+  sessionId: sessionId,
+  initialPolygons: initialPolygons,
+);
+
+Future<int> addPointToLayer({
+  required int sessionId,
+  required int layerId,
+  required Point point,
+}) => RustLib.instance.api.crateApiGalileoApiAddPointToLayer(
+  sessionId: sessionId,
+  layerId: layerId,
+  point: point,
+);
+
+Future<int> addPolygonToLayer({
+  required int sessionId,
+  required int layerId,
+  required Polygon polygon,
+}) => RustLib.instance.api.crateApiGalileoApiAddPolygonToLayer(
+  sessionId: sessionId,
+  layerId: layerId,
+  polygon: polygon,
+);
+
+Future<bool> removePointFromLayer({
+  required int sessionId,
+  required int layerId,
+  required int index,
+}) => RustLib.instance.api.crateApiGalileoApiRemovePointFromLayer(
+  sessionId: sessionId,
+  layerId: layerId,
+  index: index,
+);
+
+Future<bool> removePolygonFromLayer({
+  required int sessionId,
+  required int layerId,
+  required int index,
+}) => RustLib.instance.api.crateApiGalileoApiRemovePolygonFromLayer(
+  sessionId: sessionId,
+  layerId: layerId,
+  index: index,
+);
+
 Future<MapViewport?> getMapViewport({required int sessionId}) =>
     RustLib.instance.api.crateApiGalileoApiGetMapViewport(sessionId: sessionId);
 

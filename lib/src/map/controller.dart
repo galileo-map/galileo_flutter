@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:galileo_flutter/src/rust/api/dart_types.dart';
 import 'package:galileo_flutter/src/rust/api/galileo_api.dart' as rlib;
+import 'package:galileo_flutter/src/layer/controller.dart';
 
 import 'package:irondash_engine_context/irondash_engine_context.dart';
 import "package:rxdart/rxdart.dart" as rx;
@@ -26,7 +27,11 @@ enum GalileoMapState {
 class GalileoMapController {
   final MapSize size;
   final MapInitConfig config;
+
+  late final LayerController layer_controller;
+
   final List<LayerConfig> layers;
+  final Map<String, int> _layer_names = {};
 
   final int sessionId;
   final rx.BehaviorSubject<GalileoMapState> _stateBroadcast;
@@ -42,7 +47,9 @@ class GalileoMapController {
     required rx.BehaviorSubject<GalileoMapState> stateBroadcast,
     StreamSubscription<GalileoMapState>? originalSub,
   }) : _stateBroadcast = stateBroadcast,
-       _originalSub = originalSub;
+       _originalSub = originalSub {
+    layer_controller = LayerController(sessionId: sessionId, layers: layers);
+  }
 
   /// Stream of map state changes
   Stream<GalileoMapState> get stateStream => _stateBroadcast.stream;
@@ -86,15 +93,12 @@ class GalileoMapController {
         originalSub: null,
       );
 
+      for (final layer in layers) {
+        await controller.layer_controller.addLayer(layer);
+      }
+
       controller._textureId = newSessionResp.textureId;
       controller._running = true;
-
-      for (final layer in layers) {
-        await rlib.addSessionLayer(
-          sessionId: controller.sessionId,
-          layerConfig: layer,
-        );
-      }
 
       await rlib.requestMapRedraw(sessionId: controller.sessionId);
 
@@ -153,25 +157,12 @@ class GalileoMapController {
 
   /// Get the current map viewport
   Future<MapViewport?> getViewport() async {
-    return null;
+    return rlib.getMapViewport(sessionId: sessionId);
   }
 
   /// Set the map viewport
   Future<void> setViewport(MapViewport viewport) async {
     if (!_running) return;
-  }
-
-  /// Add a layer to the map
-  Future<void> addLayer(LayerConfig layer) async {
-    if (!_running) return;
-
-    try {
-      await rlib.addSessionLayer(sessionId: sessionId, layerConfig: layer);
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Error adding layer: $e');
-      }
-    }
   }
 
   /// Resize the map

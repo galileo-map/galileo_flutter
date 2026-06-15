@@ -5,22 +5,20 @@ import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:galileo_flutter/src/galileo_map_controller.dart';
+import 'package:galileo_flutter/src/map/controller.dart';
 import 'package:galileo_flutter/src/rust/api/dart_types.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:galileo_flutter/src/layer/overlay.dart';
 
 /// A widget that displays a Galileo map with interactive controls
 class GalileoMapWidget extends StatefulWidget {
   final GalileoMapController controller;
 
-  final MapSize size;
-
   final MapInitConfig config;
 
   final List<LayerConfig> layers;
-  
-  final Widget? child;
 
+  final Widget? child;
 
   /// Whether to dispose the controller when the widget disposes
   final bool autoDispose;
@@ -31,13 +29,15 @@ class GalileoMapWidget extends StatefulWidget {
   /// Focus node for keyboard events
   final FocusNode? focusNode;
 
-/// Called when the map is tapped
+  /// Called when the map is tapped
   final void Function(double x, double y)? onTap;
+
+  /// Fires at most once per 30 ms to avoid flooding the Rust FFI layer.
+  final void Function(MapViewport viewport)? onViewportChanged;
 
   const GalileoMapWidget._({
     super.key,
     required this.controller,
-    required this.size,
     required this.config,
     required this.layers,
     this.child,
@@ -45,13 +45,13 @@ class GalileoMapWidget extends StatefulWidget {
     this.enableKeyboard = true,
     this.focusNode,
     this.onTap,
+    this.onViewportChanged,
   });
 
   /// Create a GalileoMapWidget from an existing controller
   factory GalileoMapWidget.fromController({
     Key? key,
     required GalileoMapController controller,
-    required MapSize size,
     required MapInitConfig config,
     List<LayerConfig> layers = const [LayerConfig.osm()],
     bool autoDispose = true,
@@ -59,6 +59,7 @@ class GalileoMapWidget extends StatefulWidget {
     FocusNode? focusNode,
     Widget? child,
     void Function(double x, double y)? onTap,
+    void Function(MapViewport viewport)? onViewportChanged,
   }) {
     return GalileoMapWidget._(
       key: key,
@@ -67,14 +68,14 @@ class GalileoMapWidget extends StatefulWidget {
       enableKeyboard: enableKeyboard,
       focusNode: focusNode,
       onTap: onTap,
-      size: size,
+      onViewportChanged: onViewportChanged,
       config: config,
       layers: layers,
       child: child,
     );
   }
 
-/// Create a GalileoMapWidget with configuration
+  /// Create a GalileoMapWidget with configuration
   static Widget fromConfig({
     Key? key,
     required MapSize size,
@@ -120,6 +121,42 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
   bool _isPinchScaling = false;
 
   final Set<int> _activePointers = {};
+
+  /// Lock flags to ensure only one FFI call to getViewport is active at any time.
+  bool _isFetchingViewport = false;
+  bool _needsViewportUpdate = false;
+
+  /// Fetch the current viewport from Rust and emit it to [onViewportChanged].
+  /// Non-blocking/locked: starts the FFI call immediately, and queues at most one
+  /// subsequent update if another request comes in while the FFI call is active.
+  void _scheduleViewportUpdate() {
+    if (widget.onViewportChanged == null) return;
+    if (_isFetchingViewport) {
+      _needsViewportUpdate = true;
+      return;
+    }
+
+    _isFetchingViewport = true;
+    _needsViewportUpdate = false;
+
+    widget.controller
+        .getViewport()
+        .then((vp) {
+          _isFetchingViewport = false;
+          if (vp != null && mounted) {
+            widget.onViewportChanged!(vp);
+          }
+          if (_needsViewportUpdate && mounted) {
+            _scheduleViewportUpdate();
+          }
+        })
+        .catchError((e) {
+          _isFetchingViewport = false;
+          if (_needsViewportUpdate && mounted) {
+            _scheduleViewportUpdate();
+          }
+        });
+  }
 
   double get _devicePixelRatio {
     return MediaQuery.of(context).devicePixelRatio;
@@ -178,6 +215,8 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
     if (_panAccumulatedDelta != Offset.zero) {
       _sendPanEvent(_panAccumulatedDelta, _lastPointerPosition!);
       _panAccumulatedDelta = Offset.zero;
+      // Schedule a viewport fetch so overlay widgets track the pan in real time.
+      _scheduleViewportUpdate();
     }
   }
 
@@ -227,6 +266,16 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
       children: [
         // The actual map texture
         Positioned.fill(child: Texture(textureId: textureId)),
+        // Geo-anchored widgets from LayerController
+        ListenableBuilder(
+          listenable: widget.controller.layer_controller,
+          builder: (context, _) {
+            return MapOverlayLayer(
+              controller: widget.controller.layer_controller,
+              overlays: widget.controller.layer_controller.overlays,
+            );
+          },
+        ),
         // Optional child widget overlay
         if (widget.child != null) widget.child!,
       ],
@@ -282,6 +331,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
           final zoomFactor =
               math.pow(1.0 - zoomSensitivity, -event.scrollDelta.dy).toDouble();
           _sendZoomEvent(zoomFactor, event.localPosition);
+          _scheduleViewportUpdate();
         }
       },
       onPointerMove: (event) {
@@ -333,6 +383,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
                 math.pow(scaleDelta, zoomSensitivity).toDouble();
             _lastPinchScaleValue = details.scale;
             _sendZoomEvent(1.0 / amplifiedDelta, details.localFocalPoint);
+            _scheduleViewportUpdate();
           }
         }
       },
@@ -382,96 +433,44 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
   }
 
   _handleKeyNavigation(LogicalKeyboardKey key) {
+    final centerX = widget.controller.size.width / _devicePixelRatio / 2;
+    final centerY = widget.controller.size.height / _devicePixelRatio / 2;
+    final center = Offset(centerX, centerY);
+    const step = 20.0;
+
     switch (key) {
       case LogicalKeyboardKey.arrowUp:
-        // Pan up using drag event
-        final centerX = widget.controller.size.width / 2;
-        final centerY = widget.controller.size.height / 2;
-        final userEvent = UserEvent.drag(
-          MouseButton.left,
-          const Vector2(dx: 0, dy: 20),
-          MouseEvent(
-            screenPointerPosition: Point2(x: centerX, y: centerY),
-            buttons: const MouseButtonsState(
-              left: MouseButtonState.pressed,
-              middle: MouseButtonState.released,
-              right: MouseButtonState.released,
-            ),
-          ),
-        );
-        widget.controller.handleEvent(userEvent);
-        break;
+        _sendPanEvent(const Offset(0, step), center);
       case LogicalKeyboardKey.arrowDown:
-        // Pan down using drag event
-        final centerX = widget.controller.size.width / 2;
-        final centerY = widget.controller.size.height / 2;
-        final userEvent = UserEvent.drag(
-          MouseButton.left,
-          const Vector2(dx: 0, dy: -20),
-          MouseEvent(
-            screenPointerPosition: Point2(x: centerX, y: centerY),
-            buttons: const MouseButtonsState(
-              left: MouseButtonState.pressed,
-              middle: MouseButtonState.released,
-              right: MouseButtonState.released,
-            ),
-          ),
-        );
-        widget.controller.handleEvent(userEvent);
-        break;
+        _sendPanEvent(const Offset(0, -step), center);
       case LogicalKeyboardKey.arrowLeft:
-        // Pan left using drag event
-        final centerX = widget.controller.size.width / 2;
-        final centerY = widget.controller.size.height / 2;
-        final userEvent = UserEvent.drag(
-          MouseButton.left,
-          const Vector2(dx: 20, dy: 0),
-          MouseEvent(
-            screenPointerPosition: Point2(x: centerX, y: centerY),
-            buttons: const MouseButtonsState(
-              left: MouseButtonState.pressed,
-              middle: MouseButtonState.released,
-              right: MouseButtonState.released,
-            ),
-          ),
-        );
-        widget.controller.handleEvent(userEvent);
-        break;
+        _sendPanEvent(const Offset(step, 0), center);
       case LogicalKeyboardKey.arrowRight:
-        // Pan right using drag event
-        final centerX = widget.controller.size.width / 2;
-        final centerY = widget.controller.size.height / 2;
-        final userEvent = UserEvent.drag(
-          MouseButton.left,
-          const Vector2(dx: -20, dy: 0),
-          MouseEvent(
-            screenPointerPosition: Point2(x: centerX, y: centerY),
-            buttons: const MouseButtonsState(
-              left: MouseButtonState.pressed,
-              middle: MouseButtonState.released,
-              right: MouseButtonState.released,
-            ),
-          ),
-        );
-        widget.controller.handleEvent(userEvent);
-        break;
+        _sendPanEvent(const Offset(-step, 0), center);
       case LogicalKeyboardKey.equal:
       case LogicalKeyboardKey.numpadAdd:
-        // Zoom in
-        final centerX = widget.controller.size.width / 2;
-        final centerY = widget.controller.size.height / 2;
-        final userEvent = UserEvent.zoom(0.9, Point2(x: centerX, y: centerY));
-        widget.controller.handleEvent(userEvent);
-        break;
+        widget.controller.handleEvent(
+          UserEvent.zoom(
+            0.9,
+            Point2(
+              x: centerX * _devicePixelRatio,
+              y: centerY * _devicePixelRatio,
+            ),
+          ),
+        );
       case LogicalKeyboardKey.minus:
       case LogicalKeyboardKey.numpadSubtract:
-        // Zoom out
-        final centerX = widget.controller.size.width / 2;
-        final centerY = widget.controller.size.height / 2;
-        final userEvent = UserEvent.zoom(1.1, Point2(x: centerX, y: centerY));
-        widget.controller.handleEvent(userEvent);
-        break;
+        widget.controller.handleEvent(
+          UserEvent.zoom(
+            1.1,
+            Point2(
+              x: centerX * _devicePixelRatio,
+              y: centerY * _devicePixelRatio,
+            ),
+          ),
+        );
     }
+    _scheduleViewportUpdate();
   }
 
   @override
@@ -541,18 +540,12 @@ class _GalileoMapFromConfig extends StatefulWidget {
   final MapInitConfig config;
   final List<LayerConfig> layers;
   final Widget? child;
-
-  /// Whether to dispose the controller when the widget disposes
   final bool autoDispose;
-
-
-  /// Focus node for keyboard events
   final bool enableKeyboard;
-
-  /// Whether to enable keyboard input
+  final FocusNode? focusNode;
   final void Function(double x, double y)? onTap;
 
-  /// Called when the map is tappedinal FocusNode? focusNode;
+  /// Called when the map is tapped
   final void Function(MapViewport viewport)? onViewportChanged;
 
   const _GalileoMapFromConfig({
@@ -615,7 +608,6 @@ class _GalileoMapFromConfigState extends State<_GalileoMapFromConfig> {
 
         return GalileoMapWidget._(
           controller: controller!,
-          size: widget.size,
           config: widget.config,
           layers: widget.layers,
           autoDispose: widget.autoDispose,

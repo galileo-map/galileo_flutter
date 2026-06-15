@@ -10,7 +10,7 @@ use parking_lot::Mutex;
 pub use pixel_buffer::PixelBuffer;
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
-use std::sync::{Arc,OnceLock};
+use std::sync::{Arc, OnceLock};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 pub use windowless_renderer::WindowlessRenderer;
 
