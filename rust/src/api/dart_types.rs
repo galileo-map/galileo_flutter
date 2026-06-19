@@ -59,8 +59,8 @@ impl ScreenLocation {
 
     #[frb(sync)]
     pub fn to_geographical(self,vp: MapViewport,  height: f64, width: f64 )->GeoLocation{
-    let mx = vp.x_min + (self.x / width) * (vp.x_max - vp.x_min);
-    let my = vp.y_max - (self.y / height) * (vp.y_max - vp.y_min);
+    let mx = vp.x_min + if width == 0.0 { 0.0 } else { (self.x / width) * (vp.x_max - vp.x_min) };
+    let my = vp.y_max - if height == 0.0 { 0.0 } else { (self.y / height) * (vp.y_max - vp.y_min) };
     let (lat,lng) = mercator_to_lat_lon(mx, my);
     GeoLocation { latitude: lat, longitude: lng }
     }
