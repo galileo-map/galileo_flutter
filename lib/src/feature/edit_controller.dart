@@ -1,5 +1,4 @@
 import 'dart:ui' as ui;
-import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter/material.dart';
@@ -7,65 +6,28 @@ import 'package:flutter/services.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
 import 'package:galileo_flutter/src/layer/controller.dart';
 
-abstract final class MapProjection {
-  static const double _r = 6378137.0;
+/// Converts a [ScreenLocation] to a Flutter [Offset].
+/// Used wherever Canvas or hit-test code needs an [Offset].
+Offset _toOffset(ScreenLocation s) => Offset(s.x, s.y);
 
-  static (double, double) latLonToMercator(double lat, double lon) => (
-    lon * (math.pi / 180) * _r,
-    math.log(math.tan(math.pi / 4 + lat * (math.pi / 180) / 2)) * _r,
-  );
-
-  static (double, double) mercatorToLatLon(double x, double y) => (
-    (2 * math.atan(math.exp(y / _r)) - math.pi / 2) * (180 / math.pi),
-    (x / _r) * (180 / math.pi),
-  );
-
-  static Offset latLonToScreen(
-    (double, double) coord,
-    Size size,
-    ViewportBounds vp,
-  ) {
-    final (mx, my) = latLonToMercator(coord.$1, coord.$2);
-    return Offset(
-      (mx - vp.xMin) / (vp.xMax - vp.xMin) * size.width,
-      (vp.yMax - my) / (vp.yMax - vp.yMin) * size.height,
-    );
-  }
-
-  static (double, double) screenToLatLon(
-    Offset pos,
-    Size size,
-    ViewportBounds vp,
-  ) {
-    final mx = vp.xMin + (pos.dx / size.width) * (vp.xMax - vp.xMin);
-    final my = vp.yMax - (pos.dy / size.height) * (vp.yMax - vp.yMin);
-    return mercatorToLatLon(mx, my);
-  }
-}
-
-class ViewportBounds {
-  final double xMin, xMax, yMin, yMax;
-  const ViewportBounds({
-    required this.xMin,
-    required this.xMax,
-    required this.yMin,
-    required this.yMax,
-  });
+/// Converts a vertex [GeoLocation] to a screen [Offset] in one step.
+Offset _geoToOffset(GeoLocation geo, Size size, MapViewport vp) {
+  final s = geo.toScreen(height: size.height, width: size.width, vp: vp);
+  return Offset(s.x, s.y);
 }
 
 class EditOverlayPainter extends CustomPainter {
-  final List<(double, double)> vertices;
-  final ViewportBounds viewport;
+  final List<GeoLocation> vertices;
+  final MapViewport viewport;
 
   const EditOverlayPainter({required this.vertices, required this.viewport});
 
   @override
   void paint(Canvas canvas, Size size) {
     if (vertices.isEmpty) return;
-    final pts =
-        vertices
-            .map((v) => MapProjection.latLonToScreen(v, size, viewport))
-            .toList();
+    final pts = vertices
+        .map((v) => _geoToOffset(v, size, viewport))
+        .toList();
 
     if (pts.length >= 3) {
       final path = Path()..moveTo(pts[0].dx, pts[0].dy);
@@ -98,18 +60,17 @@ class EditOverlayPainter extends CustomPainter {
 /// Vertices are shown as blue dots; edges as dashed lines; if 3+ vertices
 /// exist a translucent fill closes the shape.
 class PendingPolygonPainter extends CustomPainter {
-  final List<(double, double)> vertices;
-  final ViewportBounds viewport;
+  final List<GeoLocation> vertices;
+  final MapViewport viewport;
 
   const PendingPolygonPainter({required this.vertices, required this.viewport});
 
   @override
   void paint(Canvas canvas, Size size) {
     if (vertices.isEmpty) return;
-    final pts =
-        vertices
-            .map((v) => MapProjection.latLonToScreen(v, size, viewport))
-            .toList();
+    final pts = vertices
+        .map((v) => _geoToOffset(v, size, viewport))
+        .toList();
 
     // Translucent fill + dashed border when closed (3+ pts).
     if (pts.length >= 3) {
@@ -309,7 +270,7 @@ class FeatureLayerManager {
 
 abstract class FeatureEditController extends ChangeNotifier {
   bool get isActive;
-  void updateViewport(ViewportBounds viewport);
+  void updateViewport(MapViewport viewport);
   void handlePointerDown(PointerDownEvent event, Size mapSize);
   void handlePointerMove(PointerMoveEvent event, Size mapSize);
   Future<void> handlePointerUp(PointerUpEvent event, Size mapSize);
@@ -330,8 +291,8 @@ class PolygonEditController extends FeatureEditController {
   FeatureLayerManager? _features;
 
   int? _selectedPolygonId;
-  List<(double, double)> _editingVertices = [];
-  ViewportBounds? _viewport;
+  List<GeoLocation> _editingVertices = [];
+  MapViewport? _viewport;
   int? _draggingVertexIndex;
   Offset? _pointerDownPos;
 
@@ -341,9 +302,9 @@ class PolygonEditController extends FeatureEditController {
   bool get isActive => _selectedPolygonId != null;
 
   int? get selectedPolygonId => _selectedPolygonId;
-  List<(double, double)> get editingVertices =>
+  List<GeoLocation> get editingVertices =>
       List.unmodifiable(_editingVertices);
-  ViewportBounds? get viewport => _viewport;
+  MapViewport? get viewport => _viewport;
 
   LayerController? get layerController => _features?.layerController;
 
@@ -355,7 +316,7 @@ class PolygonEditController extends FeatureEditController {
   }
 
   @override
-  void updateViewport(ViewportBounds viewport) {
+  void updateViewport(MapViewport viewport) {
     _viewport = viewport;
     notifyListeners();
   }
@@ -379,7 +340,7 @@ class PolygonEditController extends FeatureEditController {
   Future<bool> trySelectAt(
     Offset screenPos,
     Size mapSize,
-    ViewportBounds vp,
+    MapViewport vp,
   ) async {
     _viewport = vp;
     final features = _features;
@@ -439,11 +400,9 @@ class PolygonEditController extends FeatureEditController {
     final vi = _draggingVertexIndex;
     final vp = _viewport;
     if (vi == null || vp == null || !isActive) return;
-    _editingVertices[vi] = MapProjection.screenToLatLon(
-      event.localPosition,
-      mapSize,
-      vp,
-    );
+    final pos = event.localPosition;
+    _editingVertices[vi] = ScreenLocation(x: pos.dx, y: pos.dy)
+        .toGeographical(vp: vp, height: mapSize.height, width: mapSize.width);
     notifyListeners(); // live vertex drag
   }
 
@@ -507,7 +466,10 @@ class PolygonEditController extends FeatureEditController {
   Future<void> _insertVertexAfterEdge(int edgeIndex) async {
     final a = _editingVertices[edgeIndex];
     final b = _editingVertices[(edgeIndex + 1) % _editingVertices.length];
-    final mid = ((a.$1 + b.$1) / 2, (a.$2 + b.$2) / 2);
+    final mid = GeoLocation(
+      latitude: (a.latitude + b.latitude) / 2,
+      longitude: (a.longitude + b.longitude) / 2,
+    );
     _editingVertices.insert(edgeIndex + 1, mid);
     notifyListeners();
     await _commitEdits();
@@ -517,10 +479,8 @@ class PolygonEditController extends FeatureEditController {
     final vp = _viewport;
     if (vp == null) return null;
     for (int i = 0; i < _editingVertices.length; i++) {
-      if ((MapProjection.latLonToScreen(_editingVertices[i], size, vp) - pos)
-              .distance <
-          _vertexHitR)
-        return i;
+      final scr = _geoToOffset(_editingVertices[i], size, vp);
+      if ((scr - pos).distance < _vertexHitR) return i;
     }
     return null;
   }
@@ -529,15 +489,14 @@ class PolygonEditController extends FeatureEditController {
     final vp = _viewport;
     if (vp == null) return null;
     for (int i = 0; i < _editingVertices.length; i++) {
-      final a = MapProjection.latLonToScreen(_editingVertices[i], size, vp);
-      final b = MapProjection.latLonToScreen(
+      final a = _geoToOffset(_editingVertices[i], size, vp);
+      final b = _geoToOffset(
         _editingVertices[(i + 1) % _editingVertices.length],
         size,
         vp,
       );
-      if ((Offset((a.dx + b.dx) / 2, (a.dy + b.dy) / 2) - pos).distance <
-          _midpointHitR)
-        return i;
+      final mid = (a + b) / 2;
+      if ((mid - pos).distance < _midpointHitR) return i;
     }
     return null;
   }
@@ -548,9 +507,7 @@ class PolygonEditController extends FeatureEditController {
     if (poly == null || vp == null) return false;
     return pointInPolygon(
       pos,
-      poly.points
-          .map((t) => MapProjection.latLonToScreen(t, size, vp))
-          .toList(),
+      poly.points.map((t) => _geoToOffset(t, size, vp)).toList(),
     );
   }
 

@@ -8,8 +8,9 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'dart_types.freezed.dart';
 
-// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `MapPosition`, `Point3`, `PointSymbol`, `PolygonSymbol`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
+// These functions are ignored because they are not marked as `pub`: `lat_lon_to_mercator`, `mercator_to_lat_lon`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `Point3`, `PointSymbol`, `PolygonSymbol`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 // These functions are ignored (category: IgnoreBecauseExplicitAttribute): `from_rect`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`
 
 class Color {
@@ -37,6 +38,36 @@ class Color {
           g == other.g &&
           b == other.b &&
           a == other.a;
+}
+
+/// Geographic position with latitude and longitude coordinates.
+class GeoLocation {
+  final double latitude;
+  final double longitude;
+
+  const GeoLocation({required this.latitude, required this.longitude});
+
+  ScreenLocation toScreen({
+    required double height,
+    required double width,
+    required MapViewport vp,
+  }) => RustLib.instance.api.crateApiDartTypesGeoLocationToScreen(
+    that: this,
+    height: height,
+    width: width,
+    vp: vp,
+  );
+
+  @override
+  int get hashCode => latitude.hashCode ^ longitude.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GeoLocation &&
+          runtimeType == other.runtimeType &&
+          latitude == other.latitude &&
+          longitude == other.longitude;
 }
 
 @freezed
@@ -72,7 +103,7 @@ sealed class LayerConfig with _$LayerConfig {
 }
 
 class MapInitConfig {
-  final (double, double) latlon;
+  final GeoLocation latlon;
   final int zoomLevel;
   final MapSize mapSize;
 
@@ -251,7 +282,7 @@ class MouseEvent {
 ///     ),
 ///   )
 class Point {
-  final (double, double) coordinate;
+  final GeoLocation coordinate;
   final PointStyle style;
 
   const Point({required this.coordinate, required this.style});
@@ -317,7 +348,7 @@ class PointStyle {
 ///     ),
 ///   )
 class Polygon {
-  final List<(double, double)> points;
+  final List<GeoLocation> points;
   final PolygonStyle style;
 
   const Polygon({required this.points, required this.style});
@@ -370,6 +401,36 @@ class PolygonStyle {
           strokeColor == other.strokeColor &&
           strokeWidth == other.strokeWidth &&
           strokeOffset == other.strokeOffset;
+}
+
+/// Flutter/Screen with x and y coordinates.
+class ScreenLocation {
+  final double x;
+  final double y;
+
+  const ScreenLocation({required this.x, required this.y});
+
+  GeoLocation toGeographical({
+    required MapViewport vp,
+    required double height,
+    required double width,
+  }) => RustLib.instance.api.crateApiDartTypesScreenLocationToGeographical(
+    that: this,
+    vp: vp,
+    height: height,
+    width: width,
+  );
+
+  @override
+  int get hashCode => x.hashCode ^ y.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ScreenLocation &&
+          runtimeType == other.runtimeType &&
+          x == other.x &&
+          y == other.y;
 }
 
 @freezed

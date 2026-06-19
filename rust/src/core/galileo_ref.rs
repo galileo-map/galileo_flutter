@@ -14,14 +14,14 @@ pub fn create_galileo_map(
         .with_z_level(3) // z-level in config is too big, so only blue ocean is drawn, so for
         // testing change it to just 3
         // .with_z_level(config.z_level) // Initial zoom level
-        .with_latlon(config.latlon.0, config.latlon.1)
+        .with_latlon(config.latlon.latitude, config.latlon.longitude)
         .build();
     Ok(map)
 }
 
 pub fn create_galileo_map_v2(config: &MapInitConfig) -> anyhow::Result<Map> {
     let map = MapBuilder::default()
-        .with_latlon(config.latlon.0, config.latlon.1)
+        .with_latlon(config.latlon.latitude, config.latlon.longitude)
         .with_z_level(config.zoom_level)
         .build();
     Ok(map)

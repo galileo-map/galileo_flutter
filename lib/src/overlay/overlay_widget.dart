@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:galileo_flutter/galileo_flutter.dart';
 
 enum OverlayType {
   /// Size stays constant in screen pixels.
@@ -14,8 +15,7 @@ enum OverlayType {
 /// [MapOverlayLayer] inside [GalileoMapWidget] reads the list and
 /// repositions each overlay whenever the viewport changes.
 class OverlayWidget extends StatelessWidget {
-  final double lat;
-  final double lon;
+  final GeoLocation loc;
   final double height;
   final double width;
   final OverlayType type;
@@ -23,8 +23,7 @@ class OverlayWidget extends StatelessWidget {
 
   const OverlayWidget({
     super.key,
-    required this.lat,
-    required this.lon,
+    required this.loc,
     required this.height,
     required this.width,
     required this.type,

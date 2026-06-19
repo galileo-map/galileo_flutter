@@ -9,8 +9,8 @@ class LayerController extends ChangeNotifier {
   final Map<String, FeatureEditController> _editors = {};
   final List<LayerConfig> layers;
   final int sessionId;
-  ViewportBounds? _viewportBounds;
-  ViewportBounds? get viewportBounds => _viewportBounds;
+  MapViewport? _viewportBounds;
+  MapViewport? get viewportBounds => _viewportBounds;
 
   double _zoomScale = 1.0;
   double get zoomScale => _zoomScale;
@@ -46,7 +46,7 @@ class LayerController extends ChangeNotifier {
   /// Update Viewport
   Future<void> updateViewport(MapViewport? nativeViewport) async {
     if (nativeViewport == null) return;
-    _viewportBounds = ViewportBounds(
+    _viewportBounds = MapViewport(
       xMin: nativeViewport.xMin,
       xMax: nativeViewport.xMax,
       yMin: nativeViewport.yMin,

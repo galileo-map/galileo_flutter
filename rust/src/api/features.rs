@@ -24,7 +24,7 @@ impl Geometry for Polygon {
         let ring: Vec<GeoPoint2d> = self
             .points
             .iter()
-            .map(|(lat, lon)| GeoPoint2d::latlon(*lat, *lon))
+            .map(|point| GeoPoint2d::latlon(point.latitude, point.longitude))
             .collect();
 
         let polygon = galileo::galileo_types::impls::Polygon::<GeoPoint2d>::new(
@@ -51,7 +51,7 @@ impl Geometry for Point {
         &self,
         projection: &P,
     ) -> Option<Geom<P::OutPoint>> {
-        let coordinate: GeoPoint2d = GeoPoint2d::latlon(self.coordinate.0, self.coordinate.1);
+        let coordinate: GeoPoint2d = GeoPoint2d::latlon(self.coordinate.latitude, self.coordinate.longitude);
         coordinate.project(projection)
     }
 }

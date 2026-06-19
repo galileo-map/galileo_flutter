@@ -38,7 +38,7 @@ class MapOverlayFlowDelegate extends FlowDelegate {
   final LayerController controller;
   final Size mapSize;
   final List<OverlayWidget> overlays;
-  final ViewportBounds? viewportBounds;
+  final MapViewport? viewportBounds;
   final double zoomScale;
 
   MapOverlayFlowDelegate({
@@ -66,11 +66,7 @@ class MapOverlayFlowDelegate extends FlowDelegate {
       final childSize =
           context.getChildSize(i) ?? Size(overlay.width, overlay.height);
 
-      final screenPos = MapProjection.latLonToScreen(
-        (overlay.lat, overlay.lon),
-        mapSize,
-        vp,
-      );
+      final screenPos = overlay.loc.toScreen(height:mapSize.height,width:mapSize.width,vp:vp);
 
       final transformMatrix = Matrix4.identity();
 
@@ -78,8 +74,8 @@ class MapOverlayFlowDelegate extends FlowDelegate {
         // Retains its exact pixel dimension profile regardless of map scaling changes
         case OverlayType.static:
           transformMatrix.translate(
-            screenPos.dx - (childSize.width / 2),
-            screenPos.dy - (childSize.height / 2),
+            screenPos.x - (childSize.width / 2),
+            screenPos.y - (childSize.height / 2),
           );
           break;
 
@@ -87,7 +83,7 @@ class MapOverlayFlowDelegate extends FlowDelegate {
         case OverlayType.relative:
           final scale = controller.zoomScale;
 
-          transformMatrix.translate(screenPos.dx, screenPos.dy);
+          transformMatrix.translate(screenPos.x, screenPos.y);
 
           transformMatrix.scale(scale);
 

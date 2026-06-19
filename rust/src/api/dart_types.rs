@@ -3,12 +3,67 @@
 
 use flutter_rust_bridge::frb;
 use galileo::galileo_types;
+use std::f64;
 
+#[derive(Debug, Clone, Copy,PartialEq)]
 /// Geographic position with latitude and longitude coordinates.
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct MapPosition {
+pub struct GeoLocation {
     pub latitude: f64,
     pub longitude: f64,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+/// Flutter/Screen with x and y coordinates.
+pub struct ScreenLocation {
+    pub x: f64,
+    pub y: f64,
+}
+
+const R : f64= 6378137.0;
+
+  fn lat_lon_to_mercator(lat: f64,lon:f64)->(f64,f64){
+    ( lon * (f64::consts::PI / 180.0) * R,
+    f64::ln(f64::tan(f64::consts::PI / 4.0 + lat * (f64::consts::PI / 180.0) / 2.0)) * R
+    )
+  }
+
+  fn mercator_to_lat_lon(x: f64,y:f64)->(f64,f64){
+      ((2.0 * f64::atan(f64::exp(y / R)) - f64::consts::PI / 2.0) * (180.0 / f64::consts::PI),
+    (x / R) * (180.0 / f64::consts::PI))
+  }
+
+#[frb(dart_code = r#"
+  GeoLocation operator +(GeoLocation other) => GeoLocation(latitude: latitude + other.latitude,longitude : longitude + other.longitude);
+  GeoLocation operator -(GeoLocation other) => GeoLocation(latitude: latitude - other.latitude,longitude : longitude - other.longitude);
+"#)]
+impl GeoLocation {
+    #[frb(sync)]
+      pub fn to_screen(
+        self,
+        height:f64 ,
+        width:f64 ,
+        vp:MapViewport,
+      )-> ScreenLocation{
+        let (mx, my) = lat_lon_to_mercator(self.latitude, self.longitude);
+        ScreenLocation {
+          x: (mx - vp.x_min) / (vp.x_max - vp.x_min) * width,
+          y: (vp.y_max - my) / (vp.y_max - vp.y_min) * height,
+        }
+      }
+}
+#[frb(dart_code = r#"
+  ScreenLocation operator +(ScreenLocation other) => ScreenLocation(x: x + other.x, y: y + other.y);
+  ScreenLocation operator -(ScreenLocation other) => ScreenLocation(x: x - other.x, y: y - other.y);
+"#)]
+impl ScreenLocation {
+
+    #[frb(sync)]
+    pub fn to_geographical(self,vp: MapViewport,  height: f64, width: f64 )->GeoLocation{
+    let mx = vp.x_min + (self.x / width) * (vp.x_max - vp.x_min);
+    let my = vp.y_max - (self.y / height) * (vp.y_max - vp.y_min);
+    let (lat,lng) = mercator_to_lat_lon(mx, my);
+    GeoLocation { latitude: lat, longitude: lng }
+    }
 }
 
 /// Map viewport configuration including center, zoom, and rotation.
@@ -41,7 +96,7 @@ pub struct MapSize {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct MapInitConfig {
-    pub latlon: (f64, f64),
+    pub latlon: GeoLocation,
     pub zoom_level: u32,
     pub map_size: MapSize,
     /// Frames per second for the render loop (default: 30)
@@ -54,7 +109,7 @@ pub struct MapInitConfig {
 impl Default for MapInitConfig {
     fn default() -> Self {
         Self {
-            latlon: (0.0, 0.0),
+            latlon: GeoLocation{latitude:0.0, longitude:0.0},
             zoom_level: 10,
             map_size: MapSize {
                 width: 800,
@@ -107,7 +162,7 @@ pub enum LayerConfig {
 ///   )
 #[derive(Clone, Debug, PartialEq)]
 pub struct Polygon {
-    pub points: Vec<(f64, f64)>,
+    pub points: Vec<GeoLocation>,
     pub style: PolygonStyle,
 }
 
@@ -137,7 +192,7 @@ pub struct PolygonSymbol {}
 ///   )
 #[derive(Clone, Debug, PartialEq)]
 pub struct Point {
-    pub coordinate: (f64, f64),
+    pub coordinate: GeoLocation,
     pub style: PointStyle,
 }
 

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
 import 'dart:ui' as ui;
+import 'package:latlong2/latlong.dart';
 
 const MAP_TILER_API_KEY = '';
 const MAP_TILER_URL_TEMPLATE =
@@ -13,7 +14,7 @@ const _kMapSize = MapSize(width: 800, height: 600);
 const _kMapConfig = MapInitConfig(
   backgroundColor: (0.1, 0.1, 0, 0.5),
   enableMultisampling: true,
-  latlon: (0.0, 0.0),
+  latlon: GeoLocation(latitude:0.0,longitude:0.0),
   mapSize: _kMapSize,
   zoomLevel: 10,
 );
@@ -77,7 +78,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
   // List<(double, double)> _pendingVertices = [];
   // bool get _isDrawingPolygon => _pendingVertices.isNotEmpty;
 
-  ViewportBounds? _cachedViewport;
+  MapViewport? _cachedViewport;
 
   @override
   void initState() {
@@ -99,7 +100,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
   Future<void> _refreshViewport() async {
     final vp = await _controller?.getViewport();
     if (vp == null || !mounted) return;
-    final bounds = ViewportBounds(
+    final bounds = MapViewport(
       xMin: vp.xMin,
       xMax: vp.xMax,
       yMin: vp.yMin,
@@ -157,8 +158,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
 
     ctrl.layer_controller.addOverlay(
       OverlayWidget(
-        lat: 0.0,
-        lon: 0.0,
+		  loc: GeoLocation(latitude: 0.0,longitude: 0.0),
         width: 200,
         height: 150,
         type: OverlayType.static,
@@ -183,14 +183,14 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     await _refreshViewport();
   }
 
-  Future<void> _addFeatureAtScreenPos(double x, double y, Size size) async {
+  Future<void> _addFeatureAtScreenPos(Offset off, Size size) async {
     final features = _features;
     if (features == null || !_layerReady) return;
 
     final viewport = await _controller?.getViewport();
     if (viewport == null || !mounted) return;
 
-    final vp = ViewportBounds(
+    final vp = MapViewport(
       xMin: viewport.xMin,
       xMax: viewport.xMax,
       yMin: viewport.yMin,
@@ -199,11 +199,11 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     setState(() => _cachedViewport = vp);
     // _polygonEditor.updateViewport(vp);
 
-    final screenPos = Offset(x, y);
-    final (lat, lon) = MapProjection.screenToLatLon(screenPos, size, vp);
+    final screenPos = ScreenLocation(x:off.dx,y:off.dy);
+    final loc = screenPos.toGeographical(height:size.height,width: size.width, vp:vp);
 
     if (_drawMode == DrawMode.point) {
-      await _addPoint(features, lat, lon);
+      await _addPoint(features, loc);
       return;
     }
 
@@ -218,11 +218,10 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
 
   Future<void> _addPoint(
     FeatureLayerManager features,
-    double lat,
-    double lon,
+	 GeoLocation loc,
   ) async {
     final point = Point(
-      coordinate: (lat, lon),
+      coordinate: loc,
       style: PointStyle(
         fillColor: Color(r: 1.0, g: 0.0, b: 0.0, a: 1.0),
         size: 8.0,
@@ -232,7 +231,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     if (mounted) {
       setState(() {
         _statusMessage =
-            'Point at (${lat.toStringAsFixed(4)}, ${lon.toStringAsFixed(4)}) '
+            'Point at (${loc.latitude.toStringAsFixed(4)}, ${loc.longitude.toStringAsFixed(4)}) '
             '— total: ${features.pointCount}';
       });
     }
@@ -535,8 +534,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                                 (e.localPosition - down).distance <
                                     _tapThreshold) {
                               _addFeatureAtScreenPos(
-                                e.localPosition.dx,
-                                e.localPosition.dy,
+                                e.localPosition,
                                 size,
                               );
                             }
@@ -551,7 +549,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                             enableKeyboard: true,
                             autoDispose: false,
                             onViewportChanged: (vp) async {
-                              final bounds = ViewportBounds(
+                              final bounds = MapViewport(
                                 xMin: vp.xMin,
                                 xMax: vp.xMax,
                                 yMin: vp.yMin,

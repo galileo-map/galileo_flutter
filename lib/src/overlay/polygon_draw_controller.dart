@@ -11,13 +11,13 @@ class PolygonDrawController extends ChangeNotifier {
   final LayerController _layer_controller;
   final FeatureLayerManager _features;
 
-  List<(double, double)> _pendingVertices = [];
+  List<GeoLocation> _pendingVertices = [];
 
   /// Layer controller
   LayerController get layer_controller => _layer_controller;
 
   /// Unmodifiable view of the vertices placed so far.
-  List<(double, double)> get pendingVertices =>
+  List<GeoLocation> get pendingVertices =>
       List.unmodifiable(_pendingVertices);
 
   /// Whether a draw session is in progress (at least one vertex placed).
@@ -36,8 +36,8 @@ class PolygonDrawController extends ChangeNotifier {
   PolygonDrawController(this._features, this._layer_controller);
 
   /// Add a vertex at the given lat/lon.
-  void addVertex(double lat, double lon) {
-    _pendingVertices.add((lat, lon));
+  void addVertex(GeoLocation loc) {
+    _pendingVertices.add(loc);
     final n = _pendingVertices.length;
     _statusMessage =
         n < 3

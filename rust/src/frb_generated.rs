@@ -37,7 +37,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1385225485;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1303080307;
 
 // Section: executor
 
@@ -410,6 +410,42 @@ fn wire__crate__api__galileo_api__galileo_flutter_init_impl(
         },
     )
 }
+fn wire__crate__api__dart_types__geo_location_to_screen_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "geo_location_to_screen",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <crate::api::dart_types::GeoLocation>::sse_decode(&mut deserializer);
+            let api_height = <f64>::sse_decode(&mut deserializer);
+            let api_width = <f64>::sse_decode(&mut deserializer);
+            let api_vp = <crate::api::dart_types::MapViewport>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok =
+                    Result::<_, ()>::Ok(crate::api::dart_types::GeoLocation::to_screen(
+                        api_that, api_height, api_width, api_vp,
+                    ))?;
+                Ok(output_ok)
+            })())
+        },
+    )
+}
 fn wire__crate__api__galileo_api__get_map_viewport_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -751,6 +787,42 @@ fn wire__crate__api__galileo_api__resize_session_impl(
         },
     )
 }
+fn wire__crate__api__dart_types__screen_location_to_geographical_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "screen_location_to_geographical",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <crate::api::dart_types::ScreenLocation>::sse_decode(&mut deserializer);
+            let api_vp = <crate::api::dart_types::MapViewport>::sse_decode(&mut deserializer);
+            let api_height = <f64>::sse_decode(&mut deserializer);
+            let api_width = <f64>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok =
+                    Result::<_, ()>::Ok(crate::api::dart_types::ScreenLocation::to_geographical(
+                        api_that, api_vp, api_height, api_width,
+                    ))?;
+                Ok(output_ok)
+            })())
+        },
+    )
+}
 fn wire__crate__api__galileo_api__set_tile_cache_path_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -854,6 +926,18 @@ impl SseDecode for f64 {
     }
 }
 
+impl SseDecode for crate::api::dart_types::GeoLocation {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_latitude = <f64>::sse_decode(deserializer);
+        let mut var_longitude = <f64>::sse_decode(deserializer);
+        return crate::api::dart_types::GeoLocation {
+            latitude: var_latitude,
+            longitude: var_longitude,
+        };
+    }
+}
+
 impl SseDecode for i32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -918,6 +1002,20 @@ impl SseDecode for crate::api::dart_types::LayerConfig {
     }
 }
 
+impl SseDecode for Vec<crate::api::dart_types::GeoLocation> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::dart_types::GeoLocation>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<crate::api::dart_types::Point> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -954,22 +1052,10 @@ impl SseDecode for Vec<u8> {
     }
 }
 
-impl SseDecode for Vec<(f64, f64)> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut len_ = <i32>::sse_decode(deserializer);
-        let mut ans_ = vec![];
-        for idx_ in 0..len_ {
-            ans_.push(<(f64, f64)>::sse_decode(deserializer));
-        }
-        return ans_;
-    }
-}
-
 impl SseDecode for crate::api::dart_types::MapInitConfig {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_latlon = <(f64, f64)>::sse_decode(deserializer);
+        let mut var_latlon = <crate::api::dart_types::GeoLocation>::sse_decode(deserializer);
         let mut var_zoomLevel = <u32>::sse_decode(deserializer);
         let mut var_mapSize = <crate::api::dart_types::MapSize>::sse_decode(deserializer);
         let mut var_enableMultisampling = <bool>::sse_decode(deserializer);
@@ -1092,7 +1178,7 @@ impl SseDecode for Option<crate::api::dart_types::MapViewport> {
 impl SseDecode for crate::api::dart_types::Point {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_coordinate = <(f64, f64)>::sse_decode(deserializer);
+        let mut var_coordinate = <crate::api::dart_types::GeoLocation>::sse_decode(deserializer);
         let mut var_style = <crate::api::dart_types::PointStyle>::sse_decode(deserializer);
         return crate::api::dart_types::Point {
             coordinate: var_coordinate,
@@ -1125,7 +1211,7 @@ impl SseDecode for crate::api::dart_types::PointStyle {
 impl SseDecode for crate::api::dart_types::Polygon {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_points = <Vec<(f64, f64)>>::sse_decode(deserializer);
+        let mut var_points = <Vec<crate::api::dart_types::GeoLocation>>::sse_decode(deserializer);
         let mut var_style = <crate::api::dart_types::PolygonStyle>::sse_decode(deserializer);
         return crate::api::dart_types::Polygon {
             points: var_points,
@@ -1161,12 +1247,12 @@ impl SseDecode for (f32, f32, f32, f32) {
     }
 }
 
-impl SseDecode for (f64, f64) {
+impl SseDecode for crate::api::dart_types::ScreenLocation {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_field0 = <f64>::sse_decode(deserializer);
-        let mut var_field1 = <f64>::sse_decode(deserializer);
-        return (var_field0, var_field1);
+        let mut var_x = <f64>::sse_decode(deserializer);
+        let mut var_y = <f64>::sse_decode(deserializer);
+        return crate::api::dart_types::ScreenLocation { x: var_x, y: var_y };
     }
 }
 
@@ -1325,53 +1411,53 @@ fn pde_ffi_dispatcher_primary_impl(
             rust_vec_len,
             data_len,
         ),
-        10 => {
+        11 => {
             wire__crate__api__galileo_api__get_map_viewport_impl(port, ptr, rust_vec_len, data_len)
         }
-        11 => wire__crate__api__galileo_api__handle_event_for_session_impl(
+        12 => wire__crate__api__galileo_api__handle_event_for_session_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        12 => wire__crate__api__galileo_api__init_galileo_flutter_impl(
+        13 => wire__crate__api__galileo_api__init_galileo_flutter_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        13 => wire__crate__api__dart_types__map_init_config_default_impl(
+        14 => wire__crate__api__dart_types__map_init_config_default_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        14 => wire__crate__api__galileo_api__mark_session_alive_impl(
+        15 => wire__crate__api__galileo_api__mark_session_alive_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        15 => wire__crate__api__galileo_api__remove_point_from_layer_impl(
+        16 => wire__crate__api__galileo_api__remove_point_from_layer_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        16 => wire__crate__api__galileo_api__remove_polygon_from_layer_impl(
+        17 => wire__crate__api__galileo_api__remove_polygon_from_layer_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        17 => wire__crate__api__galileo_api__request_map_redraw_impl(
+        18 => wire__crate__api__galileo_api__request_map_redraw_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        18 => wire__crate__api__galileo_api__resize_session_impl(port, ptr, rust_vec_len, data_len),
-        19 => wire__crate__api__galileo_api__set_tile_cache_path_impl(
+        19 => wire__crate__api__galileo_api__resize_session_impl(port, ptr, rust_vec_len, data_len),
+        21 => wire__crate__api__galileo_api__set_tile_cache_path_impl(
             port,
             ptr,
             rust_vec_len,
@@ -1389,6 +1475,14 @@ fn pde_ffi_dispatcher_sync_impl(
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
+        10 => {
+            wire__crate__api__dart_types__geo_location_to_screen_impl(ptr, rust_vec_len, data_len)
+        }
+        20 => wire__crate__api__dart_types__screen_location_to_geographical_impl(
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
         _ => unreachable!(),
     }
 }
@@ -1433,6 +1527,27 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::galileo_api::CreateNewSession
     for crate::api::galileo_api::CreateNewSessionResponse
 {
     fn into_into_dart(self) -> crate::api::galileo_api::CreateNewSessionResponse {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::dart_types::GeoLocation {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.latitude.into_into_dart().into_dart(),
+            self.longitude.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::dart_types::GeoLocation
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::dart_types::GeoLocation>
+    for crate::api::dart_types::GeoLocation
+{
+    fn into_into_dart(self) -> crate::api::dart_types::GeoLocation {
         self
     }
 }
@@ -1745,6 +1860,27 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::dart_types::PolygonStyle>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::dart_types::ScreenLocation {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.x.into_into_dart().into_dart(),
+            self.y.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::dart_types::ScreenLocation
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::dart_types::ScreenLocation>
+    for crate::api::dart_types::ScreenLocation
+{
+    fn into_into_dart(self) -> crate::api::dart_types::ScreenLocation {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::dart_types::UserEvent {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
@@ -1898,6 +2034,14 @@ impl SseEncode for f64 {
     }
 }
 
+impl SseEncode for crate::api::dart_types::GeoLocation {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <f64>::sse_encode(self.latitude, serializer);
+        <f64>::sse_encode(self.longitude, serializer);
+    }
+}
+
 impl SseEncode for i32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1955,6 +2099,16 @@ impl SseEncode for crate::api::dart_types::LayerConfig {
     }
 }
 
+impl SseEncode for Vec<crate::api::dart_types::GeoLocation> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::dart_types::GeoLocation>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<crate::api::dart_types::Point> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1985,20 +2139,10 @@ impl SseEncode for Vec<u8> {
     }
 }
 
-impl SseEncode for Vec<(f64, f64)> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <i32>::sse_encode(self.len() as _, serializer);
-        for item in self {
-            <(f64, f64)>::sse_encode(item, serializer);
-        }
-    }
-}
-
 impl SseEncode for crate::api::dart_types::MapInitConfig {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <(f64, f64)>::sse_encode(self.latlon, serializer);
+        <crate::api::dart_types::GeoLocation>::sse_encode(self.latlon, serializer);
         <u32>::sse_encode(self.zoom_level, serializer);
         <crate::api::dart_types::MapSize>::sse_encode(self.map_size, serializer);
         <bool>::sse_encode(self.enable_multisampling, serializer);
@@ -2098,7 +2242,7 @@ impl SseEncode for Option<crate::api::dart_types::MapViewport> {
 impl SseEncode for crate::api::dart_types::Point {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <(f64, f64)>::sse_encode(self.coordinate, serializer);
+        <crate::api::dart_types::GeoLocation>::sse_encode(self.coordinate, serializer);
         <crate::api::dart_types::PointStyle>::sse_encode(self.style, serializer);
     }
 }
@@ -2122,7 +2266,7 @@ impl SseEncode for crate::api::dart_types::PointStyle {
 impl SseEncode for crate::api::dart_types::Polygon {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <Vec<(f64, f64)>>::sse_encode(self.points, serializer);
+        <Vec<crate::api::dart_types::GeoLocation>>::sse_encode(self.points, serializer);
         <crate::api::dart_types::PolygonStyle>::sse_encode(self.style, serializer);
     }
 }
@@ -2147,11 +2291,11 @@ impl SseEncode for (f32, f32, f32, f32) {
     }
 }
 
-impl SseEncode for (f64, f64) {
+impl SseEncode for crate::api::dart_types::ScreenLocation {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <f64>::sse_encode(self.0, serializer);
-        <f64>::sse_encode(self.1, serializer);
+        <f64>::sse_encode(self.x, serializer);
+        <f64>::sse_encode(self.y, serializer);
     }
 }
 

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:galileo_flutter/src/feature/edit_controller.dart';
-import 'package:galileo_flutter/src/overlay/polygon_draw_controller.dart';
+import 'package:galileo_flutter/galileo_flutter.dart';
 
 /// Overlay widget for drawing a new polygon.
 ///
 /// Handles tap detection internally, converts screen coordinates to lat/lon
-/// via [MapProjection], and calls [PolygonDrawController.addVertex].
+/// and calls [PolygonDrawController.addVertex].
 /// Renders the live preview via [PendingPolygonPainter].
 ///
 /// Place this as a child in a [Stack] that covers the map area.
@@ -45,12 +44,8 @@ class _PolygonDrawOverlayState extends State<PolygonDrawOverlay> {
                 (e.localPosition - down).distance < _tapThreshold) {
               final rb = context.findRenderObject() as RenderBox;
               final size = rb.size;
-              final (lat, lon) = MapProjection.screenToLatLon(
-                e.localPosition,
-                size,
-                vp,
-              );
-              ctrl.addVertex(lat, lon);
+              final screenPos = ScreenLocation(x:e.localPosition.dx,y:e.localPosition.dy).toGeographical(height:size.height,width:size.width,vp:vp);
+              ctrl.addVertex(screenPos);
             }
           },
           onPointerCancel: (_) => _pointerDownPosition = null,
