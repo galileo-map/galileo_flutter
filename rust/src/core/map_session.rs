@@ -196,12 +196,12 @@ impl MapSession {
         layer_id: u32,
         point: Point,
     ) -> anyhow::Result<FeatureId> {
+        let mut map = self.map.lock().await;
         let managed = self.managed_layers.lock().await;
+
         let &index = managed
             .get(&layer_id)
             .ok_or_else(|| anyhow::anyhow!("Layer {} not found", layer_id))?;
-
-        let mut map = self.map.lock().await;
         let layer = map
             .layers_mut()
             .get_mut(index)
@@ -222,12 +222,14 @@ impl MapSession {
         layer_id: u32,
         polygon: Polygon,
     ) -> anyhow::Result<FeatureId> {
+
+        let mut map = self.map.lock().await;
         let managed = self.managed_layers.lock().await;
+
         let &index = managed
             .get(&layer_id)
             .ok_or_else(|| anyhow::anyhow!("Layer {} not found", layer_id))?;
 
-        let mut map = self.map.lock().await;
         let layer = map
             .layers_mut()
             .get_mut(index)
