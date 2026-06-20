@@ -13,7 +13,7 @@ const _kMapSize = MapSize(width: 800, height: 600);
 const _kMapConfig = MapInitConfig(
   backgroundColor: (0.1, 0.1, 0, 0.5),
   enableMultisampling: true,
-  latlon: GeoLocation(latitude:0.0,longitude:0.0),
+  latlon: GeoLocation(latitude: 0.0, longitude: 0.0),
   mapSize: _kMapSize,
   zoomLevel: 10,
 );
@@ -77,8 +77,6 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
   // List<(double, double)> _pendingVertices = [];
   // bool get _isDrawingPolygon => _pendingVertices.isNotEmpty;
 
-  MapViewport? _cachedViewport;
-
   @override
   void initState() {
     super.initState();
@@ -99,15 +97,14 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
   Future<void> _refreshViewport() async {
     final vp = await _controller?.getViewport();
     if (vp == null || !mounted) return;
-    final bounds = MapViewport(
-      xMin: vp.xMin,
-      xMax: vp.xMax,
-      yMin: vp.yMin,
-      yMax: vp.yMax,
-    );
-    setState(() => _cachedViewport = bounds);
+    // final bounds = MapViewport(
+    //  xMin: vp.xMin,
+    //  xMax: vp.xMax,
+    //  yMin: vp.yMin,
+    //  yMax: vp.yMax,
+    // );
     //_polygonEditor.updateViewport(bounds);
-    await _controller?.layer_controller.updateViewport(vp);
+    await _controller?.layerController.updateViewport(vp);
   }
 
   Future<void> _switchLayer(LayerConfig newLayer) async {
@@ -121,7 +118,6 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     _features?.dispose();
     _features = null;
     // _pendingVertices = [];
-    _cachedViewport = null;
 
     final f = GalileoMapController.create(
       size: _kMapSize,
@@ -143,7 +139,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     setState(() => _controller = ctrl);
 
     final manager = FeatureLayerManager(
-      layerController: ctrl.layer_controller,
+      layerController: ctrl.layerController,
       polygonEditController: null,
     );
     await manager.initialize();
@@ -155,9 +151,9 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
       _statusMessage = 'Tap map to add features';
     });
 
-    ctrl.layer_controller.addOverlay(
+    ctrl.layerController.addOverlay(
       OverlayWidget(
-		  loc: const GeoLocation(latitude: 0.0,longitude: 0.0),
+        loc: const GeoLocation(latitude: 0.0, longitude: 0.0),
         width: 200,
         height: 150,
         type: OverlayType.static,
@@ -195,11 +191,14 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
       yMin: viewport.yMin,
       yMax: viewport.yMax,
     );
-    setState(() => _cachedViewport = vp);
     // _polygonEditor.updateViewport(vp);
 
-    final screenPos = ScreenLocation(x:off.dx,y:off.dy);
-    final loc = screenPos.toGeographical(height:size.height,width: size.width, vp:vp);
+    final screenPos = ScreenLocation(x: off.dx, y: off.dy);
+    final loc = screenPos.toGeographical(
+      height: size.height,
+      width: size.width,
+      vp: vp,
+    );
 
     if (_drawMode == DrawMode.point) {
       await _addPoint(features, loc);
@@ -215,10 +214,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     // if (!hit) await _addPendingVertex(lat, lon);
   }
 
-  Future<void> _addPoint(
-    FeatureLayerManager features,
-	 GeoLocation loc,
-  ) async {
+  Future<void> _addPoint(FeatureLayerManager features, GeoLocation loc) async {
     final point = Point(
       coordinate: loc,
       style: PointStyle(
@@ -532,10 +528,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                             if (down != null &&
                                 (e.localPosition - down).distance <
                                     _tapThreshold) {
-                              _addFeatureAtScreenPos(
-                                e.localPosition,
-                                size,
-                              );
+                              _addFeatureAtScreenPos(e.localPosition, size);
                             }
                             _pointerDownPosition = null;
                           },
@@ -548,17 +541,17 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                             enableKeyboard: true,
                             autoDispose: false,
                             onViewportChanged: (vp) async {
-                              final bounds = MapViewport(
-                                xMin: vp.xMin,
-                                xMax: vp.xMax,
-                                yMin: vp.yMin,
-                                yMax: vp.yMax,
-                              );
+                              // final bounds = MapViewport(
+                              //   xMin: vp.xMin,
+                              //   xMax: vp.xMax,
+                              //   yMin: vp.yMin,
+                              //   yMax: vp.yMax,
+                              // );
                               if (!mounted) return;
-                              setState(() => _cachedViewport = bounds);
                               // _polygonEditor.updateViewport(bounds);
-                              await _controller?.layer_controller
-                                  .updateViewport(vp);
+                              await _controller?.layerController.updateViewport(
+                                vp,
+                              );
                             },
                             child: Stack(
                               children: [

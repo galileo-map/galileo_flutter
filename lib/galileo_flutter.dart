@@ -11,8 +11,8 @@ import 'src/rust/frb_generated.dart' as rlib_gen;
 
 export 'package:galileo_flutter/src/rust/api/dart_types.dart'
     show
-		  GeoLocation,
-		  ScreenLocation,
+        GeoLocation,
+        ScreenLocation,
         MapViewport,
         MapSize,
         LayerConfig,

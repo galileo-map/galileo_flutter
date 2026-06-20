@@ -51,7 +51,8 @@ impl Geometry for Point {
         &self,
         projection: &P,
     ) -> Option<Geom<P::OutPoint>> {
-        let coordinate: GeoPoint2d = GeoPoint2d::latlon(self.coordinate.latitude, self.coordinate.longitude);
+        let coordinate: GeoPoint2d =
+            GeoPoint2d::latlon(self.coordinate.latitude, self.coordinate.longitude);
         coordinate.project(projection)
     }
 }

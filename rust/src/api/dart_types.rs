@@ -5,7 +5,7 @@ use flutter_rust_bridge::frb;
 use galileo::galileo_types;
 use std::f64;
 
-#[derive(Debug, Clone, Copy,PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 /// Geographic position with latitude and longitude coordinates.
 pub struct GeoLocation {
     pub latitude: f64,
@@ -19,54 +19,96 @@ pub struct ScreenLocation {
     pub y: f64,
 }
 
-const R : f64= 6378137.0;
+const R: f64 = 6378137.0;
 
-  fn lat_lon_to_mercator(lat: f64, lon: f64) -> (f64, f64) {
+fn lat_lon_to_mercator(lat: f64, lon: f64) -> (f64, f64) {
     let lat_rad = lat.to_radians();
     let x = lon.to_radians() * R;
     let y = (std::f64::consts::FRAC_PI_4 + lat_rad / 2.0).tan().ln() * R;
     (x, y)
-  }
+}
 
-  fn mercator_to_lat_lon(x: f64, y: f64) -> (f64, f64) {
+fn mercator_to_lat_lon(x: f64, y: f64) -> (f64, f64) {
     let lat = (2.0 * (y / R).exp().atan() - std::f64::consts::FRAC_PI_2).to_degrees();
     let lon = (x / R).to_degrees();
     (lat, lon)
-  }
+}
 
 #[frb(dart_code = r#"
-  GeoLocation operator +(GeoLocation other) => GeoLocation(latitude: latitude + other.latitude,longitude : longitude + other.longitude);
-  GeoLocation operator -(GeoLocation other) => GeoLocation(latitude: latitude - other.latitude,longitude : longitude - other.longitude);
+  GeoLocation operator +(GeoLocation other) {
+    double newLat = this.latitude + other.latitude;
+    double newLng = this.longitude + other.longitude;
+    return _normalize(newLat, newLng);
+  }
+
+  GeoLocation operator -(GeoLocation other) {
+    double newLat = this.latitude - other.latitude;
+    double newLng = this.longitude - other.longitude;
+    return _normalize(newLat, newLng);
+  }
+
+  static GeoLocation _normalize(double lat, double lng) {
+    while (lat > 90.0 || lat < -90.0) {
+      if (lat > 90.0) {
+        lat = 180.0 - lat;
+        lng += 180.0;
+      } else if (lat < -90.0) {
+        lat = -180.0 - lat;
+        lng += 180.0;
+      }
+    }
+
+    double shiftLng = lng + 180.0;
+    double wrappedLng = (shiftLng % 360.0 + 360.0) % 360.0;
+    lng = wrappedLng - 180.0;
+
+    return GeoLocation(latitude: lat, longitude: lng);
+  }
 "#)]
 impl GeoLocation {
     #[frb(sync)]
-      pub fn to_screen(
-        self,
-        height:f64 ,
-        width:f64 ,
-        vp:MapViewport,
-      )-> ScreenLocation{
+    pub fn to_screen(self, height: f64, width: f64, vp: MapViewport) -> ScreenLocation {
         let (mx, my) = lat_lon_to_mercator(self.latitude, self.longitude);
         let dx = vp.x_max - vp.x_min;
         let dy = vp.y_max - vp.y_min;
         ScreenLocation {
-          x: if dx == 0.0 { 0.0 } else { (mx - vp.x_min) / dx * width },
-          y: if dy == 0.0 { 0.0 } else { (vp.y_max - my) / dy * height },
+            x: if dx == 0.0 {
+                0.0
+            } else {
+                (mx - vp.x_min) / dx * width
+            },
+            y: if dy == 0.0 {
+                0.0
+            } else {
+                (vp.y_max - my) / dy * height
+            },
         }
-      }
+    }
 }
 #[frb(dart_code = r#"
   ScreenLocation operator +(ScreenLocation other) => ScreenLocation(x: x + other.x, y: y + other.y);
   ScreenLocation operator -(ScreenLocation other) => ScreenLocation(x: x - other.x, y: y - other.y);
 "#)]
 impl ScreenLocation {
-
     #[frb(sync)]
-    pub fn to_geographical(self,vp: MapViewport,  height: f64, width: f64 )->GeoLocation{
-    let mx = vp.x_min + if width == 0.0 { 0.0 } else { (self.x / width) * (vp.x_max - vp.x_min) };
-    let my = vp.y_max - if height == 0.0 { 0.0 } else { (self.y / height) * (vp.y_max - vp.y_min) };
-    let (lat,lng) = mercator_to_lat_lon(mx, my);
-    GeoLocation { latitude: lat, longitude: lng }
+    pub fn to_geographical(self, vp: MapViewport, height: f64, width: f64) -> GeoLocation {
+        let mx = vp.x_min
+            + if width == 0.0 {
+                0.0
+            } else {
+                (self.x / width) * (vp.x_max - vp.x_min)
+            };
+        let my = vp.y_max
+            - if height == 0.0 {
+                0.0
+            } else {
+                (self.y / height) * (vp.y_max - vp.y_min)
+            };
+        let (lat, lng) = mercator_to_lat_lon(mx, my);
+        GeoLocation {
+            latitude: lat,
+            longitude: lng,
+        }
     }
 }
 
@@ -113,7 +155,10 @@ pub struct MapInitConfig {
 impl Default for MapInitConfig {
     fn default() -> Self {
         Self {
-            latlon: GeoLocation{latitude:0.0, longitude:0.0},
+            latlon: GeoLocation {
+                latitude: 0.0,
+                longitude: 0.0,
+            },
             zoom_level: 10,
             map_size: MapSize {
                 width: 800,

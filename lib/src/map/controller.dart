@@ -28,10 +28,9 @@ class GalileoMapController {
   final MapSize size;
   final MapInitConfig config;
 
-  late final LayerController layer_controller;
+  late final LayerController layerController;
 
   final List<LayerConfig> layers;
-  final Map<String, int> _layer_names = {};
 
   final int sessionId;
   final rx.BehaviorSubject<GalileoMapState> _stateBroadcast;
@@ -48,7 +47,7 @@ class GalileoMapController {
     StreamSubscription<GalileoMapState>? originalSub,
   }) : _stateBroadcast = stateBroadcast,
        _originalSub = originalSub {
-    layer_controller = LayerController(sessionId: sessionId, layers: layers);
+    layerController = LayerController(sessionId: sessionId, layers: layers);
   }
 
   /// Stream of map state changes
@@ -94,7 +93,7 @@ class GalileoMapController {
       );
 
       for (final layer in layers) {
-        await controller.layer_controller.addLayer(layer);
+        await controller.layerController.addLayer(layer);
       }
 
       controller._textureId = newSessionResp.textureId;

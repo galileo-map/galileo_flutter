@@ -2,13 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
-import 'package:galileo_flutter/src/layer/controller.dart';
-
-/// Converts a [ScreenLocation] to a Flutter [Offset].
-/// Used wherever Canvas or hit-test code needs an [Offset].
-Offset _toOffset(ScreenLocation s) => Offset(s.x, s.y);
 
 /// Converts a vertex [GeoLocation] to a screen [Offset] in one step.
 Offset _geoToOffset(GeoLocation geo, Size size, MapViewport vp) {
@@ -25,9 +19,7 @@ class EditOverlayPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (vertices.isEmpty) return;
-    final pts = vertices
-        .map((v) => _geoToOffset(v, size, viewport))
-        .toList();
+    final pts = vertices.map((v) => _geoToOffset(v, size, viewport)).toList();
 
     if (pts.length >= 3) {
       final path = Path()..moveTo(pts[0].dx, pts[0].dy);
@@ -68,9 +60,7 @@ class PendingPolygonPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (vertices.isEmpty) return;
-    final pts = vertices
-        .map((v) => _geoToOffset(v, size, viewport))
-        .toList();
+    final pts = vertices.map((v) => _geoToOffset(v, size, viewport)).toList();
 
     // Translucent fill + dashed border when closed (3+ pts).
     if (pts.length >= 3) {
@@ -114,6 +104,7 @@ class PendingPolygonPainter extends CustomPainter {
 
 class CountChip extends StatelessWidget {
   const CountChip({
+    super.key,
     required this.icon,
     required this.color,
     required this.count,
@@ -196,8 +187,9 @@ class FeatureLayerManager {
     if (removed) {
       _pointIds.removeLast();
     } else {
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint('removeLastPoint: rust could not remove id $id');
+      }
     }
   }
 
@@ -216,7 +208,9 @@ class FeatureLayerManager {
     if (id >= 0) {
       _polygons[id] = polygon;
     } else {
-      if (kDebugMode) debugPrint('addPolygon: rust returned invalid id $id');
+      if (kDebugMode) {
+        debugPrint('addPolygon: rust returned invalid id $id');
+      }
     }
   }
 
@@ -239,8 +233,9 @@ class FeatureLayerManager {
     if (newId >= 0) {
       _polygons[newId] = updated;
     } else {
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint('updatePolygon: rust returned invalid id $newId');
+      }
     }
     return newId;
   }
@@ -255,8 +250,9 @@ class FeatureLayerManager {
     if (removed) {
       _polygons.remove(id);
     } else {
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint('removeLastPolygon: rust could not remove id $id');
+      }
     }
   }
 
@@ -302,8 +298,7 @@ class PolygonEditController extends FeatureEditController {
   bool get isActive => _selectedPolygonId != null;
 
   int? get selectedPolygonId => _selectedPolygonId;
-  List<GeoLocation> get editingVertices =>
-      List.unmodifiable(_editingVertices);
+  List<GeoLocation> get editingVertices => List.unmodifiable(_editingVertices);
   MapViewport? get viewport => _viewport;
 
   LayerController? get layerController => _features?.layerController;
@@ -401,8 +396,10 @@ class PolygonEditController extends FeatureEditController {
     final vp = _viewport;
     if (vi == null || vp == null || !isActive) return;
     final pos = event.localPosition;
-    _editingVertices[vi] = ScreenLocation(x: pos.dx, y: pos.dy)
-        .toGeographical(vp: vp, height: mapSize.height, width: mapSize.width);
+    _editingVertices[vi] = ScreenLocation(
+      x: pos.dx,
+      y: pos.dy,
+    ).toGeographical(vp: vp, height: mapSize.height, width: mapSize.width);
     notifyListeners(); // live vertex drag
   }
 

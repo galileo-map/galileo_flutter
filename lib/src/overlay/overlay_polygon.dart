@@ -29,7 +29,7 @@ class _PolygonDrawOverlayState extends State<PolygonDrawOverlay> {
     return ListenableBuilder(
       listenable: ctrl,
       builder: (context, _) {
-        final vp = ctrl.layer_controller.viewportBounds;
+        final vp = ctrl.layerController.viewportBounds;
         if (!ctrl.isDrawing || vp == null) {
           return const SizedBox.shrink();
         }
@@ -44,7 +44,10 @@ class _PolygonDrawOverlayState extends State<PolygonDrawOverlay> {
                 (e.localPosition - down).distance < _tapThreshold) {
               final rb = context.findRenderObject() as RenderBox;
               final size = rb.size;
-              final screenPos = ScreenLocation(x:e.localPosition.dx,y:e.localPosition.dy).toGeographical(height:size.height,width:size.width,vp:vp);
+              final screenPos = ScreenLocation(
+                x: e.localPosition.dx,
+                y: e.localPosition.dy,
+              ).toGeographical(height: size.height, width: size.width, vp: vp);
               ctrl.addVertex(screenPos);
             }
           },

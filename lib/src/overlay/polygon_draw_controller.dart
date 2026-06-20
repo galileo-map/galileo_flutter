@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
-import 'package:galileo_flutter/src/feature/edit_controller.dart';
 
 /// Controller that manages the pending-vertex state for drawing a new polygon.
 ///
@@ -8,17 +7,16 @@ import 'package:galileo_flutter/src/feature/edit_controller.dart';
 /// Listeners are notified on every state change so overlays and toolbars
 /// can rebuild.
 class PolygonDrawController extends ChangeNotifier {
-  final LayerController _layer_controller;
+  final LayerController _layerController;
   final FeatureLayerManager _features;
 
   List<GeoLocation> _pendingVertices = [];
 
   /// Layer controller
-  LayerController get layer_controller => _layer_controller;
+  LayerController get layerController => _layerController;
 
   /// Unmodifiable view of the vertices placed so far.
-  List<GeoLocation> get pendingVertices =>
-      List.unmodifiable(_pendingVertices);
+  List<GeoLocation> get pendingVertices => List.unmodifiable(_pendingVertices);
 
   /// Whether a draw session is in progress (at least one vertex placed).
   bool get isDrawing => _pendingVertices.isNotEmpty;
@@ -33,7 +31,7 @@ class PolygonDrawController extends ChangeNotifier {
   String _statusMessage = '';
   String get statusMessage => _statusMessage;
 
-  PolygonDrawController(this._features, this._layer_controller);
+  PolygonDrawController(this._features, this._layerController);
 
   /// Add a vertex at the given lat/lon.
   void addVertex(GeoLocation loc) {
