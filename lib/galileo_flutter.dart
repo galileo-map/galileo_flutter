@@ -19,11 +19,12 @@ export 'package:galileo_flutter/src/rust/api/dart_types.dart'
         MapInitConfig,
         Polygon,
         PolygonStyle,
-        Color,
+        GalileoColor,
         Point2,
         Point,
         PointStyle;
 export 'package:galileo_flutter/src/map/widget.dart';
+export 'package:galileo_flutter/src/extensions/color.dart';
 export 'package:galileo_flutter/src/map/controller.dart';
 export 'package:galileo_flutter/src/layer/overlay.dart';
 export 'package:galileo_flutter/src/overlay/overlay_widget.dart';

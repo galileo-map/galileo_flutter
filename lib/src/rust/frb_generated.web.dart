@@ -67,9 +67,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Vector2 dco_decode_box_autoadd_vector_2(dynamic raw);
 
   @protected
-  Color dco_decode_color(dynamic raw);
-
-  @protected
   CreateNewSessionResponse dco_decode_create_new_session_response(dynamic raw);
 
   @protected
@@ -77,6 +74,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   double dco_decode_f_64(dynamic raw);
+
+  @protected
+  GalileoColor dco_decode_galileo_color(dynamic raw);
 
   @protected
   GeoLocation dco_decode_geo_location(dynamic raw);
@@ -143,11 +143,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PolygonStyle dco_decode_polygon_style(dynamic raw);
-
-  @protected
-  (double, double, double, double) dco_decode_record_f_32_f_32_f_32_f_32(
-    dynamic raw,
-  );
 
   @protected
   ScreenLocation dco_decode_screen_location(dynamic raw);
@@ -217,9 +212,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Vector2 sse_decode_box_autoadd_vector_2(SseDeserializer deserializer);
 
   @protected
-  Color sse_decode_color(SseDeserializer deserializer);
-
-  @protected
   CreateNewSessionResponse sse_decode_create_new_session_response(
     SseDeserializer deserializer,
   );
@@ -229,6 +221,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   double sse_decode_f_64(SseDeserializer deserializer);
+
+  @protected
+  GalileoColor sse_decode_galileo_color(SseDeserializer deserializer);
 
   @protected
   GeoLocation sse_decode_geo_location(SseDeserializer deserializer);
@@ -299,11 +294,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PolygonStyle sse_decode_polygon_style(SseDeserializer deserializer);
-
-  @protected
-  (double, double, double, double) sse_decode_record_f_32_f_32_f_32_f_32(
-    SseDeserializer deserializer,
-  );
 
   @protected
   ScreenLocation sse_decode_screen_location(SseDeserializer deserializer);
@@ -393,9 +383,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_box_autoadd_vector_2(Vector2 self, SseSerializer serializer);
 
   @protected
-  void sse_encode_color(Color self, SseSerializer serializer);
-
-  @protected
   void sse_encode_create_new_session_response(
     CreateNewSessionResponse self,
     SseSerializer serializer,
@@ -406,6 +393,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_f_64(double self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_galileo_color(GalileoColor self, SseSerializer serializer);
 
   @protected
   void sse_encode_geo_location(GeoLocation self, SseSerializer serializer);
@@ -487,12 +477,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_polygon_style(PolygonStyle self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_record_f_32_f_32_f_32_f_32(
-    (double, double, double, double) self,
-    SseSerializer serializer,
-  );
 
   @protected
   void sse_encode_screen_location(

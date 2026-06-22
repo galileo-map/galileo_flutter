@@ -1,5 +1,4 @@
-import 'dart:ui' as ui;
-
+import 'dart:ui';
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter/material.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
@@ -30,13 +29,13 @@ class EditOverlayPainter extends CustomPainter {
       canvas.drawPath(
         path,
         Paint()
-          ..color = const ui.Color(0x55FFEB3B)
+          ..color = const Color(0x55FFEB3B)
           ..style = PaintingStyle.fill,
       );
       canvas.drawPath(
         path,
         Paint()
-          ..color = const ui.Color(0xFFFFEB3B)
+          ..color = const Color(0xFFFFEB3B)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2.5,
       );
@@ -72,7 +71,7 @@ class PendingPolygonPainter extends CustomPainter {
       canvas.drawPath(
         path,
         Paint()
-          ..color = const ui.Color(0x4400BFFF)
+          ..color = const Color(0x4400BFFF)
           ..style = PaintingStyle.fill,
       );
     }
@@ -81,7 +80,7 @@ class PendingPolygonPainter extends CustomPainter {
     if (pts.length >= 2) {
       final edgePaint =
           Paint()
-            ..color = const ui.Color(0xFF0288D1)
+            ..color = const Color(0xFF0288D1)
             ..strokeWidth = 2.0
             ..style = PaintingStyle.stroke;
       for (int i = 0; i < pts.length - 1; i++) {
@@ -90,7 +89,7 @@ class PendingPolygonPainter extends CustomPainter {
       // Closing dashed preview line back to first vertex.
       final dashPaint =
           Paint()
-            ..color = const ui.Color(0x880288D1)
+            ..color = const Color(0x880288D1)
             ..strokeWidth = 1.5
             ..style = PaintingStyle.stroke;
       canvas.drawLine(pts.last, pts.first, dashPaint);
@@ -112,7 +111,7 @@ class CountChip extends StatelessWidget {
   });
 
   final IconData icon;
-  final ui.Color color;
+  final Color color;
   final int count;
   final String label;
 
@@ -435,8 +434,8 @@ class PolygonEditController extends FeatureEditController {
     final updated = Polygon(
       points: List.from(_editingVertices),
       style: PolygonStyle(
-        fillColor: Color(r: 0.2, g: 0.5, b: 0.9, a: 0.8),
-        strokeColor: Color(r: 1.0, g: 1.0, b: 1.0, a: 1.0),
+        fillColor: Color(0x338FE6CC).toGalileo(),
+        strokeColor: Color(0xFFFFFFFF).toGalileo(),
         strokeWidth: 2.0,
         strokeOffset: 0.0,
       ),
@@ -465,6 +464,7 @@ class PolygonEditController extends FeatureEditController {
     final b = _editingVertices[(edgeIndex + 1) % _editingVertices.length];
 
     double midLng = (a.longitude + b.longitude) / 2;
+
     if ((a.longitude - b.longitude).abs() > 180) {
       midLng = (midLng + 180) % 360;
       if (midLng > 180) midLng -= 360;

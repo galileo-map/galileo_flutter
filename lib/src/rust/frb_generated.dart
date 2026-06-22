@@ -67,7 +67,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => 1303080307;
+  int get rustContentHash => -1940490350;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -116,6 +116,8 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateApiGalileoApiDestroySession({required int sessionId});
 
+  Future<GalileoColor> crateApiDartTypesGalileoColorDefault();
+
   Future<void> crateApiGalileoApiGalileoFlutterInit({
     required PlatformInt64 ffiPtr,
   });
@@ -138,9 +140,9 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateApiGalileoApiInitGalileoFlutter();
 
-  Future<MapInitConfig> crateApiDartTypesMapInitConfigDefault();
-
   Future<void> crateApiGalileoApiMarkSessionAlive({required int sessionId});
+
+  Future<PolygonStyle> crateApiDartTypesPolygonStyleDefault();
 
   Future<bool> crateApiGalileoApiRemovePointFromLayer({
     required int sessionId,
@@ -458,6 +460,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<GalileoColor> crateApiDartTypesGalileoColorDefault() {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 9,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_galileo_color,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiDartTypesGalileoColorDefaultConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiDartTypesGalileoColorDefaultConstMeta =>
+      const TaskConstMeta(debugName: "galileo_color_default", argNames: []);
+
+  @override
   Future<void> crateApiGalileoApiGalileoFlutterInit({
     required PlatformInt64 ffiPtr,
   }) {
@@ -469,7 +498,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 9,
+            funcId: 10,
             port: port_,
           );
         },
@@ -505,7 +534,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           sse_encode_f_64(height, serializer);
           sse_encode_f_64(width, serializer);
           sse_encode_box_autoadd_map_viewport(vp, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_screen_location,
@@ -536,7 +565,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 11,
+            funcId: 12,
             port: port_,
           );
         },
@@ -571,7 +600,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 12,
+            funcId: 13,
             port: port_,
           );
         },
@@ -601,7 +630,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 13,
+            funcId: 14,
             port: port_,
           );
         },
@@ -618,33 +647,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiGalileoApiInitGalileoFlutterConstMeta =>
       const TaskConstMeta(debugName: "init_galileo_flutter", argNames: []);
-
-  @override
-  Future<MapInitConfig> crateApiDartTypesMapInitConfigDefault() {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 14,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_map_init_config,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiDartTypesMapInitConfigDefaultConstMeta,
-        argValues: [],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiDartTypesMapInitConfigDefaultConstMeta =>
-      const TaskConstMeta(debugName: "map_init_config_default", argNames: []);
 
   @override
   Future<void> crateApiGalileoApiMarkSessionAlive({required int sessionId}) {
@@ -678,6 +680,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<PolygonStyle> crateApiDartTypesPolygonStyleDefault() {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 16,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_polygon_style,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiDartTypesPolygonStyleDefaultConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiDartTypesPolygonStyleDefaultConstMeta =>
+      const TaskConstMeta(debugName: "polygon_style_default", argNames: []);
+
+  @override
   Future<bool> crateApiGalileoApiRemovePointFromLayer({
     required int sessionId,
     required int layerId,
@@ -693,7 +722,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 16,
+            funcId: 17,
             port: port_,
           );
         },
@@ -730,7 +759,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 17,
+            funcId: 18,
             port: port_,
           );
         },
@@ -761,7 +790,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 18,
+            funcId: 19,
             port: port_,
           );
         },
@@ -796,7 +825,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 19,
+            funcId: 20,
             port: port_,
           );
         },
@@ -832,7 +861,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           sse_encode_box_autoadd_map_viewport(vp, serializer);
           sse_encode_f_64(height, serializer);
           sse_encode_f_64(width, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_geo_location,
@@ -861,7 +890,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 21,
+            funcId: 22,
             port: port_,
           );
         },
@@ -970,20 +999,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Color dco_decode_color(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return Color(
-      r: dco_decode_f_64(arr[0]),
-      g: dco_decode_f_64(arr[1]),
-      b: dco_decode_f_64(arr[2]),
-      a: dco_decode_f_64(arr[3]),
-    );
-  }
-
-  @protected
   CreateNewSessionResponse dco_decode_create_new_session_response(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
@@ -1005,6 +1020,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   double dco_decode_f_64(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as double;
+  }
+
+  @protected
+  GalileoColor dco_decode_galileo_color(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return GalileoColor(
+      r: dco_decode_f_64(arr[0]),
+      g: dco_decode_f_64(arr[1]),
+      b: dco_decode_f_64(arr[2]),
+      a: dco_decode_f_64(arr[3]),
+    );
   }
 
   @protected
@@ -1096,7 +1125,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       zoomLevel: dco_decode_u_32(arr[1]),
       mapSize: dco_decode_map_size(arr[2]),
       enableMultisampling: dco_decode_bool(arr[3]),
-      backgroundColor: dco_decode_record_f_32_f_32_f_32_f_32(arr[4]),
+      backgroundColor: dco_decode_galileo_color(arr[4]),
     );
   }
 
@@ -1203,7 +1232,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     if (arr.length != 2)
       throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
     return PointStyle(
-      fillColor: dco_decode_color(arr[0]),
+      fillColor: dco_decode_galileo_color(arr[0]),
       size: dco_decode_f_32(arr[1]),
     );
   }
@@ -1227,27 +1256,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     if (arr.length != 4)
       throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
     return PolygonStyle(
-      fillColor: dco_decode_color(arr[0]),
-      strokeColor: dco_decode_color(arr[1]),
+      fillColor: dco_decode_galileo_color(arr[0]),
+      strokeColor: dco_decode_galileo_color(arr[1]),
       strokeWidth: dco_decode_f_64(arr[2]),
       strokeOffset: dco_decode_f_64(arr[3]),
-    );
-  }
-
-  @protected
-  (double, double, double, double) dco_decode_record_f_32_f_32_f_32_f_32(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 4) {
-      throw Exception('Expected 4 elements, got ${arr.length}');
-    }
-    return (
-      dco_decode_f_32(arr[0]),
-      dco_decode_f_32(arr[1]),
-      dco_decode_f_32(arr[2]),
-      dco_decode_f_32(arr[3]),
     );
   }
 
@@ -1452,16 +1464,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Color sse_decode_color(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_r = sse_decode_f_64(deserializer);
-    var var_g = sse_decode_f_64(deserializer);
-    var var_b = sse_decode_f_64(deserializer);
-    var var_a = sse_decode_f_64(deserializer);
-    return Color(r: var_r, g: var_g, b: var_b, a: var_a);
-  }
-
-  @protected
   CreateNewSessionResponse sse_decode_create_new_session_response(
     SseDeserializer deserializer,
   ) {
@@ -1484,6 +1486,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   double sse_decode_f_64(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getFloat64();
+  }
+
+  @protected
+  GalileoColor sse_decode_galileo_color(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_r = sse_decode_f_64(deserializer);
+    var var_g = sse_decode_f_64(deserializer);
+    var var_b = sse_decode_f_64(deserializer);
+    var var_a = sse_decode_f_64(deserializer);
+    return GalileoColor(r: var_r, g: var_g, b: var_b, a: var_a);
   }
 
   @protected
@@ -1593,9 +1605,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_zoomLevel = sse_decode_u_32(deserializer);
     var var_mapSize = sse_decode_map_size(deserializer);
     var var_enableMultisampling = sse_decode_bool(deserializer);
-    var var_backgroundColor = sse_decode_record_f_32_f_32_f_32_f_32(
-      deserializer,
-    );
+    var var_backgroundColor = sse_decode_galileo_color(deserializer);
     return MapInitConfig(
       latlon: var_latlon,
       zoomLevel: var_zoomLevel,
@@ -1711,7 +1721,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   PointStyle sse_decode_point_style(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_fillColor = sse_decode_color(deserializer);
+    var var_fillColor = sse_decode_galileo_color(deserializer);
     var var_size = sse_decode_f_32(deserializer);
     return PointStyle(fillColor: var_fillColor, size: var_size);
   }
@@ -1727,8 +1737,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   PolygonStyle sse_decode_polygon_style(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_fillColor = sse_decode_color(deserializer);
-    var var_strokeColor = sse_decode_color(deserializer);
+    var var_fillColor = sse_decode_galileo_color(deserializer);
+    var var_strokeColor = sse_decode_galileo_color(deserializer);
     var var_strokeWidth = sse_decode_f_64(deserializer);
     var var_strokeOffset = sse_decode_f_64(deserializer);
     return PolygonStyle(
@@ -1737,18 +1747,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       strokeWidth: var_strokeWidth,
       strokeOffset: var_strokeOffset,
     );
-  }
-
-  @protected
-  (double, double, double, double) sse_decode_record_f_32_f_32_f_32_f_32(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_field0 = sse_decode_f_32(deserializer);
-    var var_field1 = sse_decode_f_32(deserializer);
-    var var_field2 = sse_decode_f_32(deserializer);
-    var var_field3 = sse_decode_f_32(deserializer);
-    return (var_field0, var_field1, var_field2, var_field3);
   }
 
   @protected
@@ -1950,15 +1948,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_color(Color self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_f_64(self.r, serializer);
-    sse_encode_f_64(self.g, serializer);
-    sse_encode_f_64(self.b, serializer);
-    sse_encode_f_64(self.a, serializer);
-  }
-
-  @protected
   void sse_encode_create_new_session_response(
     CreateNewSessionResponse self,
     SseSerializer serializer,
@@ -1978,6 +1967,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_f_64(double self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putFloat64(self);
+  }
+
+  @protected
+  void sse_encode_galileo_color(GalileoColor self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_f_64(self.r, serializer);
+    sse_encode_f_64(self.g, serializer);
+    sse_encode_f_64(self.b, serializer);
+    sse_encode_f_64(self.a, serializer);
   }
 
   @protected
@@ -2082,7 +2080,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_u_32(self.zoomLevel, serializer);
     sse_encode_map_size(self.mapSize, serializer);
     sse_encode_bool(self.enableMultisampling, serializer);
-    sse_encode_record_f_32_f_32_f_32_f_32(self.backgroundColor, serializer);
+    sse_encode_galileo_color(self.backgroundColor, serializer);
   }
 
   @protected
@@ -2174,7 +2172,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   void sse_encode_point_style(PointStyle self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_color(self.fillColor, serializer);
+    sse_encode_galileo_color(self.fillColor, serializer);
     sse_encode_f_32(self.size, serializer);
   }
 
@@ -2188,22 +2186,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   void sse_encode_polygon_style(PolygonStyle self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_color(self.fillColor, serializer);
-    sse_encode_color(self.strokeColor, serializer);
+    sse_encode_galileo_color(self.fillColor, serializer);
+    sse_encode_galileo_color(self.strokeColor, serializer);
     sse_encode_f_64(self.strokeWidth, serializer);
     sse_encode_f_64(self.strokeOffset, serializer);
-  }
-
-  @protected
-  void sse_encode_record_f_32_f_32_f_32_f_32(
-    (double, double, double, double) self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_f_32(self.$1, serializer);
-    sse_encode_f_32(self.$2, serializer);
-    sse_encode_f_32(self.$3, serializer);
-    sse_encode_f_32(self.$4, serializer);
   }
 
   @protected

@@ -13,18 +13,21 @@ part 'dart_types.freezed.dart';
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 // These functions are ignored (category: IgnoreBecauseExplicitAttribute): `from_rect`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`
 
-class Color {
+class GalileoColor {
   final double r;
   final double g;
   final double b;
   final double a;
 
-  const Color({
+  const GalileoColor({
     required this.r,
     required this.g,
     required this.b,
     required this.a,
   });
+
+  static Future<GalileoColor> default_() =>
+      RustLib.instance.api.crateApiDartTypesGalileoColorDefault();
 
   @override
   int get hashCode => r.hashCode ^ g.hashCode ^ b.hashCode ^ a.hashCode;
@@ -32,7 +35,7 @@ class Color {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Color &&
+      other is GalileoColor &&
           runtimeType == other.runtimeType &&
           r == other.r &&
           g == other.g &&
@@ -112,7 +115,7 @@ class MapInitConfig {
   final bool enableMultisampling;
 
   /// Background color as RGBA (0.0-1.0 range)
-  final (double, double, double, double) backgroundColor;
+  final GalileoColor backgroundColor;
 
   const MapInitConfig({
     required this.latlon,
@@ -121,9 +124,6 @@ class MapInitConfig {
     required this.enableMultisampling,
     required this.backgroundColor,
   });
-
-  static Future<MapInitConfig> default_() =>
-      RustLib.instance.api.crateApiDartTypesMapInitConfigDefault();
 
   @override
   int get hashCode =>
@@ -277,7 +277,7 @@ class MouseEvent {
 ///   Point(
 ///     coordinate: (27.7,85.3),
 ///     style: PointStyle(
-///       fillColor: (0.2,0.5,0.9,0.8),
+///       fillColor: GalileoColor(0.2,0.5,0.9,0.8),
 ///       size: 0.8,
 ///     ),
 ///   )
@@ -319,7 +319,7 @@ class Point2 {
 }
 
 class PointStyle {
-  final Color fillColor;
+  final GalileoColor fillColor;
   final double size;
 
   const PointStyle({required this.fillColor, required this.size});
@@ -341,8 +341,8 @@ class PointStyle {
 ///   Polygon(
 ///     points: [(27.7,85.3), ...],
 ///     style: PolygonStyle(
-///       fillColor: Color(0.2,0.5,0.9,0.8),
-///       strokeColor: Color(1.0,1.0,1.0,1.0),
+///       fillColor: GalileoColor(0.2,0.5,0.9,0.8),
+///       strokeColor: GalileoColor(1.0,1.0,1.0,1.0),
 ///       strokeWidth: 2.0,
 ///       strokeOffset: 0.0,
 ///     ),
@@ -367,10 +367,10 @@ class Polygon {
 
 class PolygonStyle {
   /// fillColor also as RGBA (0.0-1.0 range)
-  final Color fillColor;
+  final GalileoColor fillColor;
 
   /// fillColor also as RGBA (0.0-1.0 range)
-  final Color strokeColor;
+  final GalileoColor strokeColor;
 
   /// strokeWidth with (0.0-1.0 range)
   final double strokeWidth;
@@ -384,6 +384,9 @@ class PolygonStyle {
     required this.strokeWidth,
     required this.strokeOffset,
   });
+
+  static Future<PolygonStyle> default_() =>
+      RustLib.instance.api.crateApiDartTypesPolygonStyleDefault();
 
   @override
   int get hashCode =>

@@ -37,7 +37,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1303080307;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1940490350;
 
 // Section: executor
 
@@ -375,6 +375,39 @@ fn wire__crate__api__galileo_api__destroy_session_impl(
         },
     )
 }
+fn wire__crate__api__dart_types__galileo_color_default_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "galileo_color_default",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok =
+                        Result::<_, ()>::Ok(crate::api::dart_types::GalileoColor::default())?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__api__galileo_api__galileo_flutter_init_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -557,39 +590,6 @@ fn wire__crate__api__galileo_api__init_galileo_flutter_impl(
         },
     )
 }
-fn wire__crate__api__dart_types__map_init_config_default_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
-    rust_vec_len_: i32,
-    data_len_: i32,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "map_init_config_default",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let message = unsafe {
-                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
-                    ptr_,
-                    rust_vec_len_,
-                    data_len_,
-                )
-            };
-            let mut deserializer =
-                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            deserializer.end();
-            move |context| {
-                transform_result_sse::<_, ()>((move || {
-                    let output_ok =
-                        Result::<_, ()>::Ok(crate::api::dart_types::MapInitConfig::default())?;
-                    Ok(output_ok)
-                })())
-            }
-        },
-    )
-}
 fn wire__crate__api__galileo_api__mark_session_alive_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -619,6 +619,39 @@ fn wire__crate__api__galileo_api__mark_session_alive_impl(
                     let output_ok = Result::<_, ()>::Ok({
                         crate::api::galileo_api::mark_session_alive(api_session_id);
                     })?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__dart_types__polygon_style_default_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "polygon_style_default",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok =
+                        Result::<_, ()>::Ok(crate::api::dart_types::PolygonStyle::default())?;
                     Ok(output_ok)
                 })())
             }
@@ -884,22 +917,6 @@ impl SseDecode for bool {
     }
 }
 
-impl SseDecode for crate::api::dart_types::Color {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_r = <f64>::sse_decode(deserializer);
-        let mut var_g = <f64>::sse_decode(deserializer);
-        let mut var_b = <f64>::sse_decode(deserializer);
-        let mut var_a = <f64>::sse_decode(deserializer);
-        return crate::api::dart_types::Color {
-            r: var_r,
-            g: var_g,
-            b: var_b,
-            a: var_a,
-        };
-    }
-}
-
 impl SseDecode for crate::api::galileo_api::CreateNewSessionResponse {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -923,6 +940,22 @@ impl SseDecode for f64 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         deserializer.cursor.read_f64::<NativeEndian>().unwrap()
+    }
+}
+
+impl SseDecode for crate::api::dart_types::GalileoColor {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_r = <f64>::sse_decode(deserializer);
+        let mut var_g = <f64>::sse_decode(deserializer);
+        let mut var_b = <f64>::sse_decode(deserializer);
+        let mut var_a = <f64>::sse_decode(deserializer);
+        return crate::api::dart_types::GalileoColor {
+            r: var_r,
+            g: var_g,
+            b: var_b,
+            a: var_a,
+        };
     }
 }
 
@@ -1059,7 +1092,8 @@ impl SseDecode for crate::api::dart_types::MapInitConfig {
         let mut var_zoomLevel = <u32>::sse_decode(deserializer);
         let mut var_mapSize = <crate::api::dart_types::MapSize>::sse_decode(deserializer);
         let mut var_enableMultisampling = <bool>::sse_decode(deserializer);
-        let mut var_backgroundColor = <(f32, f32, f32, f32)>::sse_decode(deserializer);
+        let mut var_backgroundColor =
+            <crate::api::dart_types::GalileoColor>::sse_decode(deserializer);
         return crate::api::dart_types::MapInitConfig {
             latlon: var_latlon,
             zoom_level: var_zoomLevel,
@@ -1199,7 +1233,7 @@ impl SseDecode for crate::api::dart_types::Point2 {
 impl SseDecode for crate::api::dart_types::PointStyle {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_fillColor = <crate::api::dart_types::Color>::sse_decode(deserializer);
+        let mut var_fillColor = <crate::api::dart_types::GalileoColor>::sse_decode(deserializer);
         let mut var_size = <f32>::sse_decode(deserializer);
         return crate::api::dart_types::PointStyle {
             fill_color: var_fillColor,
@@ -1223,8 +1257,8 @@ impl SseDecode for crate::api::dart_types::Polygon {
 impl SseDecode for crate::api::dart_types::PolygonStyle {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_fillColor = <crate::api::dart_types::Color>::sse_decode(deserializer);
-        let mut var_strokeColor = <crate::api::dart_types::Color>::sse_decode(deserializer);
+        let mut var_fillColor = <crate::api::dart_types::GalileoColor>::sse_decode(deserializer);
+        let mut var_strokeColor = <crate::api::dart_types::GalileoColor>::sse_decode(deserializer);
         let mut var_strokeWidth = <f64>::sse_decode(deserializer);
         let mut var_strokeOffset = <f64>::sse_decode(deserializer);
         return crate::api::dart_types::PolygonStyle {
@@ -1233,17 +1267,6 @@ impl SseDecode for crate::api::dart_types::PolygonStyle {
             stroke_width: var_strokeWidth,
             stroke_offset: var_strokeOffset,
         };
-    }
-}
-
-impl SseDecode for (f32, f32, f32, f32) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_field0 = <f32>::sse_decode(deserializer);
-        let mut var_field1 = <f32>::sse_decode(deserializer);
-        let mut var_field2 = <f32>::sse_decode(deserializer);
-        let mut var_field3 = <f32>::sse_decode(deserializer);
-        return (var_field0, var_field1, var_field2, var_field3);
     }
 }
 
@@ -1405,28 +1428,28 @@ fn pde_ffi_dispatcher_primary_impl(
             data_len,
         ),
         8 => wire__crate__api__galileo_api__destroy_session_impl(port, ptr, rust_vec_len, data_len),
-        9 => wire__crate__api__galileo_api__galileo_flutter_init_impl(
+        9 => wire__crate__api__dart_types__galileo_color_default_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        11 => {
+        10 => wire__crate__api__galileo_api__galileo_flutter_init_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        12 => {
             wire__crate__api__galileo_api__get_map_viewport_impl(port, ptr, rust_vec_len, data_len)
         }
-        12 => wire__crate__api__galileo_api__handle_event_for_session_impl(
+        13 => wire__crate__api__galileo_api__handle_event_for_session_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        13 => wire__crate__api__galileo_api__init_galileo_flutter_impl(
-            port,
-            ptr,
-            rust_vec_len,
-            data_len,
-        ),
-        14 => wire__crate__api__dart_types__map_init_config_default_impl(
+        14 => wire__crate__api__galileo_api__init_galileo_flutter_impl(
             port,
             ptr,
             rust_vec_len,
@@ -1438,26 +1461,32 @@ fn pde_ffi_dispatcher_primary_impl(
             rust_vec_len,
             data_len,
         ),
-        16 => wire__crate__api__galileo_api__remove_point_from_layer_impl(
+        16 => wire__crate__api__dart_types__polygon_style_default_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        17 => wire__crate__api__galileo_api__remove_polygon_from_layer_impl(
+        17 => wire__crate__api__galileo_api__remove_point_from_layer_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        18 => wire__crate__api__galileo_api__request_map_redraw_impl(
+        18 => wire__crate__api__galileo_api__remove_polygon_from_layer_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        19 => wire__crate__api__galileo_api__resize_session_impl(port, ptr, rust_vec_len, data_len),
-        21 => wire__crate__api__galileo_api__set_tile_cache_path_impl(
+        19 => wire__crate__api__galileo_api__request_map_redraw_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        20 => wire__crate__api__galileo_api__resize_session_impl(port, ptr, rust_vec_len, data_len),
+        22 => wire__crate__api__galileo_api__set_tile_cache_path_impl(
             port,
             ptr,
             rust_vec_len,
@@ -1475,10 +1504,10 @@ fn pde_ffi_dispatcher_sync_impl(
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        10 => {
+        11 => {
             wire__crate__api__dart_types__geo_location_to_screen_impl(ptr, rust_vec_len, data_len)
         }
-        20 => wire__crate__api__dart_types__screen_location_to_geographical_impl(
+        21 => wire__crate__api__dart_types__screen_location_to_geographical_impl(
             ptr,
             rust_vec_len,
             data_len,
@@ -1489,26 +1518,6 @@ fn pde_ffi_dispatcher_sync_impl(
 
 // Section: rust2dart
 
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::dart_types::Color {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [
-            self.r.into_into_dart().into_dart(),
-            self.g.into_into_dart().into_dart(),
-            self.b.into_into_dart().into_dart(),
-            self.a.into_into_dart().into_dart(),
-        ]
-        .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::dart_types::Color {}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::dart_types::Color>
-    for crate::api::dart_types::Color
-{
-    fn into_into_dart(self) -> crate::api::dart_types::Color {
-        self
-    }
-}
 // Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::galileo_api::CreateNewSessionResponse {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
@@ -1527,6 +1536,29 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::galileo_api::CreateNewSession
     for crate::api::galileo_api::CreateNewSessionResponse
 {
     fn into_into_dart(self) -> crate::api::galileo_api::CreateNewSessionResponse {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::dart_types::GalileoColor {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.r.into_into_dart().into_dart(),
+            self.g.into_into_dart().into_dart(),
+            self.b.into_into_dart().into_dart(),
+            self.a.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::dart_types::GalileoColor
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::dart_types::GalileoColor>
+    for crate::api::dart_types::GalileoColor
+{
+    fn into_into_dart(self) -> crate::api::dart_types::GalileoColor {
         self
     }
 }
@@ -2002,16 +2034,6 @@ impl SseEncode for bool {
     }
 }
 
-impl SseEncode for crate::api::dart_types::Color {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <f64>::sse_encode(self.r, serializer);
-        <f64>::sse_encode(self.g, serializer);
-        <f64>::sse_encode(self.b, serializer);
-        <f64>::sse_encode(self.a, serializer);
-    }
-}
-
 impl SseEncode for crate::api::galileo_api::CreateNewSessionResponse {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2031,6 +2053,16 @@ impl SseEncode for f64 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         serializer.cursor.write_f64::<NativeEndian>(self).unwrap();
+    }
+}
+
+impl SseEncode for crate::api::dart_types::GalileoColor {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <f64>::sse_encode(self.r, serializer);
+        <f64>::sse_encode(self.g, serializer);
+        <f64>::sse_encode(self.b, serializer);
+        <f64>::sse_encode(self.a, serializer);
     }
 }
 
@@ -2146,7 +2178,7 @@ impl SseEncode for crate::api::dart_types::MapInitConfig {
         <u32>::sse_encode(self.zoom_level, serializer);
         <crate::api::dart_types::MapSize>::sse_encode(self.map_size, serializer);
         <bool>::sse_encode(self.enable_multisampling, serializer);
-        <(f32, f32, f32, f32)>::sse_encode(self.background_color, serializer);
+        <crate::api::dart_types::GalileoColor>::sse_encode(self.background_color, serializer);
     }
 }
 
@@ -2258,7 +2290,7 @@ impl SseEncode for crate::api::dart_types::Point2 {
 impl SseEncode for crate::api::dart_types::PointStyle {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <crate::api::dart_types::Color>::sse_encode(self.fill_color, serializer);
+        <crate::api::dart_types::GalileoColor>::sse_encode(self.fill_color, serializer);
         <f32>::sse_encode(self.size, serializer);
     }
 }
@@ -2274,20 +2306,10 @@ impl SseEncode for crate::api::dart_types::Polygon {
 impl SseEncode for crate::api::dart_types::PolygonStyle {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <crate::api::dart_types::Color>::sse_encode(self.fill_color, serializer);
-        <crate::api::dart_types::Color>::sse_encode(self.stroke_color, serializer);
+        <crate::api::dart_types::GalileoColor>::sse_encode(self.fill_color, serializer);
+        <crate::api::dart_types::GalileoColor>::sse_encode(self.stroke_color, serializer);
         <f64>::sse_encode(self.stroke_width, serializer);
         <f64>::sse_encode(self.stroke_offset, serializer);
-    }
-}
-
-impl SseEncode for (f32, f32, f32, f32) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <f32>::sse_encode(self.0, serializer);
-        <f32>::sse_encode(self.1, serializer);
-        <f32>::sse_encode(self.2, serializer);
-        <f32>::sse_encode(self.3, serializer);
     }
 }
 

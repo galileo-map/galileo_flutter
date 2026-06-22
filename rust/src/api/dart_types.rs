@@ -85,6 +85,7 @@ impl GeoLocation {
         }
     }
 }
+
 #[frb(dart_code = r#"
   ScreenLocation operator +(ScreenLocation other) => ScreenLocation(x: x + other.x, y: y + other.y);
   ScreenLocation operator -(ScreenLocation other) => ScreenLocation(x: x - other.x, y: y - other.y);
@@ -149,25 +150,7 @@ pub struct MapInitConfig {
     /// Enable multisampling anti-aliasing
     pub enable_multisampling: bool,
     /// Background color as RGBA (0.0-1.0 range)
-    pub background_color: (f32, f32, f32, f32),
-}
-
-impl Default for MapInitConfig {
-    fn default() -> Self {
-        Self {
-            latlon: GeoLocation {
-                latitude: 0.0,
-                longitude: 0.0,
-            },
-            zoom_level: 10,
-            map_size: MapSize {
-                width: 800,
-                height: 600,
-            },
-            enable_multisampling: true,
-            background_color: (0.1, 0.2, 0.3, 1.0),
-        }
-    }
+    pub background_color: GalileoColor,
 }
 
 /// Layer configuration for different types of map layers.
@@ -203,8 +186,8 @@ pub enum LayerConfig {
 ///   Polygon(
 ///     points: [(27.7,85.3), ...],
 ///     style: PolygonStyle(
-///       fillColor: Color(0.2,0.5,0.9,0.8),
-///       strokeColor: Color(1.0,1.0,1.0,1.0),
+///       fillColor: GalileoColor(0.2,0.5,0.9,0.8),
+///       strokeColor: GalileoColor(1.0,1.0,1.0,1.0),
 ///       strokeWidth: 2.0,
 ///       strokeOffset: 0.0,
 ///     ),
@@ -215,12 +198,12 @@ pub struct Polygon {
     pub style: PolygonStyle,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq,Default)]
 pub struct PolygonStyle {
     /// fillColor also as RGBA (0.0-1.0 range)
-    pub fill_color: Color,
+    pub fill_color: GalileoColor,
     /// fillColor also as RGBA (0.0-1.0 range)
-    pub stroke_color: Color,
+    pub stroke_color: GalileoColor,
     /// strokeWidth with (0.0-1.0 range)
     pub stroke_width: f64,
     /// strokeOffset with (0.0-1.0 range)
@@ -235,7 +218,7 @@ pub struct PolygonSymbol {}
 ///   Point(
 ///     coordinate: (27.7,85.3),
 ///     style: PointStyle(
-///       fillColor: (0.2,0.5,0.9,0.8),
+///       fillColor: GalileoColor(0.2,0.5,0.9,0.8),
 ///       size: 0.8,
 ///     ),
 ///   )
@@ -247,7 +230,7 @@ pub struct Point {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PointStyle {
-    pub fill_color: Color,
+    pub fill_color: GalileoColor,
     pub size: f32,
 }
 
@@ -255,15 +238,15 @@ pub struct PointStyle {
 pub struct PointSymbol {}
 
 // Manual type definitions for Dart-friendly versions
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Color {
+#[derive(Debug, Clone, Copy, PartialEq,Default)]
+pub struct GalileoColor {
     pub r: f64,
     pub g: f64,
     pub b: f64,
     pub a: f64,
 }
 
-impl Color {
+impl GalileoColor {
     #[frb(ignore)]
     pub fn to_galileo(&self) -> galileo::Color {
         galileo::Color::rgba(

@@ -67,17 +67,10 @@ class PolygonDrawController extends ChangeNotifier {
 
   /// [style] defaults to a blue fill with white stroke if not provided.
   /// Returns silently if fewer than 3 vertices have been placed.
-  Future<void> finish({PolygonStyle? style}) async {
+  Future<void> finish(PolygonStyle style) async {
     if (_pendingVertices.length < 3) return;
 
-    final effectiveStyle =
-        style ??
-        const PolygonStyle(
-          fillColor: Color(r: 0.2, g: 0.5, b: 0.9, a: 0.8),
-          strokeColor: Color(r: 1.0, g: 1.0, b: 1.0, a: 1.0),
-          strokeWidth: 2.0,
-          strokeOffset: 0.0,
-        );
+    final effectiveStyle = style;
 
     await _features.addPolygon(
       Polygon(points: List.from(_pendingVertices), style: effectiveStyle),

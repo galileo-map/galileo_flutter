@@ -3,15 +3,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
-import 'dart:ui' as ui;
 
 const MAP_TILER_API_KEY = '';
 const MAP_TILER_URL_TEMPLATE =
     'https://api.maptiler.com/tiles/v3-openmaptiles/{z}/{x}/{y}.pbf?key=$MAP_TILER_API_KEY';
 
 const _kMapSize = MapSize(width: 800, height: 600);
-const _kMapConfig = MapInitConfig(
-  backgroundColor: (0.1, 0.1, 0, 0.5),
+final _kMapConfig = MapInitConfig(
+  backgroundColor: Color(0x1A1A0080).toGalileo(),
   enableMultisampling: true,
   latlon: GeoLocation(latitude: 0.0, longitude: 0.0),
   mapSize: _kMapSize,
@@ -218,7 +217,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     final point = Point(
       coordinate: loc,
       style: PointStyle(
-        fillColor: Color(r: 1.0, g: 0.0, b: 0.0, a: 1.0),
+        fillColor: Color(0xFF0000FF).toGalileo(),
         size: 8.0,
       ),
     );
@@ -442,14 +441,14 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                 const Spacer(),
                 CountChip(
                   icon: Icons.location_on,
-                  color: const ui.Color(0xFFF44336),
+                  color: const Color(0xFFF44336),
                   count: features?.pointCount ?? 0,
                   label: 'pts',
                 ),
                 // const SizedBox(width: 8),
                 // CountChip(
                 //     icon:  Icons.pentagon_outlined,
-                //     color: const ui.Color(0xFF2196F3),
+                //     color: const Color(0xFF2196F3),
                 //     count: features?.polygonCount ?? 0,
                 //     label: 'poly'),
               ],
@@ -458,7 +457,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
 
           // if (_isDrawingPolygon)
           //   Container(
-          //     color: const ui.Color(0xFFBBDEFB),
+          //     color: const Color(0xFFBBDEFB),
           //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           //     child: Row(
           //       children: [
