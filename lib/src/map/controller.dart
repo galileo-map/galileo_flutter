@@ -25,7 +25,8 @@ enum GalileoMapState {
 
 /// Controller for managing a Galileo map instance
 class GalileoMapController {
-  final MapSize size;
+  MapSize _size;
+  MapSize get size => _size;
   final MapInitConfig config;
 
   late final LayerController layerController;
@@ -39,13 +40,14 @@ class GalileoMapController {
   int? _textureId;
 
   GalileoMapController._({
-    required this.size,
+    required MapSize size,
     required this.config,
     required this.layers,
     required this.sessionId,
     required rx.BehaviorSubject<GalileoMapState> stateBroadcast,
     StreamSubscription<GalileoMapState>? originalSub,
-  }) : _stateBroadcast = stateBroadcast,
+  }) : _size = size,
+       _stateBroadcast = stateBroadcast,
        _originalSub = originalSub {
     layerController = LayerController(sessionId: sessionId, layers: layers);
   }
@@ -167,9 +169,9 @@ class GalileoMapController {
   /// Resize the map
   Future<void> resize(MapSize newSize) async {
     if (!_running) return;
-
     try {
       await rlib.resizeSession(sessionId: sessionId, newSize: newSize);
+      _size = newSize;
     } catch (e) {
       if (kDebugMode) {
         debugPrint('Error resizing map: $e');

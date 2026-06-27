@@ -198,7 +198,7 @@ pub struct Polygon {
     pub style: PolygonStyle,
 }
 
-#[derive(Clone, Debug, PartialEq,Default)]
+#[derive(Clone, Debug, PartialEq, Default)]
 pub struct PolygonStyle {
     /// fillColor also as RGBA (0.0-1.0 range)
     pub fill_color: GalileoColor,
@@ -238,7 +238,7 @@ pub struct PointStyle {
 pub struct PointSymbol {}
 
 // Manual type definitions for Dart-friendly versions
-#[derive(Debug, Clone, Copy, PartialEq,Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub struct GalileoColor {
     pub r: f64,
     pub g: f64,

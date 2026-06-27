@@ -27,11 +27,11 @@ export 'package:galileo_flutter/src/map/widget.dart';
 export 'package:galileo_flutter/src/extensions/color.dart';
 export 'package:galileo_flutter/src/map/controller.dart';
 export 'package:galileo_flutter/src/layer/overlay.dart';
+export 'package:galileo_flutter/src/layer/feature.dart';
 export 'package:galileo_flutter/src/overlay/overlay_widget.dart';
 export 'package:galileo_flutter/src/overlay/polygon_draw_controller.dart';
 export 'package:galileo_flutter/src/overlay/overlay_polygon.dart';
 export 'package:galileo_flutter/src/layer/controller.dart';
-export 'package:galileo_flutter/src/feature/edit_controller.dart';
 
 Future<void> initGalileo({String? cachePath}) async {
   await rlib_gen.RustLib.init();

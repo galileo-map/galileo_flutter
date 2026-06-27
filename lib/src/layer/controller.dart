@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
 import 'package:galileo_flutter/src/rust/api/galileo_api.dart' as rlib;
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
+import 'dart:math' as math;
 
 class LayerController extends ChangeNotifier {
   final Map<String, int> _layerNames = {};
@@ -14,7 +15,7 @@ class LayerController extends ChangeNotifier {
   double _zoomScale = 1.0;
   double get zoomScale => _zoomScale;
 
-  double? _initialCoordWidth;
+  double? _initialResolution;
 
   final List<OverlayWidget> _overlays = [];
   List<OverlayWidget> get overlays => List.unmodifiable(_overlays);
@@ -43,7 +44,10 @@ class LayerController extends ChangeNotifier {
   LayerController({required this.sessionId, required this.layers});
 
   /// Update Viewport
-  Future<void> updateViewport(MapViewport? nativeViewport) async {
+  Future<void> updateViewport(
+    MapViewport? nativeViewport,
+    MapSize mapSize,
+  ) async {
     if (nativeViewport == null) return;
     _viewportBounds = MapViewport(
       xMin: nativeViewport.xMin,
@@ -52,10 +56,15 @@ class LayerController extends ChangeNotifier {
       yMax: nativeViewport.yMax,
     );
 
-    final width = nativeViewport.xMax - nativeViewport.xMin;
-    if (width > 0) {
-      _initialCoordWidth ??= width;
-      _zoomScale = _initialCoordWidth! / width;
+    final coordWidth = nativeViewport.xMax - nativeViewport.xMin;
+    if (coordWidth > 0 && mapSize.width > 0) {
+      final resolution = coordWidth / mapSize.width;
+      _initialResolution ??= resolution;
+      _zoomScale = _initialResolution! / resolution;
+    }
+
+    for (final editor in _editors.values) {
+      editor.updateViewport(_viewportBounds!);
     }
 
     notifyListeners();

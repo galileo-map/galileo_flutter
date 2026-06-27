@@ -459,7 +459,7 @@ class PolygonEditController extends FeatureEditController {
   }
 
   Future<void> _insertVertexAfterEdge(int edgeIndex) async {
-  /// TODO
+    /// TODO
     final a = _editingVertices[edgeIndex];
     final b = _editingVertices[(edgeIndex + 1) % _editingVertices.length];
 

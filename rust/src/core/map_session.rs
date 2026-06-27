@@ -222,7 +222,6 @@ impl MapSession {
         layer_id: u32,
         polygon: Polygon,
     ) -> anyhow::Result<FeatureId> {
-
         let mut map = self.map.lock().await;
         let managed = self.managed_layers.lock().await;
 
