@@ -1,7 +1,4 @@
-import 'package:galileo_flutter/src/overlay/overlay_widget.dart';
-import 'package:galileo_flutter/src/layer/controller.dart';
-import 'package:galileo_flutter/src/rust/api/dart_types.dart';
-
+import 'package:galileo_flutter/galileo_flutter.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vector_math/vector_math_64.dart';
 
