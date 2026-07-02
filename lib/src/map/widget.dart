@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:galileo_flutter/src/map/controller.dart';
 import 'package:galileo_flutter/src/rust/api/dart_types.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:galileo_flutter/src/layer/overlay.dart';
+import 'package:galileo_flutter/src/layer/overlay/overlay.dart';
 
 /// A widget that displays a Galileo map with interactive controls
 class GalileoMapWidget extends StatefulWidget {

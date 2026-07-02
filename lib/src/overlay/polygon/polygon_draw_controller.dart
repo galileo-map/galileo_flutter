@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
+import 'dart:ui';
+import 'package:galileo_flutter/src/utils.dart';
+import 'package:flutter/gestures.dart';
 
 /// Controller that manages the pending-vertex state for drawing a new polygon.
 ///
@@ -9,8 +12,11 @@ import 'package:galileo_flutter/galileo_flutter.dart';
 class PolygonDrawController extends ChangeNotifier {
   final LayerController _layerController;
   final FeatureLayerManager _features;
+  MapViewport? get viewport => _layerController.viewportBounds;
 
   List<GeoLocation> _pendingVertices = [];
+  Offset? _pointerDownPos;
+  static const _tapThreshold = 10.0;
 
   /// Layer controller
   LayerController get layerController => _layerController;
@@ -42,6 +48,39 @@ class PolygonDrawController extends ChangeNotifier {
             ? 'Vertex $n placed — tap ${3 - n} more to enable finishing'
             : '$n vertices — tap "Finish" to create polygon or keep adding';
     notifyListeners();
+  }
+
+  void handlePointerDown(PointerDownEvent event, Size mapSize) {
+    _pointerDownPos = event.localPosition;
+  }
+
+  void handlePointerMove(PointerMoveEvent event, Size mapSize) {
+    // No-op for now.
+  }
+
+  void handlePointerUp(PointerUpEvent event, Size mapSize) {
+    final down = _pointerDownPos;
+    _pointerDownPos = null;
+    if (down == null) return;
+
+    if ((event.localPosition - down).distance < _tapThreshold) {
+      final vp = viewport;
+      if (vp == null) return;
+
+      final screenPos = ScreenLocation(
+        x: event.localPosition.dx,
+        y: event.localPosition.dy,
+      ).toGeographical(
+        height: mapSize.height,
+        width: mapSize.width,
+        vp: vp,
+      );
+      addVertex(screenPos);
+    }
+  }
+
+  void handlePointerCancel(PointerCancelEvent event, Size mapSize) {
+    _pointerDownPos = null;
   }
 
   /// Remove the most recently placed vertex.

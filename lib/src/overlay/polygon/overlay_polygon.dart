@@ -8,22 +8,20 @@ import 'package:galileo_flutter/galileo_flutter.dart';
 /// Renders the live preview via [PendingPolygonPainter].
 ///
 /// Place this as a child in a [Stack] that covers the map area.
-class PolygonDrawOverlay extends StatefulWidget {
+class PolygonDrawOverlay extends StatelessWidget{
+
   final PolygonDrawController? controller;
 
-  const PolygonDrawOverlay({super.key, required this.controller});
+  const PolygonDrawOverlay({super.key,required this.controller});
 
-  @override
-  State<PolygonDrawOverlay> createState() => _PolygonDrawOverlayState();
-}
-
-class _PolygonDrawOverlayState extends State<PolygonDrawOverlay> {
-  static const _tapThreshold = 10.0;
-  Offset? _pointerDownPosition;
-
+  Size _mapSize(BuildContext context) {
+    final rb = context.findRenderObject() as RenderBox?;
+    return rb?.size ?? const Size(800, 600);
+  }
+  
   @override
   Widget build(BuildContext context) {
-    final ctrl = widget.controller;
+    final ctrl = controller;
     if (ctrl == null) return const SizedBox.shrink();
 
     return ListenableBuilder(
@@ -36,22 +34,10 @@ class _PolygonDrawOverlayState extends State<PolygonDrawOverlay> {
 
         return Listener(
           behavior: HitTestBehavior.opaque,
-          onPointerDown: (e) => _pointerDownPosition = e.localPosition,
-          onPointerUp: (e) {
-            final down = _pointerDownPosition;
-            _pointerDownPosition = null;
-            if (down != null &&
-                (e.localPosition - down).distance < _tapThreshold) {
-              final rb = context.findRenderObject() as RenderBox;
-              final size = rb.size;
-              final screenPos = ScreenLocation(
-                x: e.localPosition.dx,
-                y: e.localPosition.dy,
-              ).toGeographical(height: size.height, width: size.width, vp: vp);
-              ctrl.addVertex(screenPos);
-            }
-          },
-          onPointerCancel: (_) => _pointerDownPosition = null,
+          onPointerDown: (e) => ctrl.handlePointerDown(e, _mapSize(context)),
+          onPointerMove: (e) => ctrl.handlePointerMove(e, _mapSize(context)),
+          onPointerUp: (e) => ctrl.handlePointerUp(e, _mapSize(context)),
+          onPointerCancel: (e) => ctrl.handlePointerCancel(e, _mapSize(context)),
           child: CustomPaint(
             painter: PendingPolygonPainter(
               vertices: ctrl.pendingVertices,
@@ -109,7 +95,7 @@ class PolygonEditOverlay extends StatelessWidget {
             onChanged?.call();
           },
           child: CustomPaint(
-            painter: EditOverlayPainter(
+            painter: PolygonEditOverlayPainter(
               vertices: ed.editingVertices,
               viewport: vp,
             ),
