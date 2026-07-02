@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
 import 'package:galileo_flutter/src/rust/api/galileo_api.dart' as rlib;
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
-import 'dart:math' as math;
 
 class LayerController extends ChangeNotifier {
   final Map<String, int> _layerNames = {};

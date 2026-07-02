@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter/material.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
-import 'package:galileo_flutter/src/utils.dart';
 
 class FeatureLayerManager {
   static const _pointLayerName = 'managed-points';
@@ -9,6 +8,7 @@ class FeatureLayerManager {
 
   final LayerController layerController;
   final PolygonEditController? _polygonEditController;
+  final PolygonDrawController? _polygonDrawController;
 
   final List<int> _pointIds = [];
 
@@ -17,7 +17,8 @@ class FeatureLayerManager {
   FeatureLayerManager({
     required this.layerController,
     PolygonEditController? polygonEditController,
-  }) : _polygonEditController = polygonEditController;
+    PolygonDrawController? polygonDrawController,
+  }) : _polygonEditController = polygonEditController,_polygonDrawController=polygonDrawController;
 
   int get pointCount => _pointIds.length;
   int get polygonCount => _polygons.length;
@@ -32,6 +33,7 @@ class FeatureLayerManager {
     );
 
     _polygonEditController?.attach(this);
+    _polygonDrawController?.attach(this);
   }
 
   void dispose() {

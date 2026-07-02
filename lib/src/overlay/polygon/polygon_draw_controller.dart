@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
-import 'dart:ui';
-import 'package:galileo_flutter/src/utils.dart';
-import 'package:flutter/gestures.dart';
 
 /// Controller that manages the pending-vertex state for drawing a new polygon.
 ///
@@ -10,22 +7,30 @@ import 'package:flutter/gestures.dart';
 /// Listeners are notified on every state change so overlays and toolbars
 /// can rebuild.
 class PolygonDrawController extends ChangeNotifier {
-  final LayerController _layerController;
-  final FeatureLayerManager _features;
-  MapViewport? get viewport => _layerController.viewportBounds;
+  MapViewport? _viewport;
 
+  MapViewport? get viewport => _viewport;
   List<GeoLocation> _pendingVertices = [];
+
   Offset? _pointerDownPos;
+  bool get isDrawing => _pendingVertices.isNotEmpty;
+
   static const _tapThreshold = 10.0;
 
+  // callbacks
+  final void Function(String message)? onStatusMessage;
+
+
+  PolygonDrawController({this.onStatusMessage});
+
+
+  late final FeatureLayerManager? _features;
   /// Layer controller
-  LayerController get layerController => _layerController;
+  LayerController? get layerController => _features?.layerController;
 
   /// Unmodifiable view of the vertices placed so far.
   List<GeoLocation> get pendingVertices => List.unmodifiable(_pendingVertices);
 
-  /// Whether a draw session is in progress (at least one vertex placed).
-  bool get isDrawing => _pendingVertices.isNotEmpty;
 
   /// Number of vertices placed so far.
   int get vertexCount => _pendingVertices.length;
@@ -33,20 +38,27 @@ class PolygonDrawController extends ChangeNotifier {
   /// Whether the polygon has enough vertices (≥3) to be finished.
   bool get canFinish => _pendingVertices.length >= 3;
 
-  /// Human-readable status message describing the current state.
-  String _statusMessage = '';
-  String get statusMessage => _statusMessage;
 
-  PolygonDrawController(this._features, this._layerController);
+  void attach(FeatureLayerManager features) => _features = features;
+
+  void detach() {
+    _features = null;
+  }
+
 
   /// Add a vertex at the given lat/lon.
   void addVertex(GeoLocation loc) {
     _pendingVertices.add(loc);
+	  notifyListeners();
     final n = _pendingVertices.length;
-    _statusMessage =
+    onStatusMessage?.call(
         n < 3
             ? 'Vertex $n placed — tap ${3 - n} more to enable finishing'
-            : '$n vertices — tap "Finish" to create polygon or keep adding';
+            : '$n vertices — tap "Finish" to create polygon or keep adding');
+  }
+
+  void updateViewport(MapViewport viewport) {
+    _viewport = viewport;
     notifyListeners();
   }
 
@@ -88,19 +100,19 @@ class PolygonDrawController extends ChangeNotifier {
     if (_pendingVertices.isEmpty) return;
     _pendingVertices.removeLast();
     final n = _pendingVertices.length;
-    _statusMessage =
+   onStatusMessage?.call( 
         n == 0
             ? 'Tap map to start drawing a polygon'
             : n < 3
             ? 'Vertex $n placed — tap ${3 - n} more to enable finishing'
-            : '$n vertices — tap "Finish" to create polygon or keep adding';
+            : '$n vertices — tap "Finish" to create polygon or keep adding');
     notifyListeners();
   }
 
   /// Cancel the current draw session, discarding all pending vertices.
   void cancel() {
     _pendingVertices = [];
-    _statusMessage = 'Tap map to add features';
+    onStatusMessage?.call('Tap map to add features');
     notifyListeners();
   }
 
@@ -111,13 +123,13 @@ class PolygonDrawController extends ChangeNotifier {
 
     final effectiveStyle = style;
 
-    await _features.addPolygon(
+    await _features?.addPolygon(
       Polygon(points: List.from(_pendingVertices), style: effectiveStyle),
     );
 
     _pendingVertices = [];
-    _statusMessage =
-        'Polygon created — total: ${_features.polygonCount}  (tap polygon to edit)';
+    onStatusMessage?.call( 
+        'Polygon created — total: ${_features?.polygonCount}  (tap polygon to edit)');
     notifyListeners();
   }
 

@@ -13,41 +13,40 @@ class PolygonDrawOverlay extends StatelessWidget{
   final PolygonDrawController? controller;
 
   const PolygonDrawOverlay({super.key,required this.controller});
-
-  Size _mapSize(BuildContext context) {
-    final rb = context.findRenderObject() as RenderBox?;
-    return rb?.size ?? const Size(800, 600);
-  }
-  
+ 
   @override
   Widget build(BuildContext context) {
     final ctrl = controller;
     if (ctrl == null) return const SizedBox.shrink();
 
-    return ListenableBuilder(
-      listenable: ctrl,
-      builder: (context, _) {
-        final vp = ctrl.layerController.viewportBounds;
-        if (!ctrl.isDrawing || vp == null) {
-          return const SizedBox.shrink();
-        }
+		 return LayoutBuilder(
+		 	builder: (context,constraints) {
+			 return ListenableBuilder(
+				listenable: ctrl,
+				builder: (context, _) {
+				  final vp = ctrl.layerController?.viewportBounds;
+				  if (!ctrl.isDrawing || vp == null) {
+					 return const SizedBox.shrink();
+				  }
 
-        return Listener(
-          behavior: HitTestBehavior.opaque,
-          onPointerDown: (e) => ctrl.handlePointerDown(e, _mapSize(context)),
-          onPointerMove: (e) => ctrl.handlePointerMove(e, _mapSize(context)),
-          onPointerUp: (e) => ctrl.handlePointerUp(e, _mapSize(context)),
-          onPointerCancel: (e) => ctrl.handlePointerCancel(e, _mapSize(context)),
-          child: CustomPaint(
-            painter: PendingPolygonPainter(
-              vertices: ctrl.pendingVertices,
-              viewport: vp,
-            ),
-            child: const SizedBox.expand(),
-          ),
-        );
-      },
-    );
+				  return Listener(
+					 behavior: HitTestBehavior.opaque,
+					 onPointerDown: (e) => ctrl.handlePointerDown(e, constraints.biggest),
+					 onPointerMove: (e) => ctrl.handlePointerMove(e, constraints.biggest),
+					 onPointerUp: (e) => ctrl.handlePointerUp(e, constraints.biggest),
+					 onPointerCancel: (e) => ctrl.handlePointerCancel(e, constraints.biggest),
+					 child: CustomPaint(
+						painter: PendingPolygonPainter(
+						  vertices: ctrl.pendingVertices,
+						  viewport: vp,
+						),
+						child: const SizedBox.expand(),
+					 ),
+				  );
+				},
+			 );
+			}
+		 );
   }
 }
 
@@ -65,44 +64,43 @@ class PolygonEditOverlay extends StatelessWidget {
 
   const PolygonEditOverlay({super.key, required this.editor, this.onChanged});
 
-  Size _mapSize(BuildContext context) {
-    final rb = context.findRenderObject() as RenderBox?;
-    return rb?.size ?? const Size(800, 600);
-  }
-
   @override
   Widget build(BuildContext context) {
     final ed = editor;
     if (ed == null) return const SizedBox.shrink();
 
-    return ListenableBuilder(
-      listenable: ed,
-      builder: (context, _) {
-        final vp = ed.viewport;
-        if (!ed.isActive || vp == null) {
-          return const SizedBox.shrink();
-        }
-
-        return Listener(
-          behavior: HitTestBehavior.opaque,
-          onPointerDown: (e) => ed.handlePointerDown(e, _mapSize(context)),
-          onPointerMove: (e) {
-            ed.handlePointerMove(e, _mapSize(context));
-            onChanged?.call();
-          },
-          onPointerUp: (e) async {
-            await ed.handlePointerUp(e, _mapSize(context));
-            onChanged?.call();
-          },
-          child: CustomPaint(
-            painter: PolygonEditOverlayPainter(
-              vertices: ed.editingVertices,
-              viewport: vp,
-            ),
-            child: const SizedBox.expand(),
-          ),
-        );
-      },
-    );
+	 return LayoutBuilder(
+		 builder: (context,constraints) {
+			 return ListenableBuilder(
+				listenable: ed,
+				builder: (context, _) {
+				  final vp = ed.viewport;
+				  if (!ed.isActive || vp == null) {
+					 return const SizedBox.shrink();
+				  }
+				  final mapSize = constraints.biggest;
+				  return Listener(
+					 behavior: HitTestBehavior.opaque,
+					 onPointerDown: (e) => ed.handlePointerDown(e, mapSize),
+					 onPointerMove: (e) {
+						ed.handlePointerMove(e, mapSize);
+						onChanged?.call();
+					 },
+					 onPointerUp: (e) async {
+						await ed.handlePointerUp(e, mapSize);
+						onChanged?.call();
+					 },
+					 child: CustomPaint(
+						painter: PolygonEditOverlayPainter(
+						  vertices: ed.editingVertices,
+						  viewport: vp,
+						),
+						child: const SizedBox.expand(),
+					 ),
+				  );
+				  }
+			 );
+		 }
+  );
   }
 }

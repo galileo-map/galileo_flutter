@@ -19,7 +19,7 @@ final _kMapConfig = MapInitConfig(
 
 enum DrawMode {
   point,
-  //polygon
+  polygon,
 }
 
 Future<void> main() async {
@@ -63,18 +63,19 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
   FeatureLayerManager? _features;
   bool _layerReady = false;
 
-  // late final PolygonEditor _polygonEditor = PolygonEditor(
-  //  onStatusMessage:    (msg) => setState(() => _statusMessage = msg),
-  //  onSelectionChanged: (_)   => setState(() {}),
-  // );
+  late final PolygonEditController _polygonEditor = PolygonEditController(
+    onStatusMessage: (msg) => setState(() => _statusMessage = msg),
+    onSelectionChanged: (_) => setState(() {}),
+  );
+
+  late final _polygonDrawer = PolygonDrawController(
+    onStatusMessage: (msg) => setState(() => _statusMessage = msg),
+  );
 
   DrawMode _drawMode = DrawMode.point;
 
   Offset? _pointerDownPosition;
   static const _tapThreshold = 10.0;
-
-  // List<(double, double)> _pendingVertices = [];
-  // bool get _isDrawingPolygon => _pendingVertices.isNotEmpty;
 
   @override
   void initState() {
@@ -88,7 +89,8 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
 
   @override
   void dispose() {
-    //_polygonEditor.dispose();
+    _polygonEditor.dispose();
+    _polygonDrawer.dispose();
     _controller?.dispose();
     super.dispose();
   }
@@ -96,13 +98,14 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
   Future<void> _refreshViewport() async {
     final vp = await _controller?.getViewport();
     if (vp == null || !mounted) return;
-    // final bounds = MapViewport(
-    //  xMin: vp.xMin,
-    //  xMax: vp.xMax,
-    //  yMin: vp.yMin,
-    //  yMax: vp.yMax,
-    // );
-    //_polygonEditor.updateViewport(bounds);
+    final bounds = MapViewport(
+      xMin: vp.xMin,
+      xMax: vp.xMax,
+      yMin: vp.yMin,
+      yMax: vp.yMax,
+    );
+    _polygonEditor.updateViewport(bounds);
+	 _polygonDrawer.updateViewport(bounds);
     await _controller?.layerController.updateViewport(
       vp,
       _controller?.size ?? _kMapSize,
@@ -119,7 +122,6 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     _controller = null;
     _features?.dispose();
     _features = null;
-    // _pendingVertices = [];
 
     final f = GalileoMapController.create(
       size: _kMapSize,
@@ -142,7 +144,8 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
 
     final manager = FeatureLayerManager(
       layerController: ctrl.layerController,
-      polygonEditController: null,
+      polygonEditController: _polygonEditor,
+		polygonDrawController: _polygonDrawer,
     );
     await manager.initialize();
 
@@ -231,7 +234,8 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
       yMin: viewport.yMin,
       yMax: viewport.yMax,
     );
-    // _polygonEditor.updateViewport(vp);
+    _polygonEditor.updateViewport(vp);
+	 _polygonDrawer.updateViewport(vp);
 
     final screenPos = ScreenLocation(x: off.dx, y: off.dy);
     final loc = screenPos.toGeographical(
@@ -245,13 +249,15 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
       return;
     }
 
-    //  if (_isDrawingPolygon) {
-    //    await _addPendingVertex(lat, lon);
-    //    return;
-    //  }
-
-    //  final hit = await _polygonEditor.trySelectAt(screenPos, size, vp);
-    // if (!hit) await _addPendingVertex(lat, lon);
+    if (_drawMode == DrawMode.polygon) {
+      if (_polygonDrawer.isDrawing) {
+        return;
+      }
+      final hit = await _polygonEditor.trySelectAt(off, size, vp);
+      if (!hit) {
+        _polygonDrawer.addVertex(loc);
+      }
+    }
   }
 
   Future<void> _addPoint(FeatureLayerManager features, GeoLocation loc) async {
@@ -287,74 +293,6 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     if (mounted) setState(() => _statusMessage = 'Cleared all points');
   }
 
-  // Future<void> _addPendingVertex(double lat, double lon) async {
-  //   if (_cachedViewport == null) await _refreshViewport();
-  //   if (!mounted) return;
-  //   setState(() {
-  //     _pendingVertices.add((lat, lon));
-  //     final n = _pendingVertices.length;
-  //     _statusMessage = n < 3
-  //         ? 'Vertex $n placed — tap ${3 - n} more to enable finishing'
-  //         : '$n vertices — tap "Finish" to create polygon or keep adding';
-  //   });
-  // }
-
-  // Future<void> _finishPendingPolygon() async {
-  //   final features = _features;
-  //   if (features == null || _pendingVertices.length < 3) return;
-  //
-  //   await features.addPolygon(Polygon(
-  //     points: List.from(_pendingVertices),
-  //     style: PolygonStyle(
-  //       fillColor:    Color(r: 0.2, g: 0.5, b: 0.9, a: 0.8),
-  //       strokeColor:  Color(r: 1.0, g: 1.0, b: 1.0, a: 1.0),
-  //       strokeWidth:  2.0,
-  //       strokeOffset: 0.0,
-  //     ),
-  //   ));
-  //   if (!mounted) return;
-  //   setState(() {
-  //     _pendingVertices = [];
-  //     _statusMessage   =
-  //         'Polygon created — total: ${features.polygonCount}  (tap polygon to edit)';
-  //   });
-  // }
-
-  // void _cancelPendingPolygon() => setState(() {
-  //   _pendingVertices = [];
-  //   _statusMessage   = 'Tap map to add features';
-  // });
-
-  // void _undoLastPendingVertex() {
-  //   if (_pendingVertices.isEmpty) return;
-  //   setState(() {
-  //     _pendingVertices.removeLast();
-  //     final n = _pendingVertices.length;
-  //     _statusMessage = n == 0
-  //         ? 'Tap map to start drawing a polygon'
-  //         : n < 3
-  //             ? 'Vertex $n placed — tap ${3 - n} more to enable finishing'
-  //             : '$n vertices — tap "Finish" to create polygon or keep adding';
-  //   });
-  // }
-
-  // Future<void> _removeLastPolygon() async {
-  //   final features = _features;
-  //   if (features == null || features.polygonCount == 0) return;
-  //   await features.removeLastPolygon();
-  //   if (mounted) {
-  //     setState(() => _statusMessage =
-  //         'Removed polygon — total: ${features.polygonCount}');
-  //   }
-  // }
-
-  // Future<void> _clearAllPolygons() async {
-  //   final features = _features;
-  //   if (features == null || features.polygonCount == 0) return;
-  //   await features.clearPolygons();
-  //   if (mounted) setState(() => _statusMessage = 'Cleared all polygons');
-  // }
-
   @override
   Widget build(BuildContext context) {
     final features = _features;
@@ -384,9 +322,9 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        // _isDrawingPolygon
-                        //     ? 'Keep tapping to add vertices — use the buttons to finish or cancel'
-                        //     :
+                        _polygonDrawer.isDrawing 
+                             ? 'Keep tapping to add vertices — use the buttons to finish or cancel'
+                             :
                         'Tap to add feature · drag to pan · +/− to zoom',
                         style: const TextStyle(
                           fontSize: 12,
@@ -396,7 +334,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                     ],
                   ),
                 ),
-                // if (!_isDrawingPolygon)
+                if (!_polygonDrawer.isDrawing)
                 DropdownButton<String>(
                   value: _layerConfigString,
                   onChanged: (value) async {
@@ -465,14 +403,17 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                       label: Text('Point'),
                       icon: Icon(Icons.location_on),
                     ),
-                    //ButtonSegment(
-                    //    value: DrawMode.polygon,
-                    //    label: Text('Polygon'),
-                    //    icon: Icon(Icons.pentagon_outlined)),
+                    ButtonSegment(
+                      value: DrawMode.polygon,
+                      label: Text('Polygon'),
+                      icon: Icon(Icons.pentagon_outlined),
+                    ),
                   ],
                   selected: {_drawMode},
                   onSelectionChanged: (s) {
-                    // if (_isDrawingPolygon) _cancelPendingPolygon();
+                    if (_polygonDrawer.isDrawing) {
+                      _polygonDrawer.cancel();
+                    }
                     setState(() => _drawMode = s.first);
                   },
                 ),
@@ -483,58 +424,68 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                   count: features?.pointCount ?? 0,
                   label: 'pts',
                 ),
-                // const SizedBox(width: 8),
-                // CountChip(
-                //     icon:  Icons.pentagon_outlined,
-                //     color: const Color(0xFF2196F3),
-                //     count: features?.polygonCount ?? 0,
-                //     label: 'poly'),
+                const SizedBox(width: 8),
+                CountChip(
+                    icon: Icons.pentagon_outlined,
+                    color: const Color(0xFF2196F3),
+                    count: features?.polygonCount ?? 0,
+                    label: 'poly'),
               ],
             ),
           ),
 
-          // if (_isDrawingPolygon)
-          //   Container(
-          //     color: const Color(0xFFBBDEFB),
-          //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          //     child: Row(
-          //       children: [
-          //         const Icon(Icons.draw, size: 18, color: Colors.blue),
-          //         const SizedBox(width: 8),
-          //         Text(
-          //             'Drawing polygon — ${_pendingVertices.length} vertices',
-          //             style: const TextStyle(fontWeight: FontWeight.bold)),
-          //         const Spacer(),
-          //         IconButton(
-          //           tooltip:   'Undo last vertex',
-          //           icon:      const Icon(Icons.undo, size: 20),
-          //           onPressed: _pendingVertices.isNotEmpty
-          //               ? _undoLastPendingVertex
-          //               : null,
-          //           color: Colors.blueGrey,
-          //         ),
-          //         const SizedBox(width: 4),
-          //         OutlinedButton.icon(
-          //           onPressed: _cancelPendingPolygon,
-          //           icon:  const Icon(Icons.close, size: 16),
-          //           label: const Text('Cancel'),
-          //           style: OutlinedButton.styleFrom(
-          //               foregroundColor: Colors.red),
-          //         ),
-          //         const SizedBox(width: 8),
-          //         ElevatedButton.icon(
-          //           onPressed: _pendingVertices.length >= 3
-          //               ? _finishPendingPolygon
-          //               : null,
-          //           icon:  const Icon(Icons.check, size: 16),
-          //           label: const Text('Finish Polygon'),
-          //           style: ElevatedButton.styleFrom(
-          //               backgroundColor: Colors.blue,
-          //               foregroundColor: Colors.white),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
+          if (_polygonDrawer.isDrawing)
+            Container(
+              color: const Color(0xFFBBDEFB),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              child: Row(
+                children: [
+                  const Icon(Icons.draw, size: 18, color: Colors.blue),
+                  const SizedBox(width: 8),
+                  Text(
+                      'Drawing polygon — ${_polygonDrawer.vertexCount ?? 0} vertices',
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const Spacer(),
+                  IconButton(
+                    tooltip: 'Undo last vertex',
+                    icon: const Icon(Icons.undo, size: 20),
+                    onPressed: _polygonDrawer.isDrawing
+                        ? () => _polygonDrawer.undoLastVertex()
+                        : null,
+                    color: Colors.blueGrey,
+                  ),
+                  const SizedBox(width: 4),
+                  OutlinedButton.icon(
+                    onPressed: () => _polygonDrawer.cancel(),
+                    icon: const Icon(Icons.close, size: 16),
+                    label: const Text('Cancel'),
+                    style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton.icon(
+                    onPressed: _polygonDrawer.canFinish
+                        ? () async {
+                            await _polygonDrawer.finish(
+                              PolygonStyle(
+                                fillColor: const Color(0x338FE6CC).toGalileo(),
+                                strokeColor: const Color(0xFFFFFFFF).toGalileo(),
+                                strokeWidth: 2.0,
+                                strokeOffset: 0.0,
+                              ),
+                            );
+                            setState(() {});
+                          }
+                        : null,
+                    icon: const Icon(Icons.check, size: 16),
+                    label: const Text('Finish Polygon'),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white),
+                  ),
+                ],
+              ),
+            ),
           Expanded(
             child: Container(
               decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
@@ -578,14 +529,15 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                             enableKeyboard: true,
                             autoDispose: false,
                             onViewportChanged: (vp) async {
-                              //  final bounds = MapViewport(
-                              //    xMin: vp.xMin,
-                              //    xMax: vp.xMax,
-                              //    yMin: vp.yMin,
-                              //    yMax: vp.yMax,
-                              //  );
+                              final bounds = MapViewport(
+                                xMin: vp.xMin,
+                                xMax: vp.xMax,
+                                yMin: vp.yMin,
+                                yMax: vp.yMax,
+                              );
                               if (!mounted) return;
-                              // _polygonEditor.updateViewport(bounds);
+                              _polygonEditor.updateViewport(bounds);
+										_polygonDrawer.updateViewport(bounds);
                               await _controller?.layerController.updateViewport(
                                 vp,
                                 _controller?.size ?? _kMapSize,
@@ -593,6 +545,11 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                             },
                             child: Stack(
                               children: [
+                                PolygonDrawOverlay(controller: _polygonDrawer),
+                                PolygonEditOverlay(
+                                  editor: _polygonEditor,
+                                  onChanged: () => setState(() {}),
+                                ),
                                 Positioned(
                                   top: 10,
                                   right: 10,
@@ -639,12 +596,12 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                                             color: Colors.red,
                                           ),
                                         ),
-                                        // Text(
-                                        //     'Polygons: ${features?.polygonCount ?? 0}',
-                                        //     style: const TextStyle(
-                                        //         fontSize: 10,
-                                        //         fontWeight: FontWeight.bold,
-                                        //         color: Colors.blue)),
+                                        Text(
+                                            'Polygons: ${features?.polygonCount ?? 0}',
+                                            style: const TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.blue)),
                                       ],
                                     ),
                                   ),
@@ -700,41 +657,47 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                     ),
                   ],
                 ),
-                // const SizedBox(height: 8),
-                // Row(
-                //   children: [
-                //     const Icon(Icons.pentagon_outlined,
-                //         color: Colors.blue, size: 18),
-                //     const SizedBox(width: 6),
-                //     const Text('Polygons:',
-                //         style: TextStyle(fontWeight: FontWeight.bold)),
-                //     const SizedBox(width: 8),
-                //     ElevatedButton.icon(
-                //       onPressed: (_layerReady &&
-                //               (features?.polygonCount ?? 0) > 0 &&
-                //               !_isDrawingPolygon)
-                //           ? _removeLastPolygon
-                //           : null,
-                //       icon:  const Icon(Icons.remove_circle_outline, size: 16),
-                //       label: Text(
-                //           'Remove Last (${features?.polygonCount ?? 0})'),
-                //       style: ElevatedButton.styleFrom(
-                //           foregroundColor: Colors.blue),
-                //       ),
-                //     const SizedBox(width: 8),
-                //     ElevatedButton.icon(
-                //       onPressed: (_layerReady &&
-                //               (features?.polygonCount ?? 0) > 0 &&
-                //               !_isDrawingPolygon)
-                //           ? _clearAllPolygons
-                //           : null,
-                //       icon:  const Icon(Icons.clear, size: 16),
-                //       label: const Text('Clear All'),
-                //       style: ElevatedButton.styleFrom(
-                //           foregroundColor: Colors.blue),
-                //     ),
-                //   ],
-                // ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.pentagon_outlined,
+                        color: Colors.blue, size: 18),
+                    const SizedBox(width: 6),
+                    const Text('Polygons:',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 8),
+                    ElevatedButton.icon(
+                      onPressed: (_layerReady &&
+                              (features?.polygonCount ?? 0) > 0 &&
+                              _polygonDrawer.isDrawing != true)
+                          ? () async {
+                              await features?.removeLastPolygon();
+                              setState(() {});
+                            }
+                          : null,
+                      icon: const Icon(Icons.remove_circle_outline, size: 16),
+                      label: Text(
+                          'Remove Last (${features?.polygonCount ?? 0})'),
+                      style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.blue),
+                      ),
+                    const SizedBox(width: 8),
+                    ElevatedButton.icon(
+                      onPressed: (_layerReady &&
+                              (features?.polygonCount ?? 0) > 0 &&
+                              _polygonDrawer.isDrawing != true)
+                          ? () async {
+                              await features?.clearPolygons();
+                              setState(() {});
+                            }
+                          : null,
+                      icon: const Icon(Icons.clear, size: 16),
+                      label: const Text('Clear All'),
+                      style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.blue),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -750,8 +713,8 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                     content: Text(
                       'Galileo Flutter Demo\n'
                       'Session ID: ${_controller?.sessionId ?? "none"}\n'
-                      'Points on map: ${features?.pointCount ?? 0}\n',
-                      // 'Polygons on map: ${features?.polygonCount ?? 0}',
+                      'Points on map: ${features?.pointCount ?? 0}\n'
+                      'Polygons on map: ${features?.polygonCount ?? 0}',
                     ),
                     actions: [
                       TextButton(
