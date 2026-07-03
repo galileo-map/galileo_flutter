@@ -12,6 +12,8 @@ class PolygonEditOverlayPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (vertices.isEmpty) return;
+    // Clip to the widget's own bounds so nothing bleeds outside the map area.
+    canvas.clipRect(Offset.zero & size);
     final pts = vertices.map((v) => geoToOffset(v, size, viewport)).toList();
 
     if (pts.length >= 3) {
@@ -53,6 +55,8 @@ class PendingPolygonPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (vertices.isEmpty) return;
+    // Clip to the widget's own bounds so nothing bleeds outside the map area.
+    canvas.clipRect(Offset.zero & size);
     final pts = vertices.map((v) => geoToOffset(v, size, viewport)).toList();
 
     // Translucent fill + dashed border when closed (3+ pts).

@@ -15,6 +15,10 @@ class PolygonEditController extends FeatureEditController {
 
   final void Function(int? polygonId)? onSelectionChanged;
 
+  final void Function(int vertexIndex)? onVertexDragStart;
+
+  final void Function()? onVertexDragEnd;
+
   FeatureLayerManager? _features;
 
   int? _selectedPolygonId;
@@ -23,7 +27,15 @@ class PolygonEditController extends FeatureEditController {
   int? _draggingVertexIndex;
   Offset? _pointerDownPos;
 
-  PolygonEditController({this.onStatusMessage, this.onSelectionChanged});
+  PolygonEditController({
+    this.onStatusMessage,
+    this.onSelectionChanged,
+    this.onVertexDragStart,
+    this.onVertexDragEnd,
+  });
+
+  /// True while the user is actively dragging a vertex handle.
+  bool get isDraggingVertex => _draggingVertexIndex != null;
 
   @override
   bool get isActive => _selectedPolygonId != null;
@@ -118,7 +130,11 @@ class PolygonEditController extends FeatureEditController {
   void handlePointerDown(PointerDownEvent event, Size mapSize) {
     if (!isActive) return;
     _pointerDownPos = event.localPosition;
-    _draggingVertexIndex = _hitVertex(event.localPosition, mapSize);
+    final vi = _hitVertex(event.localPosition, mapSize);
+    _draggingVertexIndex = vi;
+    if (vi != null) {
+      onVertexDragStart?.call(vi);
+    }
   }
 
   @override
@@ -143,8 +159,13 @@ class PolygonEditController extends FeatureEditController {
     final isTap =
         down == null || (event.localPosition - down).distance < _tapThreshold;
 
+    final wasDragging = vi != null && !isTap;
     _draggingVertexIndex = null;
     _pointerDownPos = null;
+
+    if (wasDragging) {
+      onVertexDragEnd?.call();
+    }
 
     if (vi != null) {
       isTap ? await _removeVertex(vi) : await _commitEdits();

@@ -18,13 +18,15 @@ class MapOverlayLayer extends StatelessWidget {
       builder: (context, constraints) {
         final mapSize = Size(constraints.maxWidth, constraints.maxHeight);
 
-        return Flow(
-          delegate: MapOverlayFlowDelegate(
-            controller: controller,
-            mapSize: mapSize,
-            overlays: overlays,
+        return ClipRect(
+          child: Flow(
+            delegate: MapOverlayFlowDelegate(
+              controller: controller,
+              mapSize: mapSize,
+              overlays: overlays,
+            ),
+            children: overlays,
           ),
-          children: overlays,
         );
       },
     );

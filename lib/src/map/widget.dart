@@ -32,6 +32,10 @@ class GalileoMapWidget extends StatefulWidget {
   /// Called when the map is tapped
   final void Function(double x, double y)? onTap;
 
+  /// When this [ValueNotifier] holds `true`, the map ignores pointer-move
+  /// events so that an overlapping vertex drag doesn't also pan the map.
+  final ValueNotifier<bool>? suppressPanNotifier;
+
   /// Fires at most once per 30 ms to avoid flooding the Rust FFI layer.
   final void Function(MapViewport viewport)? onViewportChanged;
 
@@ -46,6 +50,7 @@ class GalileoMapWidget extends StatefulWidget {
     this.focusNode,
     this.onTap,
     this.onViewportChanged,
+    this.suppressPanNotifier,
   });
 
   /// Create a GalileoMapWidget from an existing controller
@@ -60,6 +65,7 @@ class GalileoMapWidget extends StatefulWidget {
     Widget? child,
     void Function(double x, double y)? onTap,
     void Function(MapViewport viewport)? onViewportChanged,
+    ValueNotifier<bool>? suppressPanNotifier,
   }) {
     return GalileoMapWidget._(
       key: key,
@@ -69,6 +75,7 @@ class GalileoMapWidget extends StatefulWidget {
       focusNode: focusNode,
       onTap: onTap,
       onViewportChanged: onViewportChanged,
+      suppressPanNotifier: suppressPanNotifier,
       config: config,
       layers: layers,
       child: child,
@@ -224,6 +231,12 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
   }
 
   void _onTickPan(Duration elapsed) {
+    // If pan is suppressed, discard any accumulated delta 
+	 // so the map doesn't pan when the user releases.
+    if (widget.suppressPanNotifier?.value == true) {
+      _panAccumulatedDelta = Offset.zero;
+      return;
+    }
     if (_panAccumulatedDelta != Offset.zero) {
       _sendPanEvent(_panAccumulatedDelta, _lastPointerPosition!);
       _panAccumulatedDelta = Offset.zero;
@@ -354,6 +367,14 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
         }
 
         if (event.buttons == 0) {
+          return;
+        }
+
+        // If an overlay has requested pan suppression,
+        // still track the position so the next un-suppressed frame is correct,
+        // but don't accumulate the delta.
+        if (widget.suppressPanNotifier?.value == true) {
+          _lastPointerPosition = event.localPosition;
           return;
         }
 
