@@ -26,6 +26,7 @@ class PolygonEditController extends FeatureEditController {
   MapViewport? _viewport;
   int? _draggingVertexIndex;
   Offset? _pointerDownPos;
+  bool _wasActiveOnPointerDown = false;
 
   PolygonEditController({
     this.onStatusMessage,
@@ -36,6 +37,12 @@ class PolygonEditController extends FeatureEditController {
 
   /// True while the user is actively dragging a vertex handle.
   bool get isDraggingVertex => _draggingVertexIndex != null;
+
+  /// Index of the vertex currently being dragged, or null.
+  int? get draggingVertexIndex => _draggingVertexIndex;
+
+  /// True if the editor was active at the start of the current gesture pointer down.
+  bool get wasActiveOnPointerDown => _wasActiveOnPointerDown;
 
   @override
   bool get isActive => _selectedPolygonId != null;
@@ -74,7 +81,7 @@ class PolygonEditController extends FeatureEditController {
   }
 
   /// the widget calls this in its main tap dispatcher when in polygon draw mode
-  /// and not currently drawing.
+  /// and currently editing.
   Future<bool> trySelectAt(
     Offset screenPos,
     Size mapSize,
@@ -128,6 +135,7 @@ class PolygonEditController extends FeatureEditController {
 
   @override
   void handlePointerDown(PointerDownEvent event, Size mapSize) {
+    _wasActiveOnPointerDown = isActive;
     if (!isActive) return;
     _pointerDownPos = event.localPosition;
     final vi = _hitVertex(event.localPosition, mapSize);

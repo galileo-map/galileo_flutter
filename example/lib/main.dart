@@ -260,7 +260,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
         return;
       }
       final hit = await _polygonEditor.trySelectAt(off, size, vp);
-      if (!hit) {
+      if (!hit && !_polygonEditor.wasActiveOnPointerDown) {
         _polygonDrawer.addVertex(loc);
       }
     }

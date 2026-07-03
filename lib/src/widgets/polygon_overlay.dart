@@ -2,18 +2,60 @@ import 'package:flutter/material.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
 import 'package:galileo_flutter/src/utils.dart';
 
+const _kVertexR = 11.0;
+const _kMidpointR = 8.0;
+
+const _kHandleRed = Color(0xFFE53935);
+
+
+Paint _fillPaint(Color c) => Paint()..color = c..style = PaintingStyle.fill;
+Paint _strokePaint(Color c, double w) =>
+    Paint()..color = c..style = PaintingStyle.stroke..strokeWidth = w;
+
+void _drawHandle(
+  Canvas canvas,
+  Offset center,
+  double r,
+  Color bg, {
+  Color border = Colors.white,
+  double borderWidth = 2.0,
+}) {
+  canvas.drawCircle(center, r, _fillPaint(bg));
+  canvas.drawCircle(center, r, _strokePaint(border, borderWidth));
+}
+
+/// Draws a "+" symbol at [center] with arm length [arm].
+void _drawPlus(Canvas canvas, Offset center, double arm, Color color) {
+  final p = _strokePaint(color, 2.0)..strokeCap = StrokeCap.round;
+  canvas.drawLine(
+    Offset(center.dx - arm, center.dy),
+    Offset(center.dx + arm, center.dy),
+    p,
+  );
+  canvas.drawLine(
+    Offset(center.dx, center.dy - arm),
+    Offset(center.dx, center.dy + arm),
+    p,
+  );
+}
 
 class PolygonEditOverlayPainter extends CustomPainter {
   final List<GeoLocation> vertices;
   final MapViewport viewport;
 
-  const PolygonEditOverlayPainter({required this.vertices, required this.viewport});
+  final int? draggingVertexIndex;
+
+  const PolygonEditOverlayPainter({
+    required this.vertices,
+    required this.viewport,
+    this.draggingVertexIndex,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
     if (vertices.isEmpty) return;
-    // Clip to the widget's own bounds so nothing bleeds outside the map area.
     canvas.clipRect(Offset.zero & size);
+
     final pts = vertices.map((v) => geoToOffset(v, size, viewport)).toList();
 
     if (pts.length >= 3) {
@@ -22,30 +64,40 @@ class PolygonEditOverlayPainter extends CustomPainter {
         path.lineTo(pts[i].dx, pts[i].dy);
       }
       path.close();
-      canvas.drawPath(
-        path,
-        Paint()
-          ..color = const Color(0x55FFEB3B)
-          ..style = PaintingStyle.fill,
-      );
-      canvas.drawPath(
-        path,
-        Paint()
-          ..color = const Color(0xFFFFEB3B)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.5,
+      canvas.drawPath(path, _fillPaint(const Color(0x22FFFFFF)));
+      canvas.drawPath(path, _strokePaint(const Color(0xCCFFFFFF), 1.5));
+    } else if (pts.length == 2) {
+      canvas.drawLine(pts[0], pts[1], _strokePaint(const Color(0xCCFFFFFF), 1.5));
+    }
+
+    for (int i = 0; i < pts.length; i++) {
+      final a = pts[i];
+      final b = pts[(i + 1) % pts.length];
+      final mid = Offset((a.dx + b.dx) / 2, (a.dy + b.dy) / 2);
+
+      _drawHandle(canvas, mid, _kMidpointR, _kHandleRed);
+      _drawPlus(canvas, mid, _kMidpointR * 0.5, Colors.white);
+    }
+
+    for (int i = 0; i < pts.length; i++) {
+      final pt = pts[i];
+      final isDragging = i == draggingVertexIndex;
+
+      _drawHandle(
+        canvas, pt, _kVertexR,
+        isDragging ? Colors.white : _kHandleRed,
+        border: isDragging ? _kHandleRed : Colors.white,
       );
     }
   }
 
   @override
   bool shouldRepaint(PolygonEditOverlayPainter old) =>
-      old.vertices != vertices || old.viewport != viewport;
+      old.vertices != vertices ||
+      old.viewport != viewport ||
+      old.draggingVertexIndex != draggingVertexIndex;
 }
 
-/// Draws the live preview of a polygon being drawn vertex-by-vertex.
-/// Vertices are shown as blue dots; edges as dashed lines; if 3+ vertices
-/// exist a translucent fill closes the shape.
 class PendingPolygonPainter extends CustomPainter {
   final List<GeoLocation> vertices;
   final MapViewport viewport;
@@ -55,42 +107,29 @@ class PendingPolygonPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (vertices.isEmpty) return;
-    // Clip to the widget's own bounds so nothing bleeds outside the map area.
     canvas.clipRect(Offset.zero & size);
+
     final pts = vertices.map((v) => geoToOffset(v, size, viewport)).toList();
 
-    // Translucent fill + dashed border when closed (3+ pts).
     if (pts.length >= 3) {
       final path = Path()..moveTo(pts[0].dx, pts[0].dy);
       for (int i = 1; i < pts.length; i++) {
         path.lineTo(pts[i].dx, pts[i].dy);
       }
       path.close();
-      canvas.drawPath(
-        path,
-        Paint()
-          ..color = const Color(0x4400BFFF)
-          ..style = PaintingStyle.fill,
-      );
+      canvas.drawPath(path, _fillPaint(const Color(0x4400BFFF)));
     }
 
-    // Edge lines (open polyline).
     if (pts.length >= 2) {
-      final edgePaint =
-          Paint()
-            ..color = const Color(0xFF0288D1)
-            ..strokeWidth = 2.0
-            ..style = PaintingStyle.stroke;
+      final edgePaint = _strokePaint(const Color(0xFF0288D1), 2.0);
       for (int i = 0; i < pts.length - 1; i++) {
         canvas.drawLine(pts[i], pts[i + 1], edgePaint);
       }
-      // Closing dashed preview line back to first vertex.
-      final dashPaint =
-          Paint()
-            ..color = const Color(0x880288D1)
-            ..strokeWidth = 1.5
-            ..style = PaintingStyle.stroke;
-      canvas.drawLine(pts.last, pts.first, dashPaint);
+      canvas.drawLine(pts.last, pts.first, _strokePaint(const Color(0x880288D1), 1.5));
+    }
+
+    for (int i = 0; i < pts.length; i++) {
+      _drawHandle(canvas, pts[i], _kVertexR, _kHandleRed);
     }
   }
 

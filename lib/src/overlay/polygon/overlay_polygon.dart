@@ -94,6 +94,7 @@ class PolygonEditOverlay extends StatelessWidget {
 						painter: PolygonEditOverlayPainter(
 						  vertices: ed.editingVertices,
 						  viewport: vp,
+						  draggingVertexIndex: ed.draggingVertexIndex,
 						),
 						child: const SizedBox.expand(),
 					 ),
