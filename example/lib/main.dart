@@ -17,10 +17,7 @@ final _kMapConfig = MapInitConfig(
   zoomLevel: 10,
 );
 
-enum DrawMode {
-  point,
-  polygon,
-}
+enum DrawMode { point, polygon }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -111,7 +108,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
       yMax: vp.yMax,
     );
     _polygonEditor.updateViewport(bounds);
-	 _polygonDrawer.updateViewport(bounds);
+    _polygonDrawer.updateViewport(bounds);
     await _controller?.layerController.updateViewport(
       vp,
       _controller?.size ?? _kMapSize,
@@ -151,7 +148,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     final manager = FeatureLayerManager(
       layerController: ctrl.layerController,
       polygonEditController: _polygonEditor,
-		polygonDrawController: _polygonDrawer,
+      polygonDrawController: _polygonDrawer,
     );
     await manager.initialize();
 
@@ -241,7 +238,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
       yMax: viewport.yMax,
     );
     _polygonEditor.updateViewport(vp);
-	 _polygonDrawer.updateViewport(vp);
+    _polygonDrawer.updateViewport(vp);
 
     final screenPos = ScreenLocation(x: off.dx, y: off.dy);
     final loc = screenPos.toGeographical(
@@ -328,10 +325,9 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        _polygonDrawer.isDrawing 
-                             ? 'Keep tapping to add vertices — use the buttons to finish or cancel'
-                             :
-                        'Tap to add feature · drag to pan · +/− to zoom',
+                        _polygonDrawer.isDrawing
+                            ? 'Keep tapping to add vertices — use the buttons to finish or cancel'
+                            : 'Tap to add feature · drag to pan · +/− to zoom',
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.grey,
@@ -341,53 +337,53 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                   ),
                 ),
                 if (!_polygonDrawer.isDrawing)
-                DropdownButton<String>(
-                  value: _layerConfigString,
-                  onChanged: (value) async {
-                    if (value == null || value == _layerConfigString) return;
-                    setState(() => _layerConfigString = value);
-                    switch (value) {
-                      case 'osm_tile_layer':
-                        await _switchLayer(LayerConfig.osm());
-                      case 'vector_tile_layer_1':
-                        final style = await rootBundle.loadString(
-                          'assets/vt_style.json',
-                        );
-                        if (!mounted) return;
-                        await _switchLayer(
-                          LayerConfig.vectorTiles(
-                            urlTemplate: MAP_TILER_URL_TEMPLATE,
-                            styleJson: style,
-                          ),
-                        );
-                      case 'vector_tile_layer_2':
-                        final style = await rootBundle.loadString(
-                          'assets/simple_style.json',
-                        );
-                        if (!mounted) return;
-                        await _switchLayer(
-                          LayerConfig.vectorTiles(
-                            urlTemplate: MAP_TILER_URL_TEMPLATE,
-                            styleJson: style,
-                          ),
-                        );
-                    }
-                  },
-                  items: const [
-                    DropdownMenuItem(
-                      value: 'osm_tile_layer',
-                      child: Text('OSM Tile Layer'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'vector_tile_layer_1',
-                      child: Text('Vector Tile Style 1'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'vector_tile_layer_2',
-                      child: Text('Vector Tile Style 2'),
-                    ),
-                  ],
-                ),
+                  DropdownButton<String>(
+                    value: _layerConfigString,
+                    onChanged: (value) async {
+                      if (value == null || value == _layerConfigString) return;
+                      setState(() => _layerConfigString = value);
+                      switch (value) {
+                        case 'osm_tile_layer':
+                          await _switchLayer(LayerConfig.osm());
+                        case 'vector_tile_layer_1':
+                          final style = await rootBundle.loadString(
+                            'assets/vt_style.json',
+                          );
+                          if (!mounted) return;
+                          await _switchLayer(
+                            LayerConfig.vectorTiles(
+                              urlTemplate: MAP_TILER_URL_TEMPLATE,
+                              styleJson: style,
+                            ),
+                          );
+                        case 'vector_tile_layer_2':
+                          final style = await rootBundle.loadString(
+                            'assets/simple_style.json',
+                          );
+                          if (!mounted) return;
+                          await _switchLayer(
+                            LayerConfig.vectorTiles(
+                              urlTemplate: MAP_TILER_URL_TEMPLATE,
+                              styleJson: style,
+                            ),
+                          );
+                      }
+                    },
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'osm_tile_layer',
+                        child: Text('OSM Tile Layer'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'vector_tile_layer_1',
+                        child: Text('Vector Tile Style 1'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'vector_tile_layer_2',
+                        child: Text('Vector Tile Style 2'),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),
@@ -432,10 +428,11 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                 ),
                 const SizedBox(width: 8),
                 CountChip(
-                    icon: Icons.pentagon_outlined,
-                    color: const Color(0xFF2196F3),
-                    count: features?.polygonCount ?? 0,
-                    label: 'poly'),
+                  icon: Icons.pentagon_outlined,
+                  color: const Color(0xFF2196F3),
+                  count: features?.polygonCount ?? 0,
+                  label: 'poly',
+                ),
               ],
             ),
           ),
@@ -449,15 +446,17 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                   const Icon(Icons.draw, size: 18, color: Colors.blue),
                   const SizedBox(width: 8),
                   Text(
-                      'Drawing polygon — ${_polygonDrawer.vertexCount ?? 0} vertices',
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                    'Drawing polygon — ${_polygonDrawer.vertexCount} vertices',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const Spacer(),
                   IconButton(
                     tooltip: 'Undo last vertex',
                     icon: const Icon(Icons.undo, size: 20),
-                    onPressed: _polygonDrawer.isDrawing
-                        ? () => _polygonDrawer.undoLastVertex()
-                        : null,
+                    onPressed:
+                        _polygonDrawer.isDrawing
+                            ? () => _polygonDrawer.undoLastVertex()
+                            : null,
                     color: Colors.blueGrey,
                   ),
                   const SizedBox(width: 4),
@@ -466,28 +465,33 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                     icon: const Icon(Icons.close, size: 16),
                     label: const Text('Cancel'),
                     style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.red),
+                      foregroundColor: Colors.red,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton.icon(
-                    onPressed: _polygonDrawer.canFinish
-                        ? () async {
-                            await _polygonDrawer.finish(
-                              PolygonStyle(
-                                fillColor: const Color(0x338FE6CC).toGalileo(),
-                                strokeColor: const Color(0xFFFFFFFF).toGalileo(),
-                                strokeWidth: 2.0,
-                                strokeOffset: 0.0,
-                              ),
-                            );
-                            setState(() {});
-                          }
-                        : null,
+                    onPressed:
+                        _polygonDrawer.canFinish
+                            ? () async {
+                              await _polygonDrawer.finish(
+                                PolygonStyle(
+                                  fillColor:
+                                      const Color(0x338FE6CC).toGalileo(),
+                                  strokeColor:
+                                      const Color(0xFFFFFFFF).toGalileo(),
+                                  strokeWidth: 2.0,
+                                  strokeOffset: 0.0,
+                                ),
+                              );
+                              setState(() {});
+                            }
+                            : null,
                     icon: const Icon(Icons.check, size: 16),
                     label: const Text('Finish Polygon'),
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white),
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                    ),
                   ),
                 ],
               ),
@@ -544,7 +548,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                               );
                               if (!mounted) return;
                               _polygonEditor.updateViewport(bounds);
-										_polygonDrawer.updateViewport(bounds);
+                              _polygonDrawer.updateViewport(bounds);
                               await _controller?.layerController.updateViewport(
                                 vp,
                                 _controller?.size ?? _kMapSize,
@@ -604,11 +608,13 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                                           ),
                                         ),
                                         Text(
-                                            'Polygons: ${features?.polygonCount ?? 0}',
-                                            style: const TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.blue)),
+                                          'Polygons: ${features?.polygonCount ?? 0}',
+                                          style: const TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blue,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -667,41 +673,51 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(Icons.pentagon_outlined,
-                        color: Colors.blue, size: 18),
+                    const Icon(
+                      Icons.pentagon_outlined,
+                      color: Colors.blue,
+                      size: 18,
+                    ),
                     const SizedBox(width: 6),
-                    const Text('Polygons:',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    const Text(
+                      'Polygons:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     const SizedBox(width: 8),
                     ElevatedButton.icon(
-                      onPressed: (_layerReady &&
-                              (features?.polygonCount ?? 0) > 0 &&
-                              _polygonDrawer.isDrawing != true)
-                          ? () async {
-                              await features?.removeLastPolygon();
-                              setState(() {});
-                            }
-                          : null,
+                      onPressed:
+                          (_layerReady &&
+                                  (features?.polygonCount ?? 0) > 0 &&
+                                  _polygonDrawer.isDrawing != true)
+                              ? () async {
+                                await features?.removeLastPolygon();
+                                setState(() {});
+                              }
+                              : null,
                       icon: const Icon(Icons.remove_circle_outline, size: 16),
                       label: Text(
-                          'Remove Last (${features?.polygonCount ?? 0})'),
-                      style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.blue),
+                        'Remove Last (${features?.polygonCount ?? 0})',
                       ),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.blue,
+                      ),
+                    ),
                     const SizedBox(width: 8),
                     ElevatedButton.icon(
-                      onPressed: (_layerReady &&
-                              (features?.polygonCount ?? 0) > 0 &&
-                              _polygonDrawer.isDrawing != true)
-                          ? () async {
-                              await features?.clearPolygons();
-                              setState(() {});
-                            }
-                          : null,
+                      onPressed:
+                          (_layerReady &&
+                                  (features?.polygonCount ?? 0) > 0 &&
+                                  _polygonDrawer.isDrawing != true)
+                              ? () async {
+                                await features?.clearPolygons();
+                                setState(() {});
+                              }
+                              : null,
                       icon: const Icon(Icons.clear, size: 16),
                       label: const Text('Clear All'),
                       style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.blue),
+                        foregroundColor: Colors.blue,
+                      ),
                     ),
                   ],
                 ),
