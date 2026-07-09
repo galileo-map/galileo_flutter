@@ -38,6 +38,7 @@ class FeatureLayerManager {
 
   void dispose() {
     _polygonEditController?.detach();
+    _polygonDrawController?.detach();
     _pointIds.clear();
     _polygons.clear();
   }
