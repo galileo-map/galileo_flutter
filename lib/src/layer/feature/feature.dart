@@ -18,7 +18,8 @@ class FeatureLayerManager {
     required this.layerController,
     PolygonEditController? polygonEditController,
     PolygonDrawController? polygonDrawController,
-  }) : _polygonEditController = polygonEditController,_polygonDrawController=polygonDrawController;
+  }) : _polygonEditController = polygonEditController,
+       _polygonDrawController = polygonDrawController;
 
   int get pointCount => _pointIds.length;
   int get polygonCount => _polygons.length;
