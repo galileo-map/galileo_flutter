@@ -131,7 +131,7 @@ sealed class LayerConfig with _$LayerConfig {
     required List<Point> features,
   }) = LayerConfig_PointLayer;
 
-  ///Placeholder variant for flutter based widgets layer
+  /// Placeholder variant handled by flutter
   const factory LayerConfig.widgetLayer() = LayerConfig_WidgetLayer;
 }
 
@@ -305,7 +305,7 @@ class MouseEvent {
 /// Points with properties for colors
 /// Usage:
 ///   Point(
-///     coordinate: (27.7,85.3),
+///     coordinate: GeoLocation(latitude:27.7,longitude:85.3),
 ///     style: PointStyle(
 ///       fillColor: GalileoColor(0.2,0.5,0.9,0.8),
 ///       size: 0.8,
@@ -369,7 +369,7 @@ class PointStyle {
 /// Closed geographic polygon with fill/stroke styling.
 /// Usage:
 ///   Polygon(
-///     points: [(27.7,85.3), ...],
+///     points: [...],
 ///     style: PolygonStyle(
 ///       fillColor: GalileoColor(0.2,0.5,0.9,0.8),
 ///       strokeColor: GalileoColor(1.0,1.0,1.0,1.0),

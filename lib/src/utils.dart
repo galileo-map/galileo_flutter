@@ -9,7 +9,11 @@ Offset geoToOffset(GeoLocation geo, Size size, MapViewport vp) {
 
 /// Converts a vertex [Offset] to a screen [Geolocation] in one step.
 GeoLocation offsetToGeo(Offset off, Size size, MapViewport vp) {
-  final screenLocation = ScreenLocation(x:off.dx,y:off.dy);
-  final geoLocation = screenLocation.toGeographical(height: size.height, width: size.width, vp: vp);
+  final screenLocation = ScreenLocation(x: off.dx, y: off.dy);
+  final geoLocation = screenLocation.toGeographical(
+    height: size.height,
+    width: size.width,
+    vp: vp,
+  );
   return geoLocation;
 }

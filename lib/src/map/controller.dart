@@ -1,12 +1,14 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:galileo_flutter/src/rust/api/dart_types.dart';
 import 'package:galileo_flutter/src/rust/api/galileo_api.dart' as rlib;
 import 'package:galileo_flutter/src/layer/controller.dart';
+import 'package:logging/logging.dart';
 
 import 'package:irondash_engine_context/irondash_engine_context.dart';
 import "package:rxdart/rxdart.dart" as rx;
+
+final _log = Logger('GalileoMapController');
 
 /// State of a Galileo map instance
 enum GalileoMapState {
@@ -111,9 +113,7 @@ class GalileoMapController {
 
       return (controller, null);
     } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Error creating Galileo map: $e');
-      }
+      _log.severe('Error creating Galileo map', e);
       return (null, e.toString());
     }
   }
@@ -127,9 +127,7 @@ class GalileoMapController {
           await rlib.markSessionAlive(sessionId: sessionId);
           await Future.delayed(const Duration(seconds: 1));
         } catch (e) {
-          if (kDebugMode) {
-            debugPrint('Error in keep-alive task: $e');
-          }
+          _log.severe('Error in keep-alive task', e);
           if (_running) {
             _stateBroadcast.add(GalileoMapState.error);
           }
@@ -146,9 +144,7 @@ class GalileoMapController {
     try {
       await rlib.handleEventForSession(sessionId: sessionId, event: event);
     } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Error handling event: $e');
-      }
+      _log.warning('Error handling event', e);
     }
   }
 
@@ -173,9 +169,7 @@ class GalileoMapController {
       await rlib.resizeSession(sessionId: sessionId, newSize: newSize);
       _size = newSize;
     } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Error resizing map: $e');
-      }
+      _log.severe('Error resizing map', e);
     }
   }
 
@@ -188,9 +182,7 @@ class GalileoMapController {
       await _originalSub?.cancel();
       await _stateBroadcast.close();
     } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Error disposing Galileo map controller: $e');
-      }
+      _log.severe('Error disposing Galileo map controller', e);
     }
   }
 }

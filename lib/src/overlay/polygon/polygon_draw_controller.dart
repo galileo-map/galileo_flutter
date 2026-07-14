@@ -20,17 +20,15 @@ class PolygonDrawController extends ChangeNotifier {
   // callbacks
   final void Function(String message)? onStatusMessage;
 
-
   PolygonDrawController({this.onStatusMessage});
 
+  FeatureLayerManager? _features;
 
-  late final FeatureLayerManager? _features;
   /// Layer controller
   LayerController? get layerController => _features?.layerController;
 
   /// Unmodifiable view of the vertices placed so far.
   List<GeoLocation> get pendingVertices => List.unmodifiable(_pendingVertices);
-
 
   /// Number of vertices placed so far.
   int get vertexCount => _pendingVertices.length;
@@ -38,23 +36,22 @@ class PolygonDrawController extends ChangeNotifier {
   /// Whether the polygon has enough vertices (≥3) to be finished.
   bool get canFinish => _pendingVertices.length >= 3;
 
-
   void attach(FeatureLayerManager features) => _features = features;
 
   void detach() {
     _features = null;
   }
 
-
   /// Add a vertex at the given lat/lon.
   void addVertex(GeoLocation loc) {
     _pendingVertices.add(loc);
-	  notifyListeners();
+    notifyListeners();
     final n = _pendingVertices.length;
     onStatusMessage?.call(
-        n < 3
-            ? 'Vertex $n placed — tap ${3 - n} more to enable finishing'
-            : '$n vertices — tap "Finish" to create polygon or keep adding');
+      n < 3
+          ? 'Vertex $n placed — tap ${3 - n} more to enable finishing'
+          : '$n vertices — tap "Finish" to create polygon or keep adding',
+    );
   }
 
   void updateViewport(MapViewport viewport) {
@@ -82,11 +79,7 @@ class PolygonDrawController extends ChangeNotifier {
       final screenPos = ScreenLocation(
         x: event.localPosition.dx,
         y: event.localPosition.dy,
-      ).toGeographical(
-        height: mapSize.height,
-        width: mapSize.width,
-        vp: vp,
-      );
+      ).toGeographical(height: mapSize.height, width: mapSize.width, vp: vp);
       addVertex(screenPos);
     }
   }
@@ -100,12 +93,13 @@ class PolygonDrawController extends ChangeNotifier {
     if (_pendingVertices.isEmpty) return;
     _pendingVertices.removeLast();
     final n = _pendingVertices.length;
-   onStatusMessage?.call( 
-        n == 0
-            ? 'Tap map to start drawing a polygon'
-            : n < 3
-            ? 'Vertex $n placed — tap ${3 - n} more to enable finishing'
-            : '$n vertices — tap "Finish" to create polygon or keep adding');
+    onStatusMessage?.call(
+      n == 0
+          ? 'Tap map to start drawing a polygon'
+          : n < 3
+          ? 'Vertex $n placed — tap ${3 - n} more to enable finishing'
+          : '$n vertices — tap "Finish" to create polygon or keep adding',
+    );
     notifyListeners();
   }
 
@@ -128,8 +122,9 @@ class PolygonDrawController extends ChangeNotifier {
     );
 
     _pendingVertices = [];
-    onStatusMessage?.call( 
-        'Polygon created — total: ${_features?.polygonCount}  (tap polygon to edit)');
+    onStatusMessage?.call(
+      'Polygon created — total: ${_features?.polygonCount}  (tap polygon to edit)',
+    );
     notifyListeners();
   }
 

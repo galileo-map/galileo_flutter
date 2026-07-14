@@ -1,14 +1,16 @@
-import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter/material.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
+import 'package:logging/logging.dart';
+
+final _log = Logger('FeatureLayerManager');
 
 class FeatureLayerManager {
   static const _pointLayerName = 'managed-points';
   static const _polygonLayerName = 'managed-polygons';
 
   final LayerController layerController;
-  final PolygonEditController? _polygonEditController;
-  final PolygonDrawController? _polygonDrawController;
+  final PolygonEditController _polygonEditController;
+  final PolygonDrawController _polygonDrawController;
 
   final List<int> _pointIds = [];
 
@@ -16,8 +18,8 @@ class FeatureLayerManager {
 
   FeatureLayerManager({
     required this.layerController,
-    PolygonEditController? polygonEditController,
-    PolygonDrawController? polygonDrawController,
+    required PolygonEditController polygonEditController,
+    required PolygonDrawController polygonDrawController,
   }) : _polygonEditController = polygonEditController,
        _polygonDrawController = polygonDrawController;
 
@@ -33,13 +35,13 @@ class FeatureLayerManager {
       editor: _polygonEditController,
     );
 
-    _polygonEditController?.attach(this);
-    _polygonDrawController?.attach(this);
+    _polygonEditController.attach(this);
+    _polygonDrawController.attach(this);
   }
 
   void dispose() {
-    _polygonEditController?.detach();
-    _polygonDrawController?.detach();
+    _polygonEditController.detach();
+    _polygonDrawController.detach();
     _pointIds.clear();
     _polygons.clear();
   }
@@ -50,7 +52,7 @@ class FeatureLayerManager {
     if (id >= 0) {
       _pointIds.add(id);
     } else {
-      if (kDebugMode) debugPrint('addPoint: rust returned invalid id $id');
+      _log.warning('addPoint: rust returned invalid id $id');
     }
   }
 
@@ -64,9 +66,7 @@ class FeatureLayerManager {
     if (removed) {
       _pointIds.removeLast();
     } else {
-      if (kDebugMode) {
-        debugPrint('removeLastPoint: rust could not remove id $id');
-      }
+      _log.warning('removeLastPoint: rust could not remove id $id');
     }
   }
 
@@ -85,9 +85,7 @@ class FeatureLayerManager {
     if (id >= 0) {
       _polygons[id] = polygon;
     } else {
-      if (kDebugMode) {
-        debugPrint('addPolygon: rust returned invalid id $id');
-      }
+      _log.warning('addPolygon: rust returned invalid id $id');
     }
   }
 
@@ -97,9 +95,7 @@ class FeatureLayerManager {
       oldId,
     );
     if (!removed) {
-      if (kDebugMode) {
-        debugPrint('updatePolygon: could not remove old id $oldId');
-      }
+      _log.warning('updatePolygon: could not remove old id $oldId');
     }
     _polygons.remove(oldId);
 
@@ -110,9 +106,7 @@ class FeatureLayerManager {
     if (newId >= 0) {
       _polygons[newId] = updated;
     } else {
-      if (kDebugMode) {
-        debugPrint('updatePolygon: rust returned invalid id $newId');
-      }
+      _log.warning('updatePolygon: rust returned invalid id $newId');
     }
     return newId;
   }
@@ -127,9 +121,7 @@ class FeatureLayerManager {
     if (removed) {
       _polygons.remove(id);
     } else {
-      if (kDebugMode) {
-        debugPrint('removeLastPolygon: rust could not remove id $id');
-      }
+      _log.warning('removeLastPolygon: rust could not remove id $id');
     }
   }
 
@@ -143,6 +135,11 @@ class FeatureLayerManager {
 
 abstract class FeatureEditController extends ChangeNotifier {
   bool get isActive;
+
+  /// Whether the map should suppress panning while this editor is active.
+  /// Override in subclasses that perform drag gestures (e.g. vertex drags).
+  bool get shouldSuppressPan => false;
+
   void updateViewport(MapViewport viewport);
   void handlePointerDown(PointerDownEvent event, Size mapSize);
   void handlePointerMove(PointerMoveEvent event, Size mapSize);

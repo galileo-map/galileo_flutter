@@ -7,10 +7,17 @@ const _kMidpointR = 8.0;
 
 const _kHandleRed = Color(0xFFE53935);
 
-
-Paint _fillPaint(Color c) => Paint()..color = c..style = PaintingStyle.fill;
+Paint _fillPaint(Color c) =>
+    Paint()
+      ..color = c
+      ..style = PaintingStyle.fill;
 Paint _strokePaint(Color c, double w) =>
-    Paint()..color = c..style = PaintingStyle.stroke..strokeWidth = w;
+    Paint()
+      ..color = c
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = w;
+
+final Paint _sharedPaint = Paint();
 
 void _drawHandle(
   Canvas canvas,
@@ -20,8 +27,14 @@ void _drawHandle(
   Color border = Colors.white,
   double borderWidth = 2.0,
 }) {
-  canvas.drawCircle(center, r, _fillPaint(bg));
-  canvas.drawCircle(center, r, _strokePaint(border, borderWidth));
+  _sharedPaint.style = PaintingStyle.fill;
+  _sharedPaint.color = bg;
+  canvas.drawCircle(center, r, _sharedPaint);
+
+  _sharedPaint.style = PaintingStyle.stroke;
+  _sharedPaint.color = border;
+  _sharedPaint.strokeWidth = borderWidth;
+  canvas.drawCircle(center, r, _sharedPaint);
 }
 
 /// Draws a "+" symbol at [center] with arm length [arm].
@@ -67,7 +80,11 @@ class PolygonEditOverlayPainter extends CustomPainter {
       canvas.drawPath(path, _fillPaint(const Color(0x22FFFFFF)));
       canvas.drawPath(path, _strokePaint(const Color(0xCCFFFFFF), 1.5));
     } else if (pts.length == 2) {
-      canvas.drawLine(pts[0], pts[1], _strokePaint(const Color(0xCCFFFFFF), 1.5));
+      canvas.drawLine(
+        pts[0],
+        pts[1],
+        _strokePaint(const Color(0xCCFFFFFF), 1.5),
+      );
     }
 
     for (int i = 0; i < pts.length; i++) {
@@ -84,7 +101,9 @@ class PolygonEditOverlayPainter extends CustomPainter {
       final isDragging = i == draggingVertexIndex;
 
       _drawHandle(
-        canvas, pt, _kVertexR,
+        canvas,
+        pt,
+        _kVertexR,
         isDragging ? Colors.white : _kHandleRed,
         border: isDragging ? _kHandleRed : Colors.white,
       );
@@ -125,7 +144,11 @@ class PendingPolygonPainter extends CustomPainter {
       for (int i = 0; i < pts.length - 1; i++) {
         canvas.drawLine(pts[i], pts[i + 1], edgePaint);
       }
-      canvas.drawLine(pts.last, pts.first, _strokePaint(const Color(0x880288D1), 1.5));
+      canvas.drawLine(
+        pts.last,
+        pts.first,
+        _strokePaint(const Color(0x880288D1), 1.5),
+      );
     }
 
     for (int i = 0; i < pts.length; i++) {

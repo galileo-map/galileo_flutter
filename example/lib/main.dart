@@ -63,12 +63,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
   late final PolygonEditController _polygonEditor = PolygonEditController(
     onStatusMessage: (msg) => setState(() => _statusMessage = msg),
     onSelectionChanged: (_) => setState(() {}),
-    onVertexDragStart: (_) => _suppressMapPan.value = true,
-    onVertexDragEnd: () => _suppressMapPan.value = false,
   );
-
-  /// Notifier that mutes map panning while a vertex handle is being dragged.
-  final ValueNotifier<bool> _suppressMapPan = ValueNotifier(false);
 
   late final _polygonDrawer = PolygonDrawController(
     onStatusMessage: (msg) => setState(() => _statusMessage = msg),
@@ -93,7 +88,6 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
   void dispose() {
     _polygonEditor.dispose();
     _polygonDrawer.dispose();
-    _suppressMapPan.dispose();
     _controller?.dispose();
     super.dispose();
   }
@@ -538,7 +532,6 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                             layers: const [],
                             enableKeyboard: true,
                             autoDispose: false,
-                            suppressPanNotifier: _suppressMapPan,
                             onViewportChanged: (vp) async {
                               final bounds = MapViewport(
                                 xMin: vp.xMin,

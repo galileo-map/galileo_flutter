@@ -1,7 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
 import 'package:galileo_flutter/src/rust/api/galileo_api.dart' as rlib;
-import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
+import 'package:logging/logging.dart';
+
+final _log = Logger('LayerController');
 
 class LayerController extends ChangeNotifier {
   final Map<String, int> _layerNames = {};
@@ -39,6 +41,10 @@ class LayerController extends ChangeNotifier {
     final e = _editors[layerName];
     return e is T ? e : null;
   }
+
+  /// True when any registered editor is performing a drag gesture and the map
+  /// should not process pointer-move events as pans.
+  bool get shouldSuppressPan => _editors.values.any((e) => e.shouldSuppressPan);
 
   LayerController({required this.sessionId, required this.layers});
 
@@ -79,9 +85,7 @@ class LayerController extends ChangeNotifier {
         },
       );
     } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Error adding layer: $e');
-      }
+      _log.severe('Error adding layer', e);
     }
   }
 
@@ -98,7 +102,7 @@ class LayerController extends ChangeNotifier {
       _layerNames[name] = id;
       return id;
     } catch (e) {
-      if (kDebugMode) debugPrint('Error creating point layer "$name": $e');
+      _log.severe('Error creating point layer "$name"', e);
       return null;
     }
   }
@@ -122,7 +126,7 @@ class LayerController extends ChangeNotifier {
 
       return id;
     } catch (e) {
-      if (kDebugMode) debugPrint('Error creating polygon layer "$name": $e');
+      _log.severe('Error creating polygon layer "$name"', e);
       return null;
     }
   }
@@ -130,7 +134,7 @@ class LayerController extends ChangeNotifier {
   Future<int> addPointToLayer(String layerName, Point point) async {
     final id = _layerNames[layerName];
     if (id == null) {
-      if (kDebugMode) debugPrint('No point layer named "$layerName"');
+      _log.warning('No point layer named "$layerName"');
       return -1;
     }
     try {
@@ -140,7 +144,7 @@ class LayerController extends ChangeNotifier {
         point: point,
       );
     } catch (e) {
-      if (kDebugMode) debugPrint('Error adding point to "$layerName": $e');
+      _log.severe('Error adding point to "$layerName"', e);
       return -1;
     }
   }
@@ -155,7 +159,7 @@ class LayerController extends ChangeNotifier {
         index: index,
       );
     } catch (e) {
-      if (kDebugMode) debugPrint('Error removing point from "$layerName": $e');
+      _log.severe('Error removing point from "$layerName"', e);
       return false;
     }
   }
@@ -163,7 +167,7 @@ class LayerController extends ChangeNotifier {
   Future<int> addPolygonToLayer(String layerName, Polygon polygon) async {
     final id = _layerNames[layerName];
     if (id == null) {
-      if (kDebugMode) debugPrint('No point layer named "$layerName"');
+      _log.warning('No polygon layer named "$layerName"');
       return -1;
     }
     try {
@@ -173,7 +177,7 @@ class LayerController extends ChangeNotifier {
         polygon: polygon,
       );
     } catch (e) {
-      if (kDebugMode) debugPrint('Error adding point to "$layerName": $e');
+      _log.severe('Error adding polygon to "$layerName"', e);
       return -1;
     }
   }
@@ -188,7 +192,7 @@ class LayerController extends ChangeNotifier {
         index: index,
       );
     } catch (e) {
-      if (kDebugMode) debugPrint('Error removing point from "$layerName": $e');
+      _log.severe('Error removing polygon from "$layerName"', e);
       return false;
     }
   }

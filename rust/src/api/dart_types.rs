@@ -1,6 +1,5 @@
 //! Types shared between Dart and Rust for Galileo Flutter integration.
 //! All types here are used by flutter_rust_bridge_codegen.
-
 use flutter_rust_bridge::frb;
 use galileo::galileo_types;
 use std::f64;
@@ -177,14 +176,14 @@ pub enum LayerConfig {
         /// Stores the Point features to be rendered
         features: Vec<Point>,
     },
-    ///Placeholder variant for flutter based widgets layer
+    /// Placeholder variant handled by flutter
     WidgetLayer,
 }
 
 /// Closed geographic polygon with fill/stroke styling.
 /// Usage:
 ///   Polygon(
-///     points: [(27.7,85.3), ...],
+///     points: [...],
 ///     style: PolygonStyle(
 ///       fillColor: GalileoColor(0.2,0.5,0.9,0.8),
 ///       strokeColor: GalileoColor(1.0,1.0,1.0,1.0),
@@ -216,7 +215,7 @@ pub struct PolygonSymbol {}
 /// Points with properties for colors
 /// Usage:
 ///   Point(
-///     coordinate: (27.7,85.3),
+///     coordinate: GeoLocation(latitude:27.7,longitude:85.3),
 ///     style: PointStyle(
 ///       fillColor: GalileoColor(0.2,0.5,0.9,0.8),
 ///       size: 0.8,
@@ -313,8 +312,6 @@ pub enum MouseButton {
     /// The button you click when you are a pro gamer and want to look cool.
     Other,
 }
-
-pub type FeatureId = u64;
 
 impl MouseButton {
     #[frb(ignore)]

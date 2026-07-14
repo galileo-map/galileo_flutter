@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
+import 'package:logging/logging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +9,8 @@ import 'package:galileo_flutter/src/map/controller.dart';
 import 'package:galileo_flutter/src/rust/api/dart_types.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:galileo_flutter/src/layer/overlay/overlay.dart';
+
+final _log = Logger('GalileoMapWidget');
 
 /// A widget that displays a Galileo map with interactive controls
 class GalileoMapWidget extends StatefulWidget {
@@ -32,10 +34,6 @@ class GalileoMapWidget extends StatefulWidget {
   /// Called when the map is tapped
   final void Function(double x, double y)? onTap;
 
-  /// When this [ValueNotifier] holds `true`, the map ignores pointer-move
-  /// events so that an overlapping vertex drag doesn't also pan the map.
-  final ValueNotifier<bool>? suppressPanNotifier;
-
   /// Fires at most once per 30 ms to avoid flooding the Rust FFI layer.
   final void Function(MapViewport viewport)? onViewportChanged;
 
@@ -50,7 +48,6 @@ class GalileoMapWidget extends StatefulWidget {
     this.focusNode,
     this.onTap,
     this.onViewportChanged,
-    this.suppressPanNotifier,
   });
 
   /// Create a GalileoMapWidget from an existing controller
@@ -65,7 +62,6 @@ class GalileoMapWidget extends StatefulWidget {
     Widget? child,
     void Function(double x, double y)? onTap,
     void Function(MapViewport viewport)? onViewportChanged,
-    ValueNotifier<bool>? suppressPanNotifier,
   }) {
     return GalileoMapWidget._(
       key: key,
@@ -75,7 +71,6 @@ class GalileoMapWidget extends StatefulWidget {
       focusNode: focusNode,
       onTap: onTap,
       onViewportChanged: onViewportChanged,
-      suppressPanNotifier: suppressPanNotifier,
       config: config,
       layers: layers,
       child: child,
@@ -231,9 +226,9 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
   }
 
   void _onTickPan(Duration elapsed) {
-    // If pan is suppressed, discard any accumulated delta 
-	 // so the map doesn't pan when the user releases.
-    if (widget.suppressPanNotifier?.value == true) {
+    // If pan is suppressed, discard any accumulated delta
+    // so the map doesn't pan when the user releases.
+    if (widget.controller.layerController.shouldSuppressPan) {
       _panAccumulatedDelta = Offset.zero;
       return;
     }
@@ -373,7 +368,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
         // If an overlay has requested pan suppression,
         // still track the position so the next un-suppressed frame is correct,
         // but don't accumulate the delta.
-        if (widget.suppressPanNotifier?.value == true) {
+        if (widget.controller.layerController.shouldSuppressPan) {
           _lastPointerPosition = event.localPosition;
           return;
         }
@@ -417,7 +412,9 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
             final amplifiedDelta =
                 math.pow(scaleDelta, zoomSensitivity).toDouble();
             _lastPinchScaleValue = details.scale;
-            _sendZoomEvent(1.0 / amplifiedDelta, details.localFocalPoint).then((_) {
+            _sendZoomEvent(1.0 / amplifiedDelta, details.localFocalPoint).then((
+              _,
+            ) {
               if (mounted) _scheduleViewportUpdate();
             });
           }
@@ -445,7 +442,9 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
           _lastMapSize = newMapSize;
           // resize in next frame
           Future.microtask(() async {
+            if (!mounted) return;
             await widget.controller.resize(newMapSize);
+            if (!mounted) return;
             _scheduleViewportUpdate();
           });
         }
@@ -554,16 +553,12 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
       streamSubscription?.cancel();
       if (widget.autoDispose) {
         try {
-          if (kDebugMode) {
-            debugPrint(
-              'Disposing Galileo map controller (${widget.controller.sessionId})',
-            );
-          }
+          _log.info(
+            'Disposing Galileo map controller (${widget.controller.sessionId})',
+          );
           await widget.controller.dispose();
         } catch (e) {
-          if (kDebugMode) {
-            debugPrint('Error disposing Galileo map controller: $e');
-          }
+          _log.severe('Error disposing Galileo map controller', e);
         }
       }
     });

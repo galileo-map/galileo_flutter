@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import 'package:galileo_flutter/src/utils.dart';
 
 class PolygonEditController extends FeatureEditController {
-
   // config editor
   static const _tapThreshold = 10.0;
   static const _vertexHitR = 14.0;
@@ -15,10 +14,6 @@ class PolygonEditController extends FeatureEditController {
 
   final void Function(int? polygonId)? onSelectionChanged;
 
-  final void Function(int vertexIndex)? onVertexDragStart;
-
-  final void Function()? onVertexDragEnd;
-
   FeatureLayerManager? _features;
 
   int? _selectedPolygonId;
@@ -28,12 +23,7 @@ class PolygonEditController extends FeatureEditController {
   Offset? _pointerDownPos;
   bool _wasActiveOnPointerDown = false;
 
-  PolygonEditController({
-    this.onStatusMessage,
-    this.onSelectionChanged,
-    this.onVertexDragStart,
-    this.onVertexDragEnd,
-  });
+  PolygonEditController({this.onStatusMessage, this.onSelectionChanged});
 
   /// True while the user is actively dragging a vertex handle.
   bool get isDraggingVertex => _draggingVertexIndex != null;
@@ -43,6 +33,9 @@ class PolygonEditController extends FeatureEditController {
 
   /// True if the editor was active at the start of the current gesture pointer down.
   bool get wasActiveOnPointerDown => _wasActiveOnPointerDown;
+
+  @override
+  bool get shouldSuppressPan => isDraggingVertex;
 
   @override
   bool get isActive => _selectedPolygonId != null;
@@ -138,11 +131,7 @@ class PolygonEditController extends FeatureEditController {
     _wasActiveOnPointerDown = isActive;
     if (!isActive) return;
     _pointerDownPos = event.localPosition;
-    final vi = _hitVertex(event.localPosition, mapSize);
-    _draggingVertexIndex = vi;
-    if (vi != null) {
-      onVertexDragStart?.call(vi);
-    }
+    _draggingVertexIndex = _hitVertex(event.localPosition, mapSize);
   }
 
   @override
@@ -167,13 +156,8 @@ class PolygonEditController extends FeatureEditController {
     final isTap =
         down == null || (event.localPosition - down).distance < _tapThreshold;
 
-    final wasDragging = vi != null && !isTap;
     _draggingVertexIndex = null;
     _pointerDownPos = null;
-
-    if (wasDragging) {
-      onVertexDragEnd?.call();
-    }
 
     if (vi != null) {
       isTap ? await _removeVertex(vi) : await _commitEdits();

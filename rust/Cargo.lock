@@ -1350,6 +1350,7 @@ dependencies = [
  "irondash_texture",
  "lazy_static",
  "log",
+ "maybe-sync",
  "parking_lot 0.12.5",
  "reqwest",
  "serde_json",
