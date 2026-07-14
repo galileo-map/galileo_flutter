@@ -153,29 +153,6 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
       _statusMessage = 'Tap map to add features';
     });
 
-    ctrl.layerController.addOverlay(
-      OverlayWidget.static(
-        loc: const ScreenLocation(x: 100.0, y: 0.0),
-        width: 250,
-        height: 250,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.blue.withValues(alpha: 0.9),
-            borderRadius: BorderRadius.circular(6),
-          ),
-          alignment: Alignment.center,
-          child: const Text(
-            'This is a statically anchored widget!',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-
     // Japan pin overlays
     final japanPins = [
       (
@@ -210,9 +187,9 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
           loc: pin.loc,
           width: 36,
           height: 48,
-          child: _LocationPin(color: pin.color),
           minZoom: 2.0,
           maxZoom: 10.0,
+          child: _LocationPin(color: pin.color),
         ),
       );
     }
