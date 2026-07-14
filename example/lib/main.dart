@@ -154,7 +154,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     });
 
     ctrl.layerController.addOverlay(
-      OverlayWidget.screen(
+      OverlayWidget.static(
         loc: const ScreenLocation(x: 100.0, y: 0.0),
         width: 250,
         height: 250,
@@ -211,6 +211,8 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
           width: 36,
           height: 48,
           child: _LocationPin(color: pin.color),
+          minZoom: 2.0,
+          maxZoom: 10.0,
         ),
       );
     }

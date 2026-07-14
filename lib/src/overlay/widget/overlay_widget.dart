@@ -21,6 +21,15 @@ class OverlayWidget extends StatelessWidget {
   final OverlayType type;
   final Widget child;
 
+  /// Minimum zoom scale at which this overlay becomes visible.
+  /// Uses the relative scale from [LayerController.zoomScale] (1.0 = initial).
+  /// If null, the overlay is visible at all zoom-out levels.
+  final double? minZoom;
+
+  /// Maximum zoom scale at which this overlay remains visible.
+  /// If null, the overlay is visible at all zoom-in levels.
+  final double? maxZoom;
+
   const OverlayWidget._({
     super.key,
     required this.type,
@@ -28,6 +37,8 @@ class OverlayWidget extends StatelessWidget {
     required this.width,
     required this.height,
     required this.child,
+    this.minZoom,
+    this.maxZoom,
   });
 
   factory OverlayWidget.geo({
@@ -36,6 +47,8 @@ class OverlayWidget extends StatelessWidget {
     required double width,
     required double height,
     required Widget child,
+    double? minZoom,
+    double? maxZoom,
   }) => OverlayWidget._(
     key: key,
     type: OverlayType.relative,
@@ -43,14 +56,18 @@ class OverlayWidget extends StatelessWidget {
     width: width,
     height: height,
     child: child,
+    minZoom: minZoom,
+    maxZoom: maxZoom,
   );
 
-  factory OverlayWidget.screen({
+  factory OverlayWidget.static({
     Key? key,
     required ScreenLocation loc,
     required double width,
     required double height,
     required Widget child,
+    double? minZoom,
+    double? maxZoom,
   }) => OverlayWidget._(
     key: key,
     type: OverlayType.static,
@@ -58,7 +75,16 @@ class OverlayWidget extends StatelessWidget {
     width: width,
     height: height,
     child: child,
+    minZoom: minZoom,
+    maxZoom: maxZoom,
   );
+
+  /// Whether this overlay should be visible at the given [zoomScale].
+  bool isVisibleAt(double zoomScale) {
+    if (minZoom != null && zoomScale < minZoom!) return false;
+    if (maxZoom != null && zoomScale > maxZoom!) return false;
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {

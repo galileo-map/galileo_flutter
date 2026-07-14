@@ -62,6 +62,9 @@ class MapOverlayFlowDelegate extends FlowDelegate {
     for (int i = 0; i < overlays.length; i++) {
       final overlay = overlays[i];
 
+      // Skip overlays outside their zoom visibility range.
+      if (!overlay.isVisibleAt(zoomScale)) continue;
+
       final childSize =
           context.getChildSize(i) ?? Size(overlay.width, overlay.height);
 
