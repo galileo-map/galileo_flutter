@@ -221,6 +221,10 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     _polygonEditor.updateViewport(vp);
     _polygonDrawer.updateViewport(vp);
 
+    if (_showClusters && _clusterController.wasClusterTappedOnPointerDown) {
+      return;
+    }
+
     final screenPos = ScreenLocation(x: off.dx, y: off.dy);
     final loc = screenPos.toGeographical(
       height: size.height,

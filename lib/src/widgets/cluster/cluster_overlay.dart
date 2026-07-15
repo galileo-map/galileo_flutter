@@ -90,28 +90,29 @@ class ClusterOverlay extends StatelessWidget {
             final clusters = controller.computeClusters(size, vp);
             final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
 
-            return Stack(
-              children: [
-                for (final cluster in clusters)
-                  Positioned(
-                    left: cluster.screenCenter.dx - cluster.radius,
-                    top: cluster.screenCenter.dy - cluster.radius,
-                    width: cluster.radius * 2,
-                    height: cluster.radius * 2,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        onClusterTap?.call(cluster);
-                        controller.zoomToCluster(
-                          mapController,
-                          cluster,
-                          devicePixelRatio: devicePixelRatio,
-                        );
-                      },
+            return Listener(
+              behavior: HitTestBehavior.translucent,
+              onPointerDown: (e) => controller.handlePointerDown(e, size, vp),
+              onPointerUp: (e) => controller.handlePointerUp(
+                e,
+                size,
+                vp,
+                mapController,
+                devicePixelRatio,
+                onClusterTap,
+              ),
+              child: Stack(
+                children: [
+                  for (final cluster in clusters)
+                    Positioned(
+                      left: cluster.screenCenter.dx - cluster.radius,
+                      top: cluster.screenCenter.dy - cluster.radius,
+                      width: cluster.radius * 2,
+                      height: cluster.radius * 2,
                       child: bubble(context, cluster),
                     ),
-                  ),
-              ],
+                ],
+              ),
             );
           },
         );
