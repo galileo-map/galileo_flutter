@@ -58,7 +58,7 @@ tasks:
     flutter.fmt:
         desc: Format Dart code
         cmds:
-            - "{{.DART_BIN}} format ."
+            - "{{.DART_BIN}} format lib example"
 
     flutter.fmt-check:
         desc: Check Dart code formatting

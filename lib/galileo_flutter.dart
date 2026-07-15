@@ -34,6 +34,8 @@ export 'package:galileo_flutter/src/overlay/polygon/polygon_edit_controller.dart
 export 'package:galileo_flutter/src/overlay/polygon/overlay_polygon.dart';
 export 'package:galileo_flutter/src/layer/controller.dart';
 export 'package:galileo_flutter/src/widgets/polygon_overlay.dart';
+export 'package:galileo_flutter/src/cluster/cluster_controller.dart';
+export 'package:galileo_flutter/src/cluster/cluster_overlay.dart';
 
 Future<void> initGalileo({String? cachePath}) async {
   await rlib_gen.RustLib.init();

@@ -1,5 +1,7 @@
 //ignore_for_file: constant_identifier_names
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
@@ -74,6 +76,11 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
   Offset? _pointerDownPosition;
   static const _tapThreshold = 10.0;
 
+  bool _showClusters = false;
+  late final _clusterController = PointClusterController(
+    points: _generateClusterDemoPoints(),
+  );
+
   @override
   void initState() {
     super.initState();
@@ -88,6 +95,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
   void dispose() {
     _polygonEditor.dispose();
     _polygonDrawer.dispose();
+    _clusterController.dispose();
     _controller?.dispose();
     super.dispose();
   }
@@ -269,6 +277,51 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     if (mounted) setState(() => _statusMessage = 'Cleared all points');
   }
 
+  List<GeoLocation> _generateClusterDemoPoints() {
+    final rand = Random(7);
+    const hotspots = [
+      GeoLocation(latitude: 40.71, longitude: -74.01), // New York
+      GeoLocation(latitude: 51.51, longitude: -0.13), // London
+      GeoLocation(latitude: 35.68, longitude: 139.69), // Tokyo
+      GeoLocation(latitude: -33.87, longitude: 151.21), // Sydney
+    ];
+    final points = <GeoLocation>[];
+    for (final hotspot in hotspots) {
+      final count = 10 + rand.nextInt(10);
+      for (var i = 0; i < count; i++) {
+        final dLat = (rand.nextDouble() - 0.5) * 1.2;
+        final dLon = (rand.nextDouble() - 0.5) * 1.2;
+        points.add(
+          GeoLocation(
+            latitude: hotspot.latitude + dLat,
+            longitude: hotspot.longitude + dLon,
+          ),
+        );
+      }
+    }
+    return points;
+  }
+
+  void _toggleClusters(bool value) {
+    setState(() {
+      _showClusters = value;
+      _statusMessage =
+          value
+              ? 'Cluster demo: tap a cluster to zoom in — ${_clusterController.points.length} points'
+              : 'Tap map to add feature';
+    });
+  }
+
+  void _onClusterTap(PointCluster cluster) {
+    setState(
+      () =>
+          _statusMessage =
+              cluster.count > 1
+                  ? 'Zoomed into cluster of ${cluster.count} points'
+                  : 'Zoomed to point',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final features = _features;
@@ -392,6 +445,14 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                     setState(() => _drawMode = s.first);
                   },
                 ),
+                const SizedBox(width: 16),
+                const Icon(Icons.scatter_plot, size: 18),
+                const SizedBox(width: 4),
+                const Text(
+                  'Clusters:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Switch(value: _showClusters, onChanged: _toggleClusters),
                 const Spacer(),
                 CountChip(
                   icon: Icons.location_on,
@@ -533,6 +594,12 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                                   editor: _polygonEditor,
                                   onChanged: () => setState(() {}),
                                 ),
+                                if (_showClusters)
+                                  ClusterOverlay(
+                                    controller: _clusterController,
+                                    mapController: controller,
+                                    onClusterTap: _onClusterTap,
+                                  ),
                                 Positioned(
                                   top: 10,
                                   right: 10,
