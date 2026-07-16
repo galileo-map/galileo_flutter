@@ -155,12 +155,15 @@ class PointClusterController extends ChangeNotifier {
   /// (plus a margin) are skipped.
   List<PointCluster> computeClusters(Size size, MapViewport vp) {
     final groups = <_MutableCluster>[];
-    for (final point in _points) {
-      final screen = point.toScreen(
-        height: size.height,
-        width: size.width,
-        vp: vp,
-      );
+    final screenPoints = GeoLocation.pointsToScreen(
+      points: _points,
+      height: size.height,
+      width: size.width,
+      vp: vp,
+    );
+    for (var i = 0; i < _points.length; i++) {
+      final point = _points[i];
+      final screen = screenPoints[i];
       final offset = Offset(screen.x, screen.y);
       if (offset.dx < -clusterRadiusPx ||
           offset.dx > size.width + clusterRadiusPx ||
@@ -203,11 +206,6 @@ class PointClusterController extends ChangeNotifier {
         steps ?? (cluster.count == 1 ? 1 : (cluster.count > 12 ? 4 : 3));
     for (var i = 0; i < effectiveSteps; i++) {
       await controller.handleEvent(UserEvent.zoom(zoomFactor, anchor));
-    }
-
-    final vp = await controller.getViewport();
-    if (vp != null) {
-      await controller.layerController.updateViewport(vp, controller.size);
     }
   }
 }

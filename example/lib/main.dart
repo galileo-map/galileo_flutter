@@ -111,7 +111,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     );
     _polygonEditor.updateViewport(bounds);
     _polygonDrawer.updateViewport(bounds);
-    await _controller?.layerController.updateViewport(
+    _controller?.layerController.updateViewport(
       vp,
       _controller?.size ?? _kMapSize,
     );
@@ -586,7 +586,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                               if (!mounted) return;
                               _polygonEditor.updateViewport(bounds);
                               _polygonDrawer.updateViewport(bounds);
-                              await _controller?.layerController.updateViewport(
+                              _controller?.layerController.updateViewport(
                                 vp,
                                 _controller?.size ?? _kMapSize,
                               );

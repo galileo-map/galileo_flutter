@@ -10,12 +10,12 @@ use galileo_types::geometry_type::GeoSpace2d;
 use log::{debug, error, info};
 use parking_lot::RwLock;
 use std::collections::HashMap;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::sync::Mutex;
 
-use crate::api::dart_types::{MapInitConfig, MapSize, MapViewport};
+use crate::api::dart_types::{MapInitConfig, MapSize, MapViewport, RenderedMapFrame};
 use crate::core::flutter::pixel_texture::{
     create_flutter_texture, PixelPayloadHolder, SharedPixelPayloadHolder,
     SharedSendablePixelTexture,
@@ -59,6 +59,8 @@ pub struct MapSession {
     is_first_render: AtomicBool,
     requires_redraw: AtomicBool,
     redraw_scheduled: AtomicBool,
+    rendered_frame_sequence: AtomicU64,
+    rendered_frame_tx: tokio::sync::watch::Sender<Option<RenderedMapFrame>>,
 }
 
 // Ensure MapSession is Send + Sync for thread safety
@@ -118,6 +120,7 @@ impl MapSession {
         let map = Arc::new(Mutex::new(map));
 
         let flutter_ctx = FlutterCtx::new(engine_handle, size)?;
+        let (rendered_frame_tx, _) = tokio::sync::watch::channel(None);
 
         let session = Arc::new(MapSession {
             session_id,
@@ -130,6 +133,8 @@ impl MapSession {
             is_first_render: AtomicBool::new(true),
             requires_redraw: AtomicBool::new(false),
             redraw_scheduled: AtomicBool::new(false),
+            rendered_frame_sequence: AtomicU64::new(0),
+            rendered_frame_tx,
             managed_layers: Arc::new(Mutex::new(HashMap::default())),
             managed_layer_id: std::sync::atomic::AtomicU32::new(0),
         });
@@ -321,17 +326,24 @@ impl MapSession {
             tokio::time::sleep(Duration::from_millis(1000)).await;
         }
 
-        let pixels = {
+        let (pixels, viewport, map_size) = {
             let renderer = self.renderer.lock().await;
             let mut map = self.map.lock().await;
 
             map.animate();
 
             // check size changed
-            let renderer_size = renderer.size().cast();
+            let texture_size = renderer.size();
+            let renderer_size = texture_size.cast();
             if map.view().size() != renderer_size {
                 map.set_size(renderer_size);
             }
+
+            let viewport = map.view().get_bbox().as_ref().map(MapViewport::from_rect);
+            let map_size = MapSize {
+                width: texture_size.width(),
+                height: texture_size.height(),
+            };
 
             debug!(
                 "Rendering map size: {:?} to surface size: {:?}",
@@ -340,14 +352,28 @@ impl MapSession {
             );
             debug!("Map view is: {:?}", map.view());
             map.load_layers();
-            renderer.render(&map).await
+            (renderer.render(&map).await, viewport, map_size)
         };
 
         // Update texture provider
         payload_holder.update_pixels(pixels);
         // Mark frame available for Flutter
         sendable_texture.mark_frame_available();
+        if let Some(viewport) = viewport {
+            let frame = RenderedMapFrame {
+                sequence: self.rendered_frame_sequence.fetch_add(1, Ordering::Relaxed) + 1,
+                viewport,
+                map_size,
+            };
+            let _ = self.rendered_frame_tx.send(Some(frame));
+        }
         Ok(())
+    }
+
+    pub fn subscribe_rendered_frames(
+        &self,
+    ) -> tokio::sync::watch::Receiver<Option<RenderedMapFrame>> {
+        self.rendered_frame_tx.subscribe()
     }
 
     pub async fn get_viewport(&self) -> Option<MapViewport> {

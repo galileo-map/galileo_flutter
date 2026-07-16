@@ -37,7 +37,11 @@ class GalileoMapController {
 
   final int sessionId;
   final rx.BehaviorSubject<GalileoMapState> _stateBroadcast;
-  final StreamSubscription<GalileoMapState>? _originalSub;
+  final rx.BehaviorSubject<MapViewport> _renderedViewportBroadcast =
+      rx.BehaviorSubject<MapViewport>();
+  StreamSubscription<RenderedMapFrame>? _renderedFrameSub;
+  BigInt _lastRenderedFrameSequence = BigInt.zero;
+  Future<void> _eventQueue = Future<void>.value();
   bool _running = false;
   int? _textureId;
 
@@ -47,10 +51,8 @@ class GalileoMapController {
     required this.layers,
     required this.sessionId,
     required rx.BehaviorSubject<GalileoMapState> stateBroadcast,
-    StreamSubscription<GalileoMapState>? originalSub,
   }) : _size = size,
-       _stateBroadcast = stateBroadcast,
-       _originalSub = originalSub {
+       _stateBroadcast = stateBroadcast {
     layerController = LayerController(sessionId: sessionId, layers: layers);
   }
 
@@ -59,6 +61,10 @@ class GalileoMapController {
 
   /// Current map state
   GalileoMapState get currentState => _stateBroadcast.value;
+
+  /// Viewports that produced completed native texture frames.
+  Stream<MapViewport> get renderedViewportStream =>
+      _renderedViewportBroadcast.stream;
 
   /// Texture ID for rendering (null if not ready)
   int? get textureId => _textureId;
@@ -93,7 +99,6 @@ class GalileoMapController {
         layers: layers,
         sessionId: newSessionResp.sessionId,
         stateBroadcast: stateBroadcast,
-        originalSub: null,
       );
 
       for (final layer in layers) {
@@ -102,6 +107,7 @@ class GalileoMapController {
 
       controller._textureId = newSessionResp.textureId;
       controller._running = true;
+      controller._startRenderedFrameStream();
 
       await rlib.requestMapRedraw(sessionId: controller.sessionId);
 
@@ -116,6 +122,26 @@ class GalileoMapController {
       _log.severe('Error creating Galileo map', e);
       return (null, e.toString());
     }
+  }
+
+  void _startRenderedFrameStream() {
+    _renderedFrameSub = rlib
+        .streamRenderedMapFrames(sessionId: sessionId)
+        .listen(
+          (frame) {
+            if (!_running || frame.sequence <= _lastRenderedFrameSequence) {
+              return;
+            }
+            _lastRenderedFrameSequence = frame.sequence;
+            layerController.updateViewport(frame.viewport, frame.mapSize);
+            _renderedViewportBroadcast.add(frame.viewport);
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            if (_running) {
+              _log.warning('Rendered-frame stream failed', error, stackTrace);
+            }
+          },
+        );
   }
 
   /// Start the session keep-alive task
@@ -138,14 +164,17 @@ class GalileoMapController {
   }
 
   /// Handle user events from the map widget
-  Future<void> handleEvent(UserEvent event) async {
-    if (!_running) return;
+  Future<void> handleEvent(UserEvent event) {
+    if (!_running) return Future<void>.value();
 
-    try {
-      await rlib.handleEventForSession(sessionId: sessionId, event: event);
-    } catch (e) {
-      _log.warning('Error handling event', e);
-    }
+    _eventQueue = _eventQueue.then((_) async {
+      try {
+        await rlib.handleEventForSession(sessionId: sessionId, event: event);
+      } catch (e) {
+        _log.warning('Error handling event', e);
+      }
+    });
+    return _eventQueue;
   }
 
   Future<void> requestRedraw() async {
@@ -179,7 +208,8 @@ class GalileoMapController {
 
     try {
       await rlib.destroySession(sessionId: sessionId);
-      await _originalSub?.cancel();
+      await _renderedFrameSub?.cancel();
+      await _renderedViewportBroadcast.close();
       await _stateBroadcast.close();
     } catch (e) {
       _log.severe('Error disposing Galileo map controller', e);

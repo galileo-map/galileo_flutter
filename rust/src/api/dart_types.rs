@@ -8,14 +8,14 @@ use std::f64;
 /// Geographic position with latitude and longitude coordinates.
 #[frb(dart_code = r#"
   GeoLocation operator +(GeoLocation other) {
-    double newLat = this.latitude + other.latitude;
-    double newLng = this.longitude + other.longitude;
+    double newLat = latitude + other.latitude;
+    double newLng = longitude + other.longitude;
     return _normalize(newLat, newLng);
   }
 
   GeoLocation operator -(GeoLocation other) {
-    double newLat = this.latitude - other.latitude;
-    double newLng = this.longitude - other.longitude;
+    double newLat = latitude - other.latitude;
+    double newLng = longitude - other.longitude;
     return _normalize(newLat, newLng);
   }
 
@@ -87,6 +87,20 @@ impl GeoLocation {
             },
         }
     }
+
+    /// Projects many geographic points in one Dart-to-Rust call.
+    #[frb(sync)]
+    pub fn points_to_screen(
+        points: Vec<GeoLocation>,
+        height: f64,
+        width: f64,
+        vp: MapViewport,
+    ) -> Vec<ScreenLocation> {
+        points
+            .into_iter()
+            .map(|point| point.to_screen(height, width, vp))
+            .collect()
+    }
 }
 
 impl ScreenLocation {
@@ -119,6 +133,18 @@ pub struct MapViewport {
     pub x_max: f64,
     pub y_min: f64,
     pub y_max: f64,
+}
+
+/// Viewport and physical texture size used to produce a rendered map frame.
+///
+/// Flutter overlays consume these frames so their positions are calculated
+/// from the same map state as the texture currently being presented.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct RenderedMapFrame {
+    /// Monotonically increasing frame identifier for a map session.
+    pub sequence: u64,
+    pub viewport: MapViewport,
+    pub map_size: MapSize,
 }
 
 impl MapViewport {

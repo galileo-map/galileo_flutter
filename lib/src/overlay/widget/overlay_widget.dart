@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
 
-enum OverlayType {
-  /// Widget's Position is anchored on the Map's Position
-  relative,
-}
-
 /// Positions a child widget on the map at a given lat/lon coordinate.
 ///
 /// Pushed into [LayerController] via [LayerController.addOverlay].
@@ -15,7 +10,6 @@ class OverlayWidget extends StatelessWidget {
   final GeoLocation loc;
   final double height;
   final double width;
-  final OverlayType type;
   final Widget child;
 
   /// Minimum zoom scale at which this overlay becomes visible.
@@ -29,7 +23,6 @@ class OverlayWidget extends StatelessWidget {
 
   const OverlayWidget._({
     super.key,
-    required this.type,
     required this.loc,
     required this.width,
     required this.height,
@@ -48,7 +41,6 @@ class OverlayWidget extends StatelessWidget {
     required Widget child,
   }) => OverlayWidget._(
     key: key,
-    type: OverlayType.relative,
     loc: loc,
     width: width,
     height: height,

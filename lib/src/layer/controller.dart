@@ -58,11 +58,8 @@ class LayerController extends ChangeNotifier {
 
   LayerController({required this.sessionId, required this.layers});
 
-  /// Update Viewport
-  Future<void> updateViewport(
-    MapViewport? nativeViewport,
-    MapSize mapSize,
-  ) async {
+  /// Applies the viewport that was used to render the current texture frame.
+  void updateViewport(MapViewport? nativeViewport, MapSize mapSize) {
     if (nativeViewport == null) return;
     _viewportBounds = MapViewport(
       xMin: nativeViewport.xMin,

@@ -58,6 +58,12 @@ class MapOverlayFlowDelegate extends FlowDelegate {
   void paintChildren(FlowPaintingContext context) {
     final vp = controller.viewportBounds;
     if (vp == null) return;
+    final screenPositions = GeoLocation.pointsToScreen(
+      points: overlays.map((overlay) => overlay.loc).toList(growable: false),
+      height: mapSize.height,
+      width: mapSize.width,
+      vp: vp,
+    );
 
     for (int i = 0; i < overlays.length; i++) {
       final overlay = overlays[i];
@@ -68,25 +74,15 @@ class MapOverlayFlowDelegate extends FlowDelegate {
       final childSize =
           context.getChildSize(i) ?? Size(overlay.width, overlay.height);
 
-      final transformMatrix = Matrix4.identity();
-
-      switch (overlay.type) {
-        case OverlayType.relative:
-          final loc = overlay.loc;
-          final screenPos = loc.toScreen(
-            height: mapSize.height,
-            width: mapSize.width,
-            vp: vp,
-          );
-          transformMatrix.translateByVector3(
+      final screenPos = screenPositions[i];
+      final transformMatrix =
+          Matrix4.identity()..translateByVector3(
             Vector3(
               screenPos.x - (childSize.width / 2),
               screenPos.y - (childSize.height / 2),
               0,
             ),
           );
-          break;
-      }
 
       context.paintChild(i, transform: transformMatrix);
     }

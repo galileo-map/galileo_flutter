@@ -112,6 +112,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
     with TickerProviderStateMixin {
   GalileoMapState? currentState;
   StreamSubscription<GalileoMapState>? streamSubscription;
+  StreamSubscription<MapViewport>? viewportSubscription;
   late FocusNode _focusNode;
   final Set<LogicalKeyboardKey> _pressedKeys = {};
   late Ticker panTicker;
@@ -123,45 +124,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
   bool _isPinchScaling = false;
 
   final Set<int> _activePointers = {};
-
-  /// Lock flags to ensure only one FFI call to getViewport is active at any time.
-  bool _isFetchingViewport = false;
-  bool _needsViewportUpdate = false;
-
-  /// Fetch the current viewport from Rust, update [layerController], and emit it to [onViewportChanged].
-  /// Non-blocking/locked: starts the FFI call immediately, and queues at most one
-  /// subsequent update if another request comes in while the FFI call is active.
-  void _scheduleViewportUpdate() {
-    if (_isFetchingViewport) {
-      _needsViewportUpdate = true;
-      return;
-    }
-
-    _isFetchingViewport = true;
-    _needsViewportUpdate = false;
-
-    widget.controller
-        .getViewport()
-        .then((vp) {
-          _isFetchingViewport = false;
-          if (vp != null && mounted) {
-            widget.controller.layerController.updateViewport(
-              vp,
-              widget.controller.size,
-            );
-            widget.onViewportChanged?.call(vp);
-          }
-          if (_needsViewportUpdate && mounted) {
-            _scheduleViewportUpdate();
-          }
-        })
-        .catchError((e) {
-          _isFetchingViewport = false;
-          if (_needsViewportUpdate && mounted) {
-            _scheduleViewportUpdate();
-          }
-        });
-  }
 
   double get _devicePixelRatio {
     return MediaQuery.of(context).devicePixelRatio;
@@ -183,15 +145,13 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
         setState(() {
           currentState = state;
         });
-        if (state == GalileoMapState.ready) {
-          _scheduleViewportUpdate();
-        }
       }
     });
-
-    if (widget.controller.currentState == GalileoMapState.ready) {
-      _scheduleViewportUpdate();
-    }
+    viewportSubscription = widget.controller.renderedViewportStream.listen((
+      vp,
+    ) {
+      if (mounted) widget.onViewportChanged?.call(vp);
+    });
   }
 
   Future<void> _sendPanEvent(Offset delta, Offset position) {
@@ -214,8 +174,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
     return widget.controller.handleEvent(panEvent);
   }
 
-  /// Sends a zoom event to Rust and returns the Future so callers can
-  /// chain [_scheduleViewportUpdate] *after* the event is processed.
+  /// Sends a zoom event to Rust. Overlay updates arrive with the rendered frame.
   Future<void> _sendZoomEvent(double zoomFactor, Offset position) {
     final scaleFactor = _devicePixelRatio;
     final zoomEvent = UserEvent.zoom(
@@ -235,8 +194,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
     if (_panAccumulatedDelta != Offset.zero) {
       _sendPanEvent(_panAccumulatedDelta, _lastPointerPosition!);
       _panAccumulatedDelta = Offset.zero;
-      // Schedule a viewport fetch so overlay widgets track the pan in real time.
-      _scheduleViewportUpdate();
     }
   }
 
@@ -322,7 +279,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
         _lastPointerPosition = null;
         panTicker.stop();
         _panAccumulatedDelta = Offset.zero;
-        _scheduleViewportUpdate();
       },
       onPointerCancel: (event) {
         _activePointers.remove(event.pointer);
@@ -351,9 +307,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
           const zoomSensitivity = 0.002;
           final zoomFactor =
               math.pow(1.0 - zoomSensitivity, -event.scrollDelta.dy).toDouble();
-          _sendZoomEvent(zoomFactor, event.localPosition).then((_) {
-            if (mounted) _scheduleViewportUpdate();
-          });
+          _sendZoomEvent(zoomFactor, event.localPosition);
         }
       },
       onPointerMove: (event) {
@@ -412,18 +366,13 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
             final amplifiedDelta =
                 math.pow(scaleDelta, zoomSensitivity).toDouble();
             _lastPinchScaleValue = details.scale;
-            _sendZoomEvent(1.0 / amplifiedDelta, details.localFocalPoint).then((
-              _,
-            ) {
-              if (mounted) _scheduleViewportUpdate();
-            });
+            _sendZoomEvent(1.0 / amplifiedDelta, details.localFocalPoint);
           }
         }
       },
       onScaleEnd: (details) {
         _lastPinchScaleValue = 1.0;
         _isPinchScaling = false;
-        _scheduleViewportUpdate();
       },
       child: mapContent,
     );
@@ -444,8 +393,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
           Future.microtask(() async {
             if (!mounted) return;
             await widget.controller.resize(newMapSize);
-            if (!mounted) return;
-            _scheduleViewportUpdate();
           });
         }
 
@@ -509,7 +456,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
           ),
         );
     }
-    if (mounted) _scheduleViewportUpdate();
   }
 
   @override
@@ -551,6 +497,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
 
     Future.microtask(() async {
       streamSubscription?.cancel();
+      viewportSubscription?.cancel();
       if (widget.autoDispose) {
         try {
           _log.info(
