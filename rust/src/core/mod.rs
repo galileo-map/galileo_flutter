@@ -53,7 +53,7 @@ pub(crate) fn init_logger() {
         .with_line_number(true)
         .with_ansi(false);
     let env_filter = EnvFilter::try_from_default_env()
-        .or_else(|_| EnvFilter::try_new("info")) // Default to info level if RUST_LOG is not set
+        .or_else(|_| EnvFilter::try_new("warn")) // Default to info level if RUST_LOG is not set
         .unwrap();
     // 5. Combine the layers and initialize the global subscriber
     tracing_subscriber::registry()
