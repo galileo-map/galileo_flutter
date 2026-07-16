@@ -97,7 +97,8 @@ class PointClusterController extends ChangeNotifier {
     _pointerDownPos = event.localPosition;
 
     for (final cluster in clusters) {
-      if ((cluster.screenCenter - event.localPosition).distance <= cluster.radius) {
+      if ((cluster.screenCenter - event.localPosition).distance <=
+          cluster.radius) {
         _tappedCluster = cluster;
         _wasClusterTappedOnPointerDown = true;
         break;
@@ -115,7 +116,8 @@ class PointClusterController extends ChangeNotifier {
   ) async {
     final cluster = _tappedCluster;
     final down = _pointerDownPos;
-    final isTap = cluster != null &&
+    final isTap =
+        cluster != null &&
         down != null &&
         (event.localPosition - down).distance < 10.0;
 

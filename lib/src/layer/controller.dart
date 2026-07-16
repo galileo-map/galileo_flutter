@@ -42,9 +42,19 @@ class LayerController extends ChangeNotifier {
     return e is T ? e : null;
   }
 
+  bool _drawSuppressPan = false;
+  bool get drawSuppressPan => _drawSuppressPan;
+  set drawSuppressPan(bool value) {
+    if (_drawSuppressPan != value) {
+      _drawSuppressPan = value;
+      notifyListeners();
+    }
+  }
+
   /// True when any registered editor is performing a drag gesture and the map
   /// should not process pointer-move events as pans.
-  bool get shouldSuppressPan => _editors.values.any((e) => e.shouldSuppressPan);
+  bool get shouldSuppressPan =>
+      _drawSuppressPan || _editors.values.any((e) => e.shouldSuppressPan);
 
   LayerController({required this.sessionId, required this.layers});
 

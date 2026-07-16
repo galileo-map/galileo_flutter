@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
+import 'package:galileo_flutter/src/utils.dart';
 
 /// Controller that manages the pending-vertex state for drawing a new polygon.
 ///
@@ -59,18 +60,55 @@ class PolygonDrawController extends ChangeNotifier {
     notifyListeners();
   }
 
+  int? _draggingVertexIndex;
+  int? get draggingVertexIndex => _draggingVertexIndex;
+
+  static const _vertexHitR = 14.0;
+
+  int? _hitVertex(Offset pos, Size size) {
+    final vp = _viewport;
+    if (vp == null) return null;
+    for (int i = 0; i < _pendingVertices.length; i++) {
+      final scr = geoToOffset(_pendingVertices[i], size, vp);
+      if ((scr - pos).distance < _vertexHitR) return i;
+    }
+    return null;
+  }
+
   void handlePointerDown(PointerDownEvent event, Size mapSize) {
     _pointerDownPos = event.localPosition;
+    _draggingVertexIndex = _hitVertex(event.localPosition, mapSize);
+    if (_draggingVertexIndex != null) {
+      layerController?.drawSuppressPan = true;
+      notifyListeners();
+    }
   }
 
   void handlePointerMove(PointerMoveEvent event, Size mapSize) {
-    // No-op for now.
+    final vi = _draggingVertexIndex;
+    final vp = _viewport;
+    if (vi == null || vp == null) return;
+    final pos = event.localPosition;
+    _pendingVertices[vi] = ScreenLocation(
+      x: pos.dx,
+      y: pos.dy,
+    ).toGeographical(vp: vp, height: mapSize.height, width: mapSize.width);
+    notifyListeners();
   }
 
   void handlePointerUp(PointerUpEvent event, Size mapSize) {
     final down = _pointerDownPos;
     _pointerDownPos = null;
+    final vi = _draggingVertexIndex;
+    _draggingVertexIndex = null;
+    layerController?.drawSuppressPan = false;
+
     if (down == null) return;
+
+    if (vi != null) {
+      notifyListeners();
+      return;
+    }
 
     if ((event.localPosition - down).distance < _tapThreshold) {
       final vp = viewport;
@@ -86,6 +124,9 @@ class PolygonDrawController extends ChangeNotifier {
 
   void handlePointerCancel(PointerCancelEvent event, Size mapSize) {
     _pointerDownPos = null;
+    _draggingVertexIndex = null;
+    layerController?.drawSuppressPan = false;
+    notifyListeners();
   }
 
   /// Remove the most recently placed vertex.
@@ -131,6 +172,7 @@ class PolygonDrawController extends ChangeNotifier {
   @override
   void dispose() {
     _pendingVertices = [];
+    _draggingVertexIndex = null;
     super.dispose();
   }
 }

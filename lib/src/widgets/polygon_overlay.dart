@@ -120,8 +120,13 @@ class PolygonEditOverlayPainter extends CustomPainter {
 class PendingPolygonPainter extends CustomPainter {
   final List<GeoLocation> vertices;
   final MapViewport viewport;
+  final int? draggingVertexIndex;
 
-  const PendingPolygonPainter({required this.vertices, required this.viewport});
+  const PendingPolygonPainter({
+    required this.vertices,
+    required this.viewport,
+    this.draggingVertexIndex,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -152,13 +157,24 @@ class PendingPolygonPainter extends CustomPainter {
     }
 
     for (int i = 0; i < pts.length; i++) {
-      _drawHandle(canvas, pts[i], _kVertexR, _kHandleRed);
+      final pt = pts[i];
+      final isDragging = i == draggingVertexIndex;
+
+      _drawHandle(
+        canvas,
+        pt,
+        _kVertexR,
+        isDragging ? Colors.white : _kHandleRed,
+        border: isDragging ? _kHandleRed : Colors.white,
+      );
     }
   }
 
   @override
   bool shouldRepaint(PendingPolygonPainter old) =>
-      old.vertices != vertices || old.viewport != viewport;
+      old.vertices != vertices ||
+      old.viewport != viewport ||
+      old.draggingVertexIndex != draggingVertexIndex;
 }
 
 class CountChip extends StatelessWidget {

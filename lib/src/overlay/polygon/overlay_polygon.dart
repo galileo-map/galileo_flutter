@@ -39,6 +39,7 @@ class PolygonDrawOverlay extends StatelessWidget {
                 painter: PendingPolygonPainter(
                   vertices: ctrl.pendingVertices,
                   viewport: vp,
+                  draggingVertexIndex: ctrl.draggingVertexIndex,
                 ),
                 child: const SizedBox.expand(),
               ),
