@@ -75,6 +75,8 @@ class PointClusterController extends ChangeNotifier {
   }) : _points = List.of(points);
 
   List<GeoLocation> _points;
+  int _pointsRevision = 0;
+  _ClusterLayoutCache? _layoutCache;
 
   /// Points within this many screen pixels of a cluster's running centroid
   /// are grouped into that cluster.
@@ -86,9 +88,8 @@ class PointClusterController extends ChangeNotifier {
   Offset? _pointerDownPos;
   PointCluster? _tappedCluster;
 
-  /// Returns whether [event] hit a cluster bubble.
-  bool handlePointerDown(PointerDownEvent event, Size mapSize, MapViewport vp) {
-    final clusters = computeClusters(mapSize, vp);
+  /// Returns whether [event] hit one of the currently rendered [clusters].
+  bool handlePointerDown(PointerDownEvent event, List<PointCluster> clusters) {
     _tappedCluster = null;
     _pointerDownPos = event.localPosition;
 
@@ -104,8 +105,6 @@ class PointClusterController extends ChangeNotifier {
 
   Future<void> handlePointerUp(
     PointerUpEvent event,
-    Size mapSize,
-    MapViewport vp,
     GalileoMapController mapController,
     double devicePixelRatio,
     void Function(PointCluster)? onClusterTap,
@@ -132,17 +131,25 @@ class PointClusterController extends ChangeNotifier {
 
   void setPoints(List<GeoLocation> points) {
     _points = List.of(points);
+    _invalidateLayout();
     notifyListeners();
   }
 
   void addPoint(GeoLocation point) {
     _points.add(point);
+    _invalidateLayout();
     notifyListeners();
   }
 
   void clear() {
     _points.clear();
+    _invalidateLayout();
     notifyListeners();
+  }
+
+  void _invalidateLayout() {
+    _pointsRevision++;
+    _layoutCache = null;
   }
 
   /// Greedily groups points whose projected screen positions (given the
@@ -150,6 +157,14 @@ class PointClusterController extends ChangeNotifier {
   /// cluster's running centroid. Points projected outside the viewport
   /// (plus a margin) are skipped.
   List<PointCluster> computeClusters(Size size, MapViewport vp) {
+    final cached = _layoutCache;
+    if (cached != null &&
+        cached.size == size &&
+        cached.viewport == vp &&
+        cached.pointsRevision == _pointsRevision) {
+      return cached.clusters;
+    }
+
     final groups = <_MutableCluster>[];
     final screenPoints = GeoLocation.pointsToScreen(
       points: _points,
@@ -181,7 +196,16 @@ class PointClusterController extends ChangeNotifier {
         groups.add(_MutableCluster(point, offset));
       }
     }
-    return [for (final group in groups) group.toCluster()];
+    final clusters = List<PointCluster>.unmodifiable([
+      for (final group in groups) group.toCluster(),
+    ]);
+    _layoutCache = _ClusterLayoutCache(
+      size: size,
+      viewport: vp,
+      pointsRevision: _pointsRevision,
+      clusters: clusters,
+    );
+    return clusters;
   }
 
   /// Zooms [controller]'s map in around [cluster]'s screen position, using
@@ -204,4 +228,18 @@ class PointClusterController extends ChangeNotifier {
       await controller.handleEvent(UserEvent.zoom(zoomFactor, anchor));
     }
   }
+}
+
+class _ClusterLayoutCache {
+  const _ClusterLayoutCache({
+    required this.size,
+    required this.viewport,
+    required this.pointsRevision,
+    required this.clusters,
+  });
+
+  final Size size;
+  final MapViewport viewport;
+  final int pointsRevision;
+  final List<PointCluster> clusters;
 }

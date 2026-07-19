@@ -97,15 +97,13 @@ class ClusterOverlay extends StatelessWidget {
             return Listener(
               behavior: HitTestBehavior.translucent,
               onPointerDown: (e) {
-                if (controller.handlePointerDown(e, size, vp)) {
+                if (controller.handlePointerDown(e, clusters)) {
                   interactionController?.consume(e.pointer);
                 }
               },
               onPointerUp:
                   (e) => controller.handlePointerUp(
                     e,
-                    size,
-                    vp,
                     mapController,
                     devicePixelRatio,
                     onClusterTap,
