@@ -28,7 +28,7 @@ class PolygonDrawOverlay extends StatelessWidget {
           listenable:
               layerController == null
                   ? ctrl
-                  : Listenable.merge([ctrl, layerController]),
+                  : Listenable.merge([ctrl, layerController.viewportChanges]),
           builder: (context, _) {
             final vp = ctrl.layerController?.viewportBounds;
             if (!ctrl.isDrawing || vp == null) {
@@ -94,7 +94,7 @@ class PolygonEditOverlay extends StatelessWidget {
           listenable:
               layerController == null
                   ? ed
-                  : Listenable.merge([ed, layerController]),
+                  : Listenable.merge([ed, layerController.viewportChanges]),
           builder: (context, _) {
             final vp = ed.layerController?.viewportBounds;
             if (!ed.isActive || vp == null) {

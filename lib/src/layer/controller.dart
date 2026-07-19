@@ -12,6 +12,10 @@ class LayerController extends ChangeNotifier {
   final int sessionId;
   MapViewport? _viewportBounds;
   MapViewport? get viewportBounds => _viewportBounds;
+  final ValueNotifier<int> _viewportRevision = ValueNotifier(0);
+
+  /// Notifies listeners only when the rendered map viewport changes.
+  Listenable get viewportChanges => _viewportRevision;
 
   double _zoomScale = 1.0;
   double get zoomScale => _zoomScale;
@@ -19,21 +23,29 @@ class LayerController extends ChangeNotifier {
   double? _initialResolution;
 
   final List<OverlayWidget> _overlays = [];
+  final ValueNotifier<int> _overlayRevision = ValueNotifier(0);
   List<OverlayWidget> get overlays => List.unmodifiable(_overlays);
+
+  /// Notifies listeners only when the overlay child list changes.
+  Listenable get overlayChanges => _overlayRevision;
 
   void addOverlay(OverlayWidget overlay) {
     _overlays.add(overlay);
+    _overlayRevision.value++;
     notifyListeners();
   }
 
   void removeOverlay(OverlayWidget overlay) {
     if (_overlays.remove(overlay)) {
+      _overlayRevision.value++;
       notifyListeners();
     }
   }
 
   void clearOverlays() {
+    if (_overlays.isEmpty) return;
     _overlays.clear();
+    _overlayRevision.value++;
     notifyListeners();
   }
 
@@ -75,6 +87,7 @@ class LayerController extends ChangeNotifier {
       _zoomScale = _initialResolution! / resolution;
     }
 
+    _viewportRevision.value++;
     notifyListeners();
   }
 
@@ -206,6 +219,8 @@ class LayerController extends ChangeNotifier {
       editor.dispose();
     }
     _editors.clear();
+    _viewportRevision.dispose();
+    _overlayRevision.dispose();
     super.dispose();
   }
 }

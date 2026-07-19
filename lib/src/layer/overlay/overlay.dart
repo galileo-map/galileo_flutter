@@ -37,16 +37,12 @@ class MapOverlayFlowDelegate extends FlowDelegate {
   final LayerController controller;
   final Size mapSize;
   final List<OverlayWidget> overlays;
-  final MapViewport? viewportBounds;
-  final double zoomScale;
 
   MapOverlayFlowDelegate({
     required this.controller,
     required this.mapSize,
     required this.overlays,
-  }) : viewportBounds = controller.viewportBounds,
-       zoomScale = controller.zoomScale,
-       super(repaint: controller);
+  }) : super(repaint: controller.viewportChanges);
 
   // Should constrain the size of the child with their own height and width
   @override
@@ -69,7 +65,7 @@ class MapOverlayFlowDelegate extends FlowDelegate {
       final overlay = overlays[i];
 
       // Skip overlays outside their zoom visibility range.
-      if (!overlay.isVisibleAt(zoomScale)) continue;
+      if (!overlay.isVisibleAt(controller.zoomScale)) continue;
 
       final childSize =
           context.getChildSize(i) ?? Size(overlay.width, overlay.height);
@@ -92,8 +88,6 @@ class MapOverlayFlowDelegate extends FlowDelegate {
   bool shouldRepaint(covariant MapOverlayFlowDelegate oldDelegate) {
     return oldDelegate.controller != controller ||
         oldDelegate.mapSize != mapSize ||
-        oldDelegate.overlays != overlays ||
-        oldDelegate.viewportBounds != viewportBounds ||
-        oldDelegate.zoomScale != zoomScale;
+        oldDelegate.overlays != overlays;
   }
 }

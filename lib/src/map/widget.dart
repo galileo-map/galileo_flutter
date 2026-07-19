@@ -260,7 +260,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
         Positioned.fill(child: Texture(textureId: textureId)),
         // Geo-anchored widgets from LayerController
         ListenableBuilder(
-          listenable: widget.controller.layerController,
+          listenable: widget.controller.layerController.overlayChanges,
           builder: (context, _) {
             return MapOverlayLayer(
               controller: widget.controller.layerController,

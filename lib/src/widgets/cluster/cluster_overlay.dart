@@ -83,7 +83,7 @@ class ClusterOverlay extends StatelessWidget {
         return ListenableBuilder(
           listenable: Listenable.merge([
             controller,
-            mapController.layerController,
+            mapController.layerController.viewportChanges,
           ]),
           builder: (context, _) {
             final vp = mapController.layerController.viewportBounds;
