@@ -140,9 +140,24 @@ abstract class FeatureEditController extends ChangeNotifier {
   /// Override in subclasses that perform drag gestures (e.g. vertex drags).
   bool get shouldSuppressPan => false;
 
-  void updateViewport(MapViewport viewport);
-  void handlePointerDown(PointerDownEvent event, Size mapSize);
-  void handlePointerMove(PointerMoveEvent event, Size mapSize);
-  Future<void> handlePointerUp(PointerUpEvent event, Size mapSize);
-  bool hitTestHandles(Offset localPosition, Size mapSize) => false;
+  void handlePointerDown(
+    PointerDownEvent event,
+    Size mapSize,
+    MapViewport viewport,
+  );
+  void handlePointerMove(
+    PointerMoveEvent event,
+    Size mapSize,
+    MapViewport viewport,
+  );
+  Future<void> handlePointerUp(
+    PointerUpEvent event,
+    Size mapSize,
+    MapViewport viewport,
+  );
+  bool hitTestHandles(
+    Offset localPosition,
+    Size mapSize,
+    MapViewport viewport,
+  ) => false;
 }

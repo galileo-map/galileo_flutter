@@ -75,10 +75,6 @@ class LayerController extends ChangeNotifier {
       _zoomScale = _initialResolution! / resolution;
     }
 
-    for (final editor in _editors.values) {
-      editor.updateViewport(_viewportBounds!);
-    }
-
     notifyListeners();
   }
 

@@ -16,10 +16,14 @@ class PolygonDrawOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ctrl = controller;
+    final layerController = ctrl.layerController;
     return LayoutBuilder(
       builder: (context, constraints) {
         return ListenableBuilder(
-          listenable: ctrl,
+          listenable:
+              layerController == null
+                  ? ctrl
+                  : Listenable.merge([ctrl, layerController]),
           builder: (context, _) {
             final vp = ctrl.layerController?.viewportBounds;
             if (!ctrl.isDrawing || vp == null) {
@@ -29,10 +33,11 @@ class PolygonDrawOverlay extends StatelessWidget {
             return Listener(
               behavior: HitTestBehavior.opaque,
               onPointerDown:
-                  (e) => ctrl.handlePointerDown(e, constraints.biggest),
+                  (e) => ctrl.handlePointerDown(e, constraints.biggest, vp),
               onPointerMove:
-                  (e) => ctrl.handlePointerMove(e, constraints.biggest),
-              onPointerUp: (e) => ctrl.handlePointerUp(e, constraints.biggest),
+                  (e) => ctrl.handlePointerMove(e, constraints.biggest, vp),
+              onPointerUp:
+                  (e) => ctrl.handlePointerUp(e, constraints.biggest, vp),
               onPointerCancel:
                   (e) => ctrl.handlePointerCancel(e, constraints.biggest),
               child: CustomPaint(
@@ -60,35 +65,36 @@ class PolygonDrawOverlay extends StatelessWidget {
 class PolygonEditOverlay extends StatelessWidget {
   final PolygonEditController editor;
 
-  /// Called after any pointer event so the parent can call `setState`.
-  final VoidCallback? onChanged;
+  /// Called after a pointer-up edit action has completed.
+  final VoidCallback? onSubmit;
 
-  const PolygonEditOverlay({super.key, required this.editor, this.onChanged});
+  const PolygonEditOverlay({super.key, required this.editor, this.onSubmit});
 
   @override
   Widget build(BuildContext context) {
     final ed = editor;
+    final layerController = ed.layerController;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         return ListenableBuilder(
-          listenable: ed,
+          listenable:
+              layerController == null
+                  ? ed
+                  : Listenable.merge([ed, layerController]),
           builder: (context, _) {
-            final vp = ed.viewport;
+            final vp = ed.layerController?.viewportBounds;
             if (!ed.isActive || vp == null) {
               return const SizedBox.shrink();
             }
             final mapSize = constraints.biggest;
             return Listener(
               behavior: HitTestBehavior.opaque,
-              onPointerDown: (e) => ed.handlePointerDown(e, mapSize),
-              onPointerMove: (e) {
-                ed.handlePointerMove(e, mapSize);
-                onChanged?.call();
-              },
+              onPointerDown: (e) => ed.handlePointerDown(e, mapSize, vp),
+              onPointerMove: (e) => ed.handlePointerMove(e, mapSize, vp),
               onPointerUp: (e) async {
-                await ed.handlePointerUp(e, mapSize);
-                onChanged?.call();
+                await ed.handlePointerUp(e, mapSize, vp);
+                onSubmit?.call();
               },
               child: CustomPaint(
                 painter: PolygonEditOverlayPainter(

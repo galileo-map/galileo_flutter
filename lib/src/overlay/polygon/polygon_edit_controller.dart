@@ -18,7 +18,6 @@ class PolygonEditController extends FeatureEditController {
 
   int? _selectedPolygonId;
   List<GeoLocation> _editingVertices = [];
-  MapViewport? _viewport;
   int? _draggingVertexIndex;
   Offset? _pointerDownPos;
   bool _wasActiveOnPointerDown = false;
@@ -42,7 +41,6 @@ class PolygonEditController extends FeatureEditController {
 
   int? get selectedPolygonId => _selectedPolygonId;
   List<GeoLocation> get editingVertices => List.unmodifiable(_editingVertices);
-  MapViewport? get viewport => _viewport;
 
   LayerController? get layerController => _features?.layerController;
 
@@ -51,12 +49,6 @@ class PolygonEditController extends FeatureEditController {
   void detach() {
     _features = null;
     _deselect(notify: false);
-  }
-
-  @override
-  void updateViewport(MapViewport viewport) {
-    _viewport = viewport;
-    notifyListeners();
   }
 
   bool pointInPolygon(Offset p, List<Offset> poly) {
@@ -78,14 +70,13 @@ class PolygonEditController extends FeatureEditController {
   Future<bool> trySelectAt(
     Offset screenPos,
     Size mapSize,
-    MapViewport vp,
+    MapViewport viewport,
   ) async {
-    _viewport = vp;
     final features = _features;
     if (features == null) return false;
 
     for (final id in features.polygons.keys) {
-      if (_hitPolygonBody(screenPos, id, mapSize)) {
+      if (_hitPolygonBody(screenPos, id, mapSize, viewport)) {
         await _selectPolygon(id);
         return true;
       }
@@ -97,10 +88,14 @@ class PolygonEditController extends FeatureEditController {
 
   /// Returns true if the given [localPosition] hits a vertex or midpoint handle.
   @override
-  bool hitTestHandles(Offset localPosition, Size mapSize) {
+  bool hitTestHandles(
+    Offset localPosition,
+    Size mapSize,
+    MapViewport viewport,
+  ) {
     if (!isActive) return false;
-    return _hitVertex(localPosition, mapSize) != null ||
-        _hitEdgeMidpoint(localPosition, mapSize) != null;
+    return _hitVertex(localPosition, mapSize, viewport) != null ||
+        _hitEdgeMidpoint(localPosition, mapSize, viewport) != null;
   }
 
   Future<void> _selectPolygon(int id) async {
@@ -127,28 +122,40 @@ class PolygonEditController extends FeatureEditController {
   }
 
   @override
-  void handlePointerDown(PointerDownEvent event, Size mapSize) {
+  void handlePointerDown(
+    PointerDownEvent event,
+    Size mapSize,
+    MapViewport viewport,
+  ) {
     _wasActiveOnPointerDown = isActive;
     if (!isActive) return;
     _pointerDownPos = event.localPosition;
-    _draggingVertexIndex = _hitVertex(event.localPosition, mapSize);
+    _draggingVertexIndex = _hitVertex(event.localPosition, mapSize, viewport);
   }
 
   @override
-  void handlePointerMove(PointerMoveEvent event, Size mapSize) {
+  void handlePointerMove(
+    PointerMoveEvent event,
+    Size mapSize,
+    MapViewport viewport,
+  ) {
     final vi = _draggingVertexIndex;
-    final vp = _viewport;
-    if (vi == null || vp == null || !isActive) return;
+    if (vi == null || !isActive) return;
     final pos = event.localPosition;
-    _editingVertices[vi] = ScreenLocation(
-      x: pos.dx,
-      y: pos.dy,
-    ).toGeographical(vp: vp, height: mapSize.height, width: mapSize.width);
+    _editingVertices[vi] = ScreenLocation(x: pos.dx, y: pos.dy).toGeographical(
+      vp: viewport,
+      height: mapSize.height,
+      width: mapSize.width,
+    );
     notifyListeners(); // live vertex drag
   }
 
   @override
-  Future<void> handlePointerUp(PointerUpEvent event, Size mapSize) async {
+  Future<void> handlePointerUp(
+    PointerUpEvent event,
+    Size mapSize,
+    MapViewport viewport,
+  ) async {
     if (!isActive) return;
 
     final down = _pointerDownPos;
@@ -162,7 +169,7 @@ class PolygonEditController extends FeatureEditController {
     if (vi != null) {
       isTap ? await _removeVertex(vi) : await _commitEdits();
     } else if (isTap) {
-      final ei = _hitEdgeMidpoint(event.localPosition, mapSize);
+      final ei = _hitEdgeMidpoint(event.localPosition, mapSize, viewport);
       if (ei != null) {
         await _insertVertexAfterEdge(ei);
       } else {
@@ -225,25 +232,21 @@ class PolygonEditController extends FeatureEditController {
     await _commitEdits();
   }
 
-  int? _hitVertex(Offset pos, Size size) {
-    final vp = _viewport;
-    if (vp == null) return null;
+  int? _hitVertex(Offset pos, Size size, MapViewport viewport) {
     for (int i = 0; i < _editingVertices.length; i++) {
-      final scr = geoToOffset(_editingVertices[i], size, vp);
+      final scr = geoToOffset(_editingVertices[i], size, viewport);
       if ((scr - pos).distance < _vertexHitR) return i;
     }
     return null;
   }
 
-  int? _hitEdgeMidpoint(Offset pos, Size size) {
-    final vp = _viewport;
-    if (vp == null) return null;
+  int? _hitEdgeMidpoint(Offset pos, Size size, MapViewport viewport) {
     for (int i = 0; i < _editingVertices.length; i++) {
-      final a = geoToOffset(_editingVertices[i], size, vp);
+      final a = geoToOffset(_editingVertices[i], size, viewport);
       final b = geoToOffset(
         _editingVertices[(i + 1) % _editingVertices.length],
         size,
-        vp,
+        viewport,
       );
       final mid = (a + b) / 2;
       if ((mid - pos).distance < _midpointHitR) return i;
@@ -251,13 +254,12 @@ class PolygonEditController extends FeatureEditController {
     return null;
   }
 
-  bool _hitPolygonBody(Offset pos, int id, Size size) {
+  bool _hitPolygonBody(Offset pos, int id, Size size, MapViewport viewport) {
     final poly = _features?.polygons[id];
-    final vp = _viewport;
-    if (poly == null || vp == null) return false;
+    if (poly == null) return false;
     return pointInPolygon(
       pos,
-      poly.points.map((t) => geoToOffset(t, size, vp)).toList(),
+      poly.points.map((t) => geoToOffset(t, size, viewport)).toList(),
     );
   }
 

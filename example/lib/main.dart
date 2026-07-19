@@ -100,23 +100,6 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     super.dispose();
   }
 
-  Future<void> _refreshViewport() async {
-    final vp = await _controller?.getViewport();
-    if (vp == null || !mounted) return;
-    final bounds = MapViewport(
-      xMin: vp.xMin,
-      xMax: vp.xMax,
-      yMin: vp.yMin,
-      yMax: vp.yMax,
-    );
-    _polygonEditor.updateViewport(bounds);
-    _polygonDrawer.updateViewport(bounds);
-    _controller?.layerController.updateViewport(
-      vp,
-      _controller?.size ?? _kMapSize,
-    );
-  }
-
   Future<void> _switchLayer(LayerConfig newLayer) async {
     setState(() {
       _layerReady = false;
@@ -201,25 +184,14 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
         ),
       );
     }
-
-    await _refreshViewport();
   }
 
   Future<void> _addFeatureAtScreenPos(Offset off, Size size) async {
     final features = _features;
     if (features == null || !_layerReady) return;
 
-    final viewport = await _controller?.getViewport();
-    if (viewport == null || !mounted) return;
-
-    final vp = MapViewport(
-      xMin: viewport.xMin,
-      xMax: viewport.xMax,
-      yMin: viewport.yMin,
-      yMax: viewport.yMax,
-    );
-    _polygonEditor.updateViewport(vp);
-    _polygonDrawer.updateViewport(vp);
+    final vp = _controller?.layerController.viewportBounds;
+    if (vp == null || !mounted) return;
 
     if (_showClusters && _clusterController.wasClusterTappedOnPointerDown) {
       return;
@@ -576,27 +548,12 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                             layers: const [],
                             enableKeyboard: true,
                             autoDispose: false,
-                            onViewportChanged: (vp) async {
-                              final bounds = MapViewport(
-                                xMin: vp.xMin,
-                                xMax: vp.xMax,
-                                yMin: vp.yMin,
-                                yMax: vp.yMax,
-                              );
-                              if (!mounted) return;
-                              _polygonEditor.updateViewport(bounds);
-                              _polygonDrawer.updateViewport(bounds);
-                              _controller?.layerController.updateViewport(
-                                vp,
-                                _controller?.size ?? _kMapSize,
-                              );
-                            },
                             child: Stack(
                               children: [
                                 PolygonDrawOverlay(controller: _polygonDrawer),
                                 PolygonEditOverlay(
                                   editor: _polygonEditor,
-                                  onChanged: () => setState(() {}),
+                                  onSubmit: () => setState(() {}),
                                 ),
                                 if (_showClusters)
                                   ClusterOverlay(

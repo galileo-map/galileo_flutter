@@ -8,9 +8,6 @@ import 'package:galileo_flutter/src/utils.dart';
 /// Listeners are notified on every state change so overlays and toolbars
 /// can rebuild.
 class PolygonDrawController extends ChangeNotifier {
-  MapViewport? _viewport;
-
-  MapViewport? get viewport => _viewport;
   List<GeoLocation> _pendingVertices = [];
 
   Offset? _pointerDownPos;
@@ -25,7 +22,7 @@ class PolygonDrawController extends ChangeNotifier {
 
   FeatureLayerManager? _features;
 
-  /// Layer controller
+  /// Layer controller used for feature submission and pan suppression.
   LayerController? get layerController => _features?.layerController;
 
   /// Unmodifiable view of the vertices placed so far.
@@ -55,48 +52,53 @@ class PolygonDrawController extends ChangeNotifier {
     );
   }
 
-  void updateViewport(MapViewport viewport) {
-    _viewport = viewport;
-    notifyListeners();
-  }
-
   int? _draggingVertexIndex;
   int? get draggingVertexIndex => _draggingVertexIndex;
 
   static const _vertexHitR = 14.0;
 
-  int? _hitVertex(Offset pos, Size size) {
-    final vp = _viewport;
-    if (vp == null) return null;
+  int? _hitVertex(Offset pos, Size size, MapViewport viewport) {
     for (int i = 0; i < _pendingVertices.length; i++) {
-      final scr = geoToOffset(_pendingVertices[i], size, vp);
+      final scr = geoToOffset(_pendingVertices[i], size, viewport);
       if ((scr - pos).distance < _vertexHitR) return i;
     }
     return null;
   }
 
-  void handlePointerDown(PointerDownEvent event, Size mapSize) {
+  void handlePointerDown(
+    PointerDownEvent event,
+    Size mapSize,
+    MapViewport viewport,
+  ) {
     _pointerDownPos = event.localPosition;
-    _draggingVertexIndex = _hitVertex(event.localPosition, mapSize);
+    _draggingVertexIndex = _hitVertex(event.localPosition, mapSize, viewport);
     if (_draggingVertexIndex != null) {
       layerController?.drawSuppressPan = true;
       notifyListeners();
     }
   }
 
-  void handlePointerMove(PointerMoveEvent event, Size mapSize) {
+  void handlePointerMove(
+    PointerMoveEvent event,
+    Size mapSize,
+    MapViewport viewport,
+  ) {
     final vi = _draggingVertexIndex;
-    final vp = _viewport;
-    if (vi == null || vp == null) return;
+    if (vi == null) return;
     final pos = event.localPosition;
-    _pendingVertices[vi] = ScreenLocation(
-      x: pos.dx,
-      y: pos.dy,
-    ).toGeographical(vp: vp, height: mapSize.height, width: mapSize.width);
+    _pendingVertices[vi] = ScreenLocation(x: pos.dx, y: pos.dy).toGeographical(
+      vp: viewport,
+      height: mapSize.height,
+      width: mapSize.width,
+    );
     notifyListeners();
   }
 
-  void handlePointerUp(PointerUpEvent event, Size mapSize) {
+  void handlePointerUp(
+    PointerUpEvent event,
+    Size mapSize,
+    MapViewport viewport,
+  ) {
     final down = _pointerDownPos;
     _pointerDownPos = null;
     final vi = _draggingVertexIndex;
@@ -111,13 +113,14 @@ class PolygonDrawController extends ChangeNotifier {
     }
 
     if ((event.localPosition - down).distance < _tapThreshold) {
-      final vp = viewport;
-      if (vp == null) return;
-
       final screenPos = ScreenLocation(
         x: event.localPosition.dx,
         y: event.localPosition.dy,
-      ).toGeographical(height: mapSize.height, width: mapSize.width, vp: vp);
+      ).toGeographical(
+        height: mapSize.height,
+        width: mapSize.width,
+        vp: viewport,
+      );
       addVertex(screenPos);
     }
   }
