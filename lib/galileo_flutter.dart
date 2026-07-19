@@ -26,6 +26,7 @@ export 'package:galileo_flutter/src/rust/api/dart_types.dart'
 export 'package:galileo_flutter/src/map/widget.dart';
 export 'package:galileo_flutter/src/extensions/color.dart';
 export 'package:galileo_flutter/src/map/controller.dart';
+export 'package:galileo_flutter/src/map/interaction_controller.dart';
 export 'package:galileo_flutter/src/layer/overlay/overlay.dart';
 export 'package:galileo_flutter/src/layer/feature/feature.dart';
 export 'package:galileo_flutter/src/overlay/widget/overlay_widget.dart';

@@ -9,6 +9,7 @@ import 'package:galileo_flutter/src/map/controller.dart';
 import 'package:galileo_flutter/src/rust/api/dart_types.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:galileo_flutter/src/layer/overlay/overlay.dart';
+import 'package:galileo_flutter/src/map/interaction_controller.dart';
 
 final _log = Logger('GalileoMapWidget');
 
@@ -34,6 +35,9 @@ class GalileoMapWidget extends StatefulWidget {
   /// Called when the map is tapped
   final void Function(double x, double y)? onTap;
 
+  /// Coordinates pointer ownership with interactive child overlays.
+  final MapInteractionController? interactionController;
+
   /// Fires at most once per 30 ms to avoid flooding the Rust FFI layer.
   final void Function(MapViewport viewport)? onViewportChanged;
 
@@ -47,6 +51,7 @@ class GalileoMapWidget extends StatefulWidget {
     this.enableKeyboard = true,
     this.focusNode,
     this.onTap,
+    this.interactionController,
     this.onViewportChanged,
   });
 
@@ -61,6 +66,7 @@ class GalileoMapWidget extends StatefulWidget {
     FocusNode? focusNode,
     Widget? child,
     void Function(double x, double y)? onTap,
+    MapInteractionController? interactionController,
     void Function(MapViewport viewport)? onViewportChanged,
   }) {
     return GalileoMapWidget._(
@@ -70,6 +76,7 @@ class GalileoMapWidget extends StatefulWidget {
       enableKeyboard: enableKeyboard,
       focusNode: focusNode,
       onTap: onTap,
+      interactionController: interactionController,
       onViewportChanged: onViewportChanged,
       config: config,
       layers: layers,
@@ -88,6 +95,7 @@ class GalileoMapWidget extends StatefulWidget {
     FocusNode? focusNode,
     Widget? child,
     void Function(double x, double y)? onTap,
+    MapInteractionController? interactionController,
     void Function(MapViewport viewport)? onViewportChanged,
   }) {
     return _GalileoMapFromConfig(
@@ -99,6 +107,7 @@ class GalileoMapWidget extends StatefulWidget {
       enableKeyboard: enableKeyboard,
       focusNode: focusNode,
       onTap: onTap,
+      interactionController: interactionController,
       onViewportChanged: onViewportChanged,
       child: child,
     );
@@ -124,6 +133,11 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
   bool _isPinchScaling = false;
 
   final Set<int> _activePointers = {};
+  final MapInteractionController _fallbackInteractionController =
+      MapInteractionController();
+
+  MapInteractionController get _interactionController =>
+      widget.interactionController ?? _fallbackInteractionController;
 
   double get _devicePixelRatio {
     return MediaQuery.of(context).devicePixelRatio;
@@ -187,7 +201,8 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
   void _onTickPan(Duration elapsed) {
     // If pan is suppressed, discard any accumulated delta
     // so the map doesn't pan when the user releases.
-    if (widget.controller.layerController.shouldSuppressPan) {
+    if (widget.controller.layerController.shouldSuppressPan ||
+        _activePointers.any(_interactionController.isConsumed)) {
       _panAccumulatedDelta = Offset.zero;
       return;
     }
@@ -262,6 +277,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
       behavior: HitTestBehavior.opaque,
       onPointerDown: (event) {
         _activePointers.add(event.pointer);
+        _interactionController.begin(event);
 
         if (_activePointers.length > 1 || _isPinchScaling) {
           return;
@@ -270,17 +286,22 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
         if (widget.enableKeyboard) {
           _focusNode.requestFocus();
         }
-        widget.onTap?.call(event.localPosition.dx, event.localPosition.dy);
         _lastPointerPosition = event.localPosition;
         panTicker.start();
       },
       onPointerUp: (event) {
+        final wasMultiPointer = _activePointers.length > 1 || _isPinchScaling;
+        final isTap = _interactionController.complete(event);
         _activePointers.remove(event.pointer);
         _lastPointerPosition = null;
         panTicker.stop();
         _panAccumulatedDelta = Offset.zero;
+        if (isTap && !wasMultiPointer) {
+          widget.onTap?.call(event.localPosition.dx, event.localPosition.dy);
+        }
       },
       onPointerCancel: (event) {
+        _interactionController.cancel(event);
         _activePointers.remove(event.pointer);
         _lastPointerPosition = null;
 
@@ -322,7 +343,8 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
         // If an overlay has requested pan suppression,
         // still track the position so the next un-suppressed frame is correct,
         // but don't accumulate the delta.
-        if (widget.controller.layerController.shouldSuppressPan) {
+        if (widget.controller.layerController.shouldSuppressPan ||
+            _interactionController.isConsumed(event.pointer)) {
           _lastPointerPosition = event.localPosition;
           return;
         }
@@ -526,6 +548,7 @@ class _GalileoMapFromConfig extends StatefulWidget {
   final bool enableKeyboard;
   final FocusNode? focusNode;
   final void Function(double x, double y)? onTap;
+  final MapInteractionController? interactionController;
 
   /// Called when the map is tapped
   final void Function(MapViewport viewport)? onViewportChanged;
@@ -540,6 +563,7 @@ class _GalileoMapFromConfig extends StatefulWidget {
     this.enableKeyboard = true,
     this.focusNode,
     this.onTap,
+    this.interactionController,
     this.onViewportChanged,
   });
 
@@ -596,6 +620,7 @@ class _GalileoMapFromConfigState extends State<_GalileoMapFromConfig> {
           enableKeyboard: widget.enableKeyboard,
           focusNode: widget.focusNode,
           onTap: widget.onTap,
+          interactionController: widget.interactionController,
           child: widget.child,
         );
       },

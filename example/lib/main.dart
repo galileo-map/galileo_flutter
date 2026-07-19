@@ -73,8 +73,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
 
   DrawMode _drawMode = DrawMode.point;
 
-  Offset? _pointerDownPosition;
-  static const _tapThreshold = 10.0;
+  late final _interactionController = MapInteractionController();
 
   bool _showClusters = false;
   late final _clusterController = PointClusterController(
@@ -192,10 +191,6 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
 
     final vp = _controller?.layerController.viewportBounds;
     if (vp == null || !mounted) return;
-
-    if (_showClusters && _clusterController.wasClusterTappedOnPointerDown) {
-      return;
-    }
 
     final screenPos = ScreenLocation(x: off.dx, y: off.dy);
     final loc = screenPos.toGeographical(
@@ -524,105 +519,98 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                     Future.microtask(() => _initManagedLayer(controller));
                   }
 
-                  return Builder(
-                    builder:
-                        (mapCtx) => Listener(
-                          onPointerDown:
-                              (e) => _pointerDownPosition = e.localPosition,
-                          onPointerUp: (e) {
-                            final rb = mapCtx.findRenderObject() as RenderBox;
-                            final size = rb.size;
-                            final down = _pointerDownPosition;
-                            if (down != null &&
-                                (e.localPosition - down).distance <
-                                    _tapThreshold) {
-                              _addFeatureAtScreenPos(e.localPosition, size);
-                            }
-                            _pointerDownPosition = null;
-                          },
-                          onPointerCancel: (_) => _pointerDownPosition = null,
-                          child: GalileoMapWidget.fromController(
-                            key: ObjectKey(controller),
-                            controller: controller!,
-                            config: _kMapConfig,
-                            layers: const [],
-                            enableKeyboard: true,
-                            autoDispose: false,
-                            child: Stack(
+                  return GalileoMapWidget.fromController(
+                    key: ObjectKey(controller),
+                    controller: controller!,
+                    config: _kMapConfig,
+                    layers: const [],
+                    enableKeyboard: true,
+                    autoDispose: false,
+                    interactionController: _interactionController,
+                    onTap: (x, y) {
+                      _addFeatureAtScreenPos(
+                        Offset(x, y),
+                        Size(
+                          controller.size.width.toDouble(),
+                          controller.size.height.toDouble(),
+                        ),
+                      );
+                    },
+                    child: Stack(
+                      children: [
+                        PolygonDrawOverlay(
+                          controller: _polygonDrawer,
+                          interactionController: _interactionController,
+                        ),
+                        PolygonEditOverlay(
+                          editor: _polygonEditor,
+                          interactionController: _interactionController,
+                          onSubmit: () => setState(() {}),
+                        ),
+                        if (_showClusters)
+                          ClusterOverlay(
+                            controller: _clusterController,
+                            mapController: controller,
+                            interactionController: _interactionController,
+                            onClusterTap: _onClusterTap,
+                          ),
+                        Positioned(
+                          top: 10,
+                          right: 10,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.9),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                PolygonDrawOverlay(controller: _polygonDrawer),
-                                PolygonEditOverlay(
-                                  editor: _polygonEditor,
-                                  onSubmit: () => setState(() {}),
+                                const SizedBox(height: 4),
+                                const Text(
+                                  '• Tap to add feature',
+                                  style: TextStyle(fontSize: 10),
                                 ),
-                                if (_showClusters)
-                                  ClusterOverlay(
-                                    controller: _clusterController,
-                                    mapController: controller,
-                                    onClusterTap: _onClusterTap,
+                                const Text(
+                                  '• Drag to pan',
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                                const Text(
+                                  '• Pinch to zoom',
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                                const Text(
+                                  '• Arrow keys to pan',
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                                const Text(
+                                  '• +/- to zoom',
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Points: ${features?.pointCount ?? 0}',
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
                                   ),
-                                Positioned(
-                                  top: 10,
-                                  right: 10,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.9,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const SizedBox(height: 4),
-                                        const Text(
-                                          '• Tap to add feature',
-                                          style: TextStyle(fontSize: 10),
-                                        ),
-                                        const Text(
-                                          '• Drag to pan',
-                                          style: TextStyle(fontSize: 10),
-                                        ),
-                                        const Text(
-                                          '• Pinch to zoom',
-                                          style: TextStyle(fontSize: 10),
-                                        ),
-                                        const Text(
-                                          '• Arrow keys to pan',
-                                          style: TextStyle(fontSize: 10),
-                                        ),
-                                        const Text(
-                                          '• +/- to zoom',
-                                          style: TextStyle(fontSize: 10),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          'Points: ${features?.pointCount ?? 0}',
-                                          style: const TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.red,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Polygons: ${features?.polygonCount ?? 0}',
-                                          style: const TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.blue,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                ),
+                                Text(
+                                  'Polygons: ${features?.polygonCount ?? 0}',
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue,
                                   ),
                                 ),
                               ],
                             ),
                           ),
                         ),
+                      ],
+                    ),
                   );
                 },
               ),

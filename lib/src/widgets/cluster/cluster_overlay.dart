@@ -17,6 +17,7 @@ class ClusterOverlay extends StatelessWidget {
     required this.mapController,
     this.bubbleBuilder,
     this.onClusterTap,
+    this.interactionController,
   });
 
   /// Supplies the points to cluster and the clustering radius.
@@ -33,6 +34,9 @@ class ClusterOverlay extends StatelessWidget {
   /// Called in addition to the built-in zoom-in behavior whenever a cluster
   /// bubble is tapped, e.g. to update a status message.
   final void Function(PointCluster cluster)? onClusterTap;
+
+  /// Coordinates cluster taps with map gestures and other overlays.
+  final MapInteractionController? interactionController;
 
   /// A circular bubble showing the point count, or a location pin for a
   /// single, unclustered point.
@@ -92,7 +96,11 @@ class ClusterOverlay extends StatelessWidget {
 
             return Listener(
               behavior: HitTestBehavior.translucent,
-              onPointerDown: (e) => controller.handlePointerDown(e, size, vp),
+              onPointerDown: (e) {
+                if (controller.handlePointerDown(e, size, vp)) {
+                  interactionController?.consume(e.pointer);
+                }
+              },
               onPointerUp:
                   (e) => controller.handlePointerUp(
                     e,

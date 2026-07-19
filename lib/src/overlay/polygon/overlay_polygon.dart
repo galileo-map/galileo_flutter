@@ -10,8 +10,13 @@ import 'package:galileo_flutter/galileo_flutter.dart';
 /// Place this as a child in a [Stack] that covers the map area.
 class PolygonDrawOverlay extends StatelessWidget {
   final PolygonDrawController controller;
+  final MapInteractionController? interactionController;
 
-  const PolygonDrawOverlay({super.key, required this.controller});
+  const PolygonDrawOverlay({
+    super.key,
+    required this.controller,
+    this.interactionController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +37,10 @@ class PolygonDrawOverlay extends StatelessWidget {
 
             return Listener(
               behavior: HitTestBehavior.opaque,
-              onPointerDown:
-                  (e) => ctrl.handlePointerDown(e, constraints.biggest, vp),
+              onPointerDown: (e) {
+                interactionController?.consume(e.pointer);
+                ctrl.handlePointerDown(e, constraints.biggest, vp);
+              },
               onPointerMove:
                   (e) => ctrl.handlePointerMove(e, constraints.biggest, vp),
               onPointerUp:
@@ -64,11 +71,17 @@ class PolygonDrawOverlay extends StatelessWidget {
 /// Place this as a child in a [Stack] that covers the map area.
 class PolygonEditOverlay extends StatelessWidget {
   final PolygonEditController editor;
+  final MapInteractionController? interactionController;
 
   /// Called after a pointer-up edit action has completed.
   final VoidCallback? onSubmit;
 
-  const PolygonEditOverlay({super.key, required this.editor, this.onSubmit});
+  const PolygonEditOverlay({
+    super.key,
+    required this.editor,
+    this.interactionController,
+    this.onSubmit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +103,10 @@ class PolygonEditOverlay extends StatelessWidget {
             final mapSize = constraints.biggest;
             return Listener(
               behavior: HitTestBehavior.opaque,
-              onPointerDown: (e) => ed.handlePointerDown(e, mapSize, vp),
+              onPointerDown: (e) {
+                interactionController?.consume(e.pointer);
+                ed.handlePointerDown(e, mapSize, vp);
+              },
               onPointerMove: (e) => ed.handlePointerMove(e, mapSize, vp),
               onPointerUp: (e) async {
                 await ed.handlePointerUp(e, mapSize, vp);

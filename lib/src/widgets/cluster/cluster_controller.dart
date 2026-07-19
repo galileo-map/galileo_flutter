@@ -85,25 +85,21 @@ class PointClusterController extends ChangeNotifier {
 
   Offset? _pointerDownPos;
   PointCluster? _tappedCluster;
-  bool _wasClusterTappedOnPointerDown = false;
 
-  /// True if a cluster bubble was hit during the current/most-recent pointer down event.
-  bool get wasClusterTappedOnPointerDown => _wasClusterTappedOnPointerDown;
-
-  void handlePointerDown(PointerDownEvent event, Size mapSize, MapViewport vp) {
+  /// Returns whether [event] hit a cluster bubble.
+  bool handlePointerDown(PointerDownEvent event, Size mapSize, MapViewport vp) {
     final clusters = computeClusters(mapSize, vp);
     _tappedCluster = null;
-    _wasClusterTappedOnPointerDown = false;
     _pointerDownPos = event.localPosition;
 
     for (final cluster in clusters) {
       if ((cluster.screenCenter - event.localPosition).distance <=
           cluster.radius) {
         _tappedCluster = cluster;
-        _wasClusterTappedOnPointerDown = true;
-        break;
+        return true;
       }
     }
+    return false;
   }
 
   Future<void> handlePointerUp(
