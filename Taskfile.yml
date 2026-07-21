@@ -58,7 +58,7 @@ tasks:
     flutter.fmt:
         desc: Format Dart code
         cmds:
-            - "{{.DART_BIN}} format lib example"
+            - "{{.DART_BIN}} format ./lib ./example ./integration_test"
 
     flutter.fmt-check:
         desc: Check Dart code formatting
@@ -102,8 +102,8 @@ tasks:
     fmt:
         desc: Format both Rust and Flutter code
         deps:
-            - task: rust.fmt
             - task: flutter.fmt
+            - task: rust.fmt
 
     lint:
         desc: Lint both Rust and Flutter code
