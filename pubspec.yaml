@@ -56,14 +56,18 @@ flutter:
         platforms:
             android:
                 ffiPlugin: true
-            ios:
-                ffiPlugin: true
             linux:
-                ffiPlugin: true
-            macos:
                 ffiPlugin: true
             windows:
                 ffiPlugin: true
+            # iOS and macOS are intentionally not declared here: this plugin's
+            # native code is built and bundled entirely via Dart native assets
+            # (see hook/build.dart). Declaring these platforms would make
+            # CocoaPods compile an empty stub framework named
+            # `galileo_flutter.framework` (see ios/macos historically using
+            # Classes/dummy_file.c just to force pod to produce an artifact),
+            # which collides at runtime with the native-assets-bundled dylib
+            # of the same name and shadows it, breaking FFI symbol lookup.
 
     # To add assets to your plugin package, add an assets section, like this:
     # assets:
