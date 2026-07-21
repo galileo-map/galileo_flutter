@@ -19,6 +19,9 @@ dependencies:
     vector_math: ^2.2.0
     latlong2: ^0.10.1
     logging: ^1.3.0
+    native_toolchain_rust: ^1.0.4
+    code_assets: ^1.2.1
+    hooks: ^2.0.2
 
 dev_dependencies:
     ffi: ^2.1.3
