@@ -22,6 +22,7 @@ export 'package:galileo_flutter/src/rust/api/dart_types.dart'
         GalileoColor,
         Point2,
         Point,
+		  UserEvent,
         PointStyle;
 export 'package:galileo_flutter/src/map/widget.dart';
 export 'package:galileo_flutter/src/extensions/color.dart';
