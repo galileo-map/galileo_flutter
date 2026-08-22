@@ -175,19 +175,41 @@ pub async fn add_session_layer(
 
     match layer_config {
         LayerConfig::Osm => {
-            let layer = RasterTileLayerBuilder::new_osm()
+            let mut builder = RasterTileLayerBuilder::new_osm();
+
+            if let Some(ref path) = *TILE_CACHE_PATH.read() {
+                builder = builder
+                    .with_file_cache_modifier_checked(path, Box::new(remove_parameters_modifier));
+            }
+
+            let layer = builder
                 .build()
                 .map_err(|e| anyhow::anyhow!("Failed to create OSM layer: {}", e))?;
             session.add_layer(layer).await;
         }
         LayerConfig::RasterTiles {
-            url_template: _,
-            attribution: _,
+            url_template,
+            attribution,
         } => {
-            // TODO: Implement custom URL tile providers
-            let layer = RasterTileLayerBuilder::new_osm()
+            let tile_schema = TileSchemaBuilder::web_mercator(0..=22)
                 .build()
-                .map_err(|e| anyhow::anyhow!("Failed to create OSM layer: {}", e))?;
+                .map_err(|e| anyhow::anyhow!("Failed to build raster tile schema: {}", e))?;
+
+            let mut builder = RasterTileLayerBuilder::new_rest(create_url_source(url_template))
+                .with_tile_schema(tile_schema);
+
+            if let Some(ref path) = *TILE_CACHE_PATH.read() {
+                builder = builder
+                    .with_file_cache_modifier_checked(path, Box::new(remove_parameters_modifier));
+            }
+
+            if let Some(attr) = attribution {
+                builder = builder.with_attribution(attr, "".to_string());
+            }
+
+            let layer = builder
+                .build()
+                .map_err(|e| anyhow::anyhow!("Failed to create raster tile layer: {}", e))?;
             session.add_layer(layer).await;
         }
         LayerConfig::VectorTiles {
