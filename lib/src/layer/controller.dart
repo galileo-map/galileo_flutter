@@ -85,12 +85,12 @@ class LayerController extends ChangeNotifier {
   /// Add a layer to the map
   Future<void> addLayer(LayerConfig layer) async {
     try {
-      await layer.maybeWhen(
-        widgetLayer: () async {},
-        orElse: () async {
+      switch (layer){
+		case LayerConfig.widgetLayer:
+		break;
+		default:
           await rlib.addSessionLayer(sessionId: sessionId, layerConfig: layer);
-        },
-      );
+      }
     } catch (e) {
       _log.severe('Error adding layer', e);
     }

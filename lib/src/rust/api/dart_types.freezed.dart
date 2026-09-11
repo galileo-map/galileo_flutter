@@ -1,6 +1,6 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: type=lint
+// coverage:ignore-file
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'dart_types.dart';
@@ -9,3485 +9,1462 @@ part of 'dart_types.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
-
 /// @nodoc
 mixin _$LayerConfig {
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() osm,
-    required TResult Function(String urlTemplate, String? attribution)
-    rasterTiles,
-    required TResult Function(
-      String urlTemplate,
-      String styleJson,
-      String? attribution,
-    )
-    vectorTiles,
-    required TResult Function(List<Polygon> features) polygonLayer,
-    required TResult Function(List<Point> features) pointLayer,
-    required TResult Function() widgetLayer,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? osm,
-    TResult? Function(String urlTemplate, String? attribution)? rasterTiles,
-    TResult? Function(
-      String urlTemplate,
-      String styleJson,
-      String? attribution,
-    )?
-    vectorTiles,
-    TResult? Function(List<Polygon> features)? polygonLayer,
-    TResult? Function(List<Point> features)? pointLayer,
-    TResult? Function()? widgetLayer,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? osm,
-    TResult Function(String urlTemplate, String? attribution)? rasterTiles,
-    TResult Function(String urlTemplate, String styleJson, String? attribution)?
-    vectorTiles,
-    TResult Function(List<Polygon> features)? polygonLayer,
-    TResult Function(List<Point> features)? pointLayer,
-    TResult Function()? widgetLayer,
-    required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(LayerConfig_Osm value) osm,
-    required TResult Function(LayerConfig_RasterTiles value) rasterTiles,
-    required TResult Function(LayerConfig_VectorTiles value) vectorTiles,
-    required TResult Function(LayerConfig_PolygonLayer value) polygonLayer,
-    required TResult Function(LayerConfig_PointLayer value) pointLayer,
-    required TResult Function(LayerConfig_WidgetLayer value) widgetLayer,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(LayerConfig_Osm value)? osm,
-    TResult? Function(LayerConfig_RasterTiles value)? rasterTiles,
-    TResult? Function(LayerConfig_VectorTiles value)? vectorTiles,
-    TResult? Function(LayerConfig_PolygonLayer value)? polygonLayer,
-    TResult? Function(LayerConfig_PointLayer value)? pointLayer,
-    TResult? Function(LayerConfig_WidgetLayer value)? widgetLayer,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(LayerConfig_Osm value)? osm,
-    TResult Function(LayerConfig_RasterTiles value)? rasterTiles,
-    TResult Function(LayerConfig_VectorTiles value)? vectorTiles,
-    TResult Function(LayerConfig_PolygonLayer value)? polygonLayer,
-    TResult Function(LayerConfig_PointLayer value)? pointLayer,
-    TResult Function(LayerConfig_WidgetLayer value)? widgetLayer,
-    required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is LayerConfig);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+    return 'LayerConfig()';
+}
+
+
 }
 
 /// @nodoc
-abstract class $LayerConfigCopyWith<$Res> {
-  factory $LayerConfigCopyWith(
-    LayerConfig value,
-    $Res Function(LayerConfig) then,
-  ) = _$LayerConfigCopyWithImpl<$Res, LayerConfig>;
+class $LayerConfigCopyWith<$Res>  {
+$LayerConfigCopyWith(LayerConfig _, $Res Function(LayerConfig) __);
+}
+
+
+/// Adds pattern-matching-related methods to [LayerConfig].
+extension LayerConfigPatterns on LayerConfig {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( LayerConfig_Osm value)?  osm,TResult Function( LayerConfig_RasterTiles value)?  rasterTiles,TResult Function( LayerConfig_VectorTiles value)?  vectorTiles,TResult Function( LayerConfig_PolygonLayer value)?  polygonLayer,TResult Function( LayerConfig_PointLayer value)?  pointLayer,TResult Function( LayerConfig_WidgetLayer value)?  widgetLayer,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case LayerConfig_Osm() when osm != null:
+return osm(_that);case LayerConfig_RasterTiles() when rasterTiles != null:
+return rasterTiles(_that);case LayerConfig_VectorTiles() when vectorTiles != null:
+return vectorTiles(_that);case LayerConfig_PolygonLayer() when polygonLayer != null:
+return polygonLayer(_that);case LayerConfig_PointLayer() when pointLayer != null:
+return pointLayer(_that);case LayerConfig_WidgetLayer() when widgetLayer != null:
+return widgetLayer(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( LayerConfig_Osm value)  osm,required TResult Function( LayerConfig_RasterTiles value)  rasterTiles,required TResult Function( LayerConfig_VectorTiles value)  vectorTiles,required TResult Function( LayerConfig_PolygonLayer value)  polygonLayer,required TResult Function( LayerConfig_PointLayer value)  pointLayer,required TResult Function( LayerConfig_WidgetLayer value)  widgetLayer,}){
+final _that = this;
+switch (_that) {
+case LayerConfig_Osm():
+return osm(_that);case LayerConfig_RasterTiles():
+return rasterTiles(_that);case LayerConfig_VectorTiles():
+return vectorTiles(_that);case LayerConfig_PolygonLayer():
+return polygonLayer(_that);case LayerConfig_PointLayer():
+return pointLayer(_that);case LayerConfig_WidgetLayer():
+return widgetLayer(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( LayerConfig_Osm value)?  osm,TResult? Function( LayerConfig_RasterTiles value)?  rasterTiles,TResult? Function( LayerConfig_VectorTiles value)?  vectorTiles,TResult? Function( LayerConfig_PolygonLayer value)?  polygonLayer,TResult? Function( LayerConfig_PointLayer value)?  pointLayer,TResult? Function( LayerConfig_WidgetLayer value)?  widgetLayer,}){
+final _that = this;
+switch (_that) {
+case LayerConfig_Osm() when osm != null:
+return osm(_that);case LayerConfig_RasterTiles() when rasterTiles != null:
+return rasterTiles(_that);case LayerConfig_VectorTiles() when vectorTiles != null:
+return vectorTiles(_that);case LayerConfig_PolygonLayer() when polygonLayer != null:
+return polygonLayer(_that);case LayerConfig_PointLayer() when pointLayer != null:
+return pointLayer(_that);case LayerConfig_WidgetLayer() when widgetLayer != null:
+return widgetLayer(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  osm,TResult Function( String urlTemplate,  String? attribution)?  rasterTiles,TResult Function( String urlTemplate,  String styleJson,  String? attribution)?  vectorTiles,TResult Function( List<Polygon> features)?  polygonLayer,TResult Function( List<Point> features)?  pointLayer,TResult Function()?  widgetLayer,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case LayerConfig_Osm() when osm != null:
+return osm();case LayerConfig_RasterTiles() when rasterTiles != null:
+return rasterTiles(_that.urlTemplate,_that.attribution);case LayerConfig_VectorTiles() when vectorTiles != null:
+return vectorTiles(_that.urlTemplate,_that.styleJson,_that.attribution);case LayerConfig_PolygonLayer() when polygonLayer != null:
+return polygonLayer(_that.features);case LayerConfig_PointLayer() when pointLayer != null:
+return pointLayer(_that.features);case LayerConfig_WidgetLayer() when widgetLayer != null:
+return widgetLayer();case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  osm,required TResult Function( String urlTemplate,  String? attribution)  rasterTiles,required TResult Function( String urlTemplate,  String styleJson,  String? attribution)  vectorTiles,required TResult Function( List<Polygon> features)  polygonLayer,required TResult Function( List<Point> features)  pointLayer,required TResult Function()  widgetLayer,}) {final _that = this;
+switch (_that) {
+case LayerConfig_Osm():
+return osm();case LayerConfig_RasterTiles():
+return rasterTiles(_that.urlTemplate,_that.attribution);case LayerConfig_VectorTiles():
+return vectorTiles(_that.urlTemplate,_that.styleJson,_that.attribution);case LayerConfig_PolygonLayer():
+return polygonLayer(_that.features);case LayerConfig_PointLayer():
+return pointLayer(_that.features);case LayerConfig_WidgetLayer():
+return widgetLayer();}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  osm,TResult? Function( String urlTemplate,  String? attribution)?  rasterTiles,TResult? Function( String urlTemplate,  String styleJson,  String? attribution)?  vectorTiles,TResult? Function( List<Polygon> features)?  polygonLayer,TResult? Function( List<Point> features)?  pointLayer,TResult? Function()?  widgetLayer,}) {final _that = this;
+switch (_that) {
+case LayerConfig_Osm() when osm != null:
+return osm();case LayerConfig_RasterTiles() when rasterTiles != null:
+return rasterTiles(_that.urlTemplate,_that.attribution);case LayerConfig_VectorTiles() when vectorTiles != null:
+return vectorTiles(_that.urlTemplate,_that.styleJson,_that.attribution);case LayerConfig_PolygonLayer() when polygonLayer != null:
+return polygonLayer(_that.features);case LayerConfig_PointLayer() when pointLayer != null:
+return pointLayer(_that.features);case LayerConfig_WidgetLayer() when widgetLayer != null:
+return widgetLayer();case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
-class _$LayerConfigCopyWithImpl<$Res, $Val extends LayerConfig>
-    implements $LayerConfigCopyWith<$Res> {
-  _$LayerConfigCopyWithImpl(this._value, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
 
-  /// Create a copy of LayerConfig
-  /// with the given fields replaced by the non-null parameter values.
+class LayerConfig_Osm extends LayerConfig {
+  const LayerConfig_Osm(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is LayerConfig_Osm);
 }
 
-/// @nodoc
-abstract class _$$LayerConfig_OsmImplCopyWith<$Res> {
-  factory _$$LayerConfig_OsmImplCopyWith(
-    _$LayerConfig_OsmImpl value,
-    $Res Function(_$LayerConfig_OsmImpl) then,
-  ) = __$$LayerConfig_OsmImplCopyWithImpl<$Res>;
-}
 
-/// @nodoc
-class __$$LayerConfig_OsmImplCopyWithImpl<$Res>
-    extends _$LayerConfigCopyWithImpl<$Res, _$LayerConfig_OsmImpl>
-    implements _$$LayerConfig_OsmImplCopyWith<$Res> {
-  __$$LayerConfig_OsmImplCopyWithImpl(
-    _$LayerConfig_OsmImpl _value,
-    $Res Function(_$LayerConfig_OsmImpl) _then,
-  ) : super(_value, _then);
+@override
+int get hashCode => runtimeType.hashCode;
 
-  /// Create a copy of LayerConfig
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-
-class _$LayerConfig_OsmImpl extends LayerConfig_Osm {
-  const _$LayerConfig_OsmImpl() : super._();
-
-  @override
-  String toString() {
+@override
+String toString() {
     return 'LayerConfig.osm()';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$LayerConfig_OsmImpl);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() osm,
-    required TResult Function(String urlTemplate, String? attribution)
-    rasterTiles,
-    required TResult Function(
-      String urlTemplate,
-      String styleJson,
-      String? attribution,
-    )
-    vectorTiles,
-    required TResult Function(List<Polygon> features) polygonLayer,
-    required TResult Function(List<Point> features) pointLayer,
-    required TResult Function() widgetLayer,
-  }) {
-    return osm();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? osm,
-    TResult? Function(String urlTemplate, String? attribution)? rasterTiles,
-    TResult? Function(
-      String urlTemplate,
-      String styleJson,
-      String? attribution,
-    )?
-    vectorTiles,
-    TResult? Function(List<Polygon> features)? polygonLayer,
-    TResult? Function(List<Point> features)? pointLayer,
-    TResult? Function()? widgetLayer,
-  }) {
-    return osm?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? osm,
-    TResult Function(String urlTemplate, String? attribution)? rasterTiles,
-    TResult Function(String urlTemplate, String styleJson, String? attribution)?
-    vectorTiles,
-    TResult Function(List<Polygon> features)? polygonLayer,
-    TResult Function(List<Point> features)? pointLayer,
-    TResult Function()? widgetLayer,
-    required TResult orElse(),
-  }) {
-    if (osm != null) {
-      return osm();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(LayerConfig_Osm value) osm,
-    required TResult Function(LayerConfig_RasterTiles value) rasterTiles,
-    required TResult Function(LayerConfig_VectorTiles value) vectorTiles,
-    required TResult Function(LayerConfig_PolygonLayer value) polygonLayer,
-    required TResult Function(LayerConfig_PointLayer value) pointLayer,
-    required TResult Function(LayerConfig_WidgetLayer value) widgetLayer,
-  }) {
-    return osm(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(LayerConfig_Osm value)? osm,
-    TResult? Function(LayerConfig_RasterTiles value)? rasterTiles,
-    TResult? Function(LayerConfig_VectorTiles value)? vectorTiles,
-    TResult? Function(LayerConfig_PolygonLayer value)? polygonLayer,
-    TResult? Function(LayerConfig_PointLayer value)? pointLayer,
-    TResult? Function(LayerConfig_WidgetLayer value)? widgetLayer,
-  }) {
-    return osm?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(LayerConfig_Osm value)? osm,
-    TResult Function(LayerConfig_RasterTiles value)? rasterTiles,
-    TResult Function(LayerConfig_VectorTiles value)? vectorTiles,
-    TResult Function(LayerConfig_PolygonLayer value)? polygonLayer,
-    TResult Function(LayerConfig_PointLayer value)? pointLayer,
-    TResult Function(LayerConfig_WidgetLayer value)? widgetLayer,
-    required TResult orElse(),
-  }) {
-    if (osm != null) {
-      return osm(this);
-    }
-    return orElse();
-  }
 }
 
-abstract class LayerConfig_Osm extends LayerConfig {
-  const factory LayerConfig_Osm() = _$LayerConfig_OsmImpl;
-  const LayerConfig_Osm._() : super._();
+
 }
 
-/// @nodoc
-abstract class _$$LayerConfig_RasterTilesImplCopyWith<$Res> {
-  factory _$$LayerConfig_RasterTilesImplCopyWith(
-    _$LayerConfig_RasterTilesImpl value,
-    $Res Function(_$LayerConfig_RasterTilesImpl) then,
-  ) = __$$LayerConfig_RasterTilesImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({String urlTemplate, String? attribution});
-}
 
-/// @nodoc
-class __$$LayerConfig_RasterTilesImplCopyWithImpl<$Res>
-    extends _$LayerConfigCopyWithImpl<$Res, _$LayerConfig_RasterTilesImpl>
-    implements _$$LayerConfig_RasterTilesImplCopyWith<$Res> {
-  __$$LayerConfig_RasterTilesImplCopyWithImpl(
-    _$LayerConfig_RasterTilesImpl _value,
-    $Res Function(_$LayerConfig_RasterTilesImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of LayerConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? urlTemplate = null, Object? attribution = freezed}) {
-    return _then(
-      _$LayerConfig_RasterTilesImpl(
-        urlTemplate:
-            null == urlTemplate
-                ? _value.urlTemplate
-                : urlTemplate // ignore: cast_nullable_to_non_nullable
-                    as String,
-        attribution:
-            freezed == attribution
-                ? _value.attribution
-                : attribution // ignore: cast_nullable_to_non_nullable
-                    as String?,
-      ),
-    );
-  }
-}
 
 /// @nodoc
 
-class _$LayerConfig_RasterTilesImpl extends LayerConfig_RasterTiles {
-  const _$LayerConfig_RasterTilesImpl({
-    required this.urlTemplate,
-    this.attribution,
-  }) : super._();
 
-  @override
-  final String urlTemplate;
-  @override
-  final String? attribution;
+class LayerConfig_RasterTiles extends LayerConfig {
+  const LayerConfig_RasterTiles({required this.urlTemplate, this.attribution}): super._();
+  
 
-  @override
-  String toString() {
+ final  String urlTemplate;
+ final  String? attribution;
+
+/// Create a copy of LayerConfig
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$LayerConfig_RasterTilesCopyWith<LayerConfig_RasterTiles> get copyWith => _$LayerConfig_RasterTilesCopyWithImpl<LayerConfig_RasterTiles>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is LayerConfig_RasterTiles&&(identical(other.urlTemplate, urlTemplate) || other.urlTemplate == urlTemplate)&&(identical(other.attribution, attribution) || other.attribution == attribution));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,urlTemplate,attribution);
+}
+
+@override
+String toString() {
     return 'LayerConfig.rasterTiles(urlTemplate: $urlTemplate, attribution: $attribution)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$LayerConfig_RasterTilesImpl &&
-            (identical(other.urlTemplate, urlTemplate) ||
-                other.urlTemplate == urlTemplate) &&
-            (identical(other.attribution, attribution) ||
-                other.attribution == attribution));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, urlTemplate, attribution);
-
-  /// Create a copy of LayerConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$LayerConfig_RasterTilesImplCopyWith<_$LayerConfig_RasterTilesImpl>
-  get copyWith => __$$LayerConfig_RasterTilesImplCopyWithImpl<
-    _$LayerConfig_RasterTilesImpl
-  >(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() osm,
-    required TResult Function(String urlTemplate, String? attribution)
-    rasterTiles,
-    required TResult Function(
-      String urlTemplate,
-      String styleJson,
-      String? attribution,
-    )
-    vectorTiles,
-    required TResult Function(List<Polygon> features) polygonLayer,
-    required TResult Function(List<Point> features) pointLayer,
-    required TResult Function() widgetLayer,
-  }) {
-    return rasterTiles(urlTemplate, attribution);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? osm,
-    TResult? Function(String urlTemplate, String? attribution)? rasterTiles,
-    TResult? Function(
-      String urlTemplate,
-      String styleJson,
-      String? attribution,
-    )?
-    vectorTiles,
-    TResult? Function(List<Polygon> features)? polygonLayer,
-    TResult? Function(List<Point> features)? pointLayer,
-    TResult? Function()? widgetLayer,
-  }) {
-    return rasterTiles?.call(urlTemplate, attribution);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? osm,
-    TResult Function(String urlTemplate, String? attribution)? rasterTiles,
-    TResult Function(String urlTemplate, String styleJson, String? attribution)?
-    vectorTiles,
-    TResult Function(List<Polygon> features)? polygonLayer,
-    TResult Function(List<Point> features)? pointLayer,
-    TResult Function()? widgetLayer,
-    required TResult orElse(),
-  }) {
-    if (rasterTiles != null) {
-      return rasterTiles(urlTemplate, attribution);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(LayerConfig_Osm value) osm,
-    required TResult Function(LayerConfig_RasterTiles value) rasterTiles,
-    required TResult Function(LayerConfig_VectorTiles value) vectorTiles,
-    required TResult Function(LayerConfig_PolygonLayer value) polygonLayer,
-    required TResult Function(LayerConfig_PointLayer value) pointLayer,
-    required TResult Function(LayerConfig_WidgetLayer value) widgetLayer,
-  }) {
-    return rasterTiles(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(LayerConfig_Osm value)? osm,
-    TResult? Function(LayerConfig_RasterTiles value)? rasterTiles,
-    TResult? Function(LayerConfig_VectorTiles value)? vectorTiles,
-    TResult? Function(LayerConfig_PolygonLayer value)? polygonLayer,
-    TResult? Function(LayerConfig_PointLayer value)? pointLayer,
-    TResult? Function(LayerConfig_WidgetLayer value)? widgetLayer,
-  }) {
-    return rasterTiles?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(LayerConfig_Osm value)? osm,
-    TResult Function(LayerConfig_RasterTiles value)? rasterTiles,
-    TResult Function(LayerConfig_VectorTiles value)? vectorTiles,
-    TResult Function(LayerConfig_PolygonLayer value)? polygonLayer,
-    TResult Function(LayerConfig_PointLayer value)? pointLayer,
-    TResult Function(LayerConfig_WidgetLayer value)? widgetLayer,
-    required TResult orElse(),
-  }) {
-    if (rasterTiles != null) {
-      return rasterTiles(this);
-    }
-    return orElse();
-  }
 }
 
-abstract class LayerConfig_RasterTiles extends LayerConfig {
-  const factory LayerConfig_RasterTiles({
-    required final String urlTemplate,
-    final String? attribution,
-  }) = _$LayerConfig_RasterTilesImpl;
-  const LayerConfig_RasterTiles._() : super._();
 
-  String get urlTemplate;
-  String? get attribution;
-
-  /// Create a copy of LayerConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$LayerConfig_RasterTilesImplCopyWith<_$LayerConfig_RasterTilesImpl>
-  get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$LayerConfig_VectorTilesImplCopyWith<$Res> {
-  factory _$$LayerConfig_VectorTilesImplCopyWith(
-    _$LayerConfig_VectorTilesImpl value,
-    $Res Function(_$LayerConfig_VectorTilesImpl) then,
-  ) = __$$LayerConfig_VectorTilesImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({String urlTemplate, String styleJson, String? attribution});
+abstract mixin class $LayerConfig_RasterTilesCopyWith<$Res> implements $LayerConfigCopyWith<$Res> {
+  factory $LayerConfig_RasterTilesCopyWith(LayerConfig_RasterTiles value, $Res Function(LayerConfig_RasterTiles) _then) = _$LayerConfig_RasterTilesCopyWithImpl;
+@useResult
+$Res call({
+ String urlTemplate, String? attribution
+});
+
+
+
+
+}
+/// @nodoc
+class _$LayerConfig_RasterTilesCopyWithImpl<$Res>
+    implements $LayerConfig_RasterTilesCopyWith<$Res> {
+  _$LayerConfig_RasterTilesCopyWithImpl(this._self, this._then);
+
+  final LayerConfig_RasterTiles _self;
+  final $Res Function(LayerConfig_RasterTiles) _then;
+
+/// Create a copy of LayerConfig
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? urlTemplate = null,Object? attribution = freezed,}) {
+  return _then(LayerConfig_RasterTiles(
+urlTemplate: null == urlTemplate ? _self.urlTemplate : urlTemplate // ignore: cast_nullable_to_non_nullable
+as String,attribution: freezed == attribution ? _self.attribution : attribution // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
 }
 
-/// @nodoc
-class __$$LayerConfig_VectorTilesImplCopyWithImpl<$Res>
-    extends _$LayerConfigCopyWithImpl<$Res, _$LayerConfig_VectorTilesImpl>
-    implements _$$LayerConfig_VectorTilesImplCopyWith<$Res> {
-  __$$LayerConfig_VectorTilesImplCopyWithImpl(
-    _$LayerConfig_VectorTilesImpl _value,
-    $Res Function(_$LayerConfig_VectorTilesImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of LayerConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? urlTemplate = null,
-    Object? styleJson = null,
-    Object? attribution = freezed,
-  }) {
-    return _then(
-      _$LayerConfig_VectorTilesImpl(
-        urlTemplate:
-            null == urlTemplate
-                ? _value.urlTemplate
-                : urlTemplate // ignore: cast_nullable_to_non_nullable
-                    as String,
-        styleJson:
-            null == styleJson
-                ? _value.styleJson
-                : styleJson // ignore: cast_nullable_to_non_nullable
-                    as String,
-        attribution:
-            freezed == attribution
-                ? _value.attribution
-                : attribution // ignore: cast_nullable_to_non_nullable
-                    as String?,
-      ),
-    );
-  }
 }
 
 /// @nodoc
 
-class _$LayerConfig_VectorTilesImpl extends LayerConfig_VectorTiles {
-  const _$LayerConfig_VectorTilesImpl({
-    required this.urlTemplate,
-    required this.styleJson,
-    this.attribution,
-  }) : super._();
 
-  @override
-  final String urlTemplate;
-  @override
-  final String styleJson;
-  @override
-  final String? attribution;
+class LayerConfig_VectorTiles extends LayerConfig {
+  const LayerConfig_VectorTiles({required this.urlTemplate, required this.styleJson, this.attribution}): super._();
+  
 
-  @override
-  String toString() {
+ final  String urlTemplate;
+ final  String styleJson;
+ final  String? attribution;
+
+/// Create a copy of LayerConfig
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$LayerConfig_VectorTilesCopyWith<LayerConfig_VectorTiles> get copyWith => _$LayerConfig_VectorTilesCopyWithImpl<LayerConfig_VectorTiles>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is LayerConfig_VectorTiles&&(identical(other.urlTemplate, urlTemplate) || other.urlTemplate == urlTemplate)&&(identical(other.styleJson, styleJson) || other.styleJson == styleJson)&&(identical(other.attribution, attribution) || other.attribution == attribution));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,urlTemplate,styleJson,attribution);
+}
+
+@override
+String toString() {
     return 'LayerConfig.vectorTiles(urlTemplate: $urlTemplate, styleJson: $styleJson, attribution: $attribution)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$LayerConfig_VectorTilesImpl &&
-            (identical(other.urlTemplate, urlTemplate) ||
-                other.urlTemplate == urlTemplate) &&
-            (identical(other.styleJson, styleJson) ||
-                other.styleJson == styleJson) &&
-            (identical(other.attribution, attribution) ||
-                other.attribution == attribution));
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(runtimeType, urlTemplate, styleJson, attribution);
-
-  /// Create a copy of LayerConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$LayerConfig_VectorTilesImplCopyWith<_$LayerConfig_VectorTilesImpl>
-  get copyWith => __$$LayerConfig_VectorTilesImplCopyWithImpl<
-    _$LayerConfig_VectorTilesImpl
-  >(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() osm,
-    required TResult Function(String urlTemplate, String? attribution)
-    rasterTiles,
-    required TResult Function(
-      String urlTemplate,
-      String styleJson,
-      String? attribution,
-    )
-    vectorTiles,
-    required TResult Function(List<Polygon> features) polygonLayer,
-    required TResult Function(List<Point> features) pointLayer,
-    required TResult Function() widgetLayer,
-  }) {
-    return vectorTiles(urlTemplate, styleJson, attribution);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? osm,
-    TResult? Function(String urlTemplate, String? attribution)? rasterTiles,
-    TResult? Function(
-      String urlTemplate,
-      String styleJson,
-      String? attribution,
-    )?
-    vectorTiles,
-    TResult? Function(List<Polygon> features)? polygonLayer,
-    TResult? Function(List<Point> features)? pointLayer,
-    TResult? Function()? widgetLayer,
-  }) {
-    return vectorTiles?.call(urlTemplate, styleJson, attribution);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? osm,
-    TResult Function(String urlTemplate, String? attribution)? rasterTiles,
-    TResult Function(String urlTemplate, String styleJson, String? attribution)?
-    vectorTiles,
-    TResult Function(List<Polygon> features)? polygonLayer,
-    TResult Function(List<Point> features)? pointLayer,
-    TResult Function()? widgetLayer,
-    required TResult orElse(),
-  }) {
-    if (vectorTiles != null) {
-      return vectorTiles(urlTemplate, styleJson, attribution);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(LayerConfig_Osm value) osm,
-    required TResult Function(LayerConfig_RasterTiles value) rasterTiles,
-    required TResult Function(LayerConfig_VectorTiles value) vectorTiles,
-    required TResult Function(LayerConfig_PolygonLayer value) polygonLayer,
-    required TResult Function(LayerConfig_PointLayer value) pointLayer,
-    required TResult Function(LayerConfig_WidgetLayer value) widgetLayer,
-  }) {
-    return vectorTiles(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(LayerConfig_Osm value)? osm,
-    TResult? Function(LayerConfig_RasterTiles value)? rasterTiles,
-    TResult? Function(LayerConfig_VectorTiles value)? vectorTiles,
-    TResult? Function(LayerConfig_PolygonLayer value)? polygonLayer,
-    TResult? Function(LayerConfig_PointLayer value)? pointLayer,
-    TResult? Function(LayerConfig_WidgetLayer value)? widgetLayer,
-  }) {
-    return vectorTiles?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(LayerConfig_Osm value)? osm,
-    TResult Function(LayerConfig_RasterTiles value)? rasterTiles,
-    TResult Function(LayerConfig_VectorTiles value)? vectorTiles,
-    TResult Function(LayerConfig_PolygonLayer value)? polygonLayer,
-    TResult Function(LayerConfig_PointLayer value)? pointLayer,
-    TResult Function(LayerConfig_WidgetLayer value)? widgetLayer,
-    required TResult orElse(),
-  }) {
-    if (vectorTiles != null) {
-      return vectorTiles(this);
-    }
-    return orElse();
-  }
 }
 
-abstract class LayerConfig_VectorTiles extends LayerConfig {
-  const factory LayerConfig_VectorTiles({
-    required final String urlTemplate,
-    required final String styleJson,
-    final String? attribution,
-  }) = _$LayerConfig_VectorTilesImpl;
-  const LayerConfig_VectorTiles._() : super._();
 
-  String get urlTemplate;
-  String get styleJson;
-  String? get attribution;
-
-  /// Create a copy of LayerConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$LayerConfig_VectorTilesImplCopyWith<_$LayerConfig_VectorTilesImpl>
-  get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$LayerConfig_PolygonLayerImplCopyWith<$Res> {
-  factory _$$LayerConfig_PolygonLayerImplCopyWith(
-    _$LayerConfig_PolygonLayerImpl value,
-    $Res Function(_$LayerConfig_PolygonLayerImpl) then,
-  ) = __$$LayerConfig_PolygonLayerImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({List<Polygon> features});
+abstract mixin class $LayerConfig_VectorTilesCopyWith<$Res> implements $LayerConfigCopyWith<$Res> {
+  factory $LayerConfig_VectorTilesCopyWith(LayerConfig_VectorTiles value, $Res Function(LayerConfig_VectorTiles) _then) = _$LayerConfig_VectorTilesCopyWithImpl;
+@useResult
+$Res call({
+ String urlTemplate, String styleJson, String? attribution
+});
+
+
+
+
+}
+/// @nodoc
+class _$LayerConfig_VectorTilesCopyWithImpl<$Res>
+    implements $LayerConfig_VectorTilesCopyWith<$Res> {
+  _$LayerConfig_VectorTilesCopyWithImpl(this._self, this._then);
+
+  final LayerConfig_VectorTiles _self;
+  final $Res Function(LayerConfig_VectorTiles) _then;
+
+/// Create a copy of LayerConfig
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? urlTemplate = null,Object? styleJson = null,Object? attribution = freezed,}) {
+  return _then(LayerConfig_VectorTiles(
+urlTemplate: null == urlTemplate ? _self.urlTemplate : urlTemplate // ignore: cast_nullable_to_non_nullable
+as String,styleJson: null == styleJson ? _self.styleJson : styleJson // ignore: cast_nullable_to_non_nullable
+as String,attribution: freezed == attribution ? _self.attribution : attribution // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
 }
 
-/// @nodoc
-class __$$LayerConfig_PolygonLayerImplCopyWithImpl<$Res>
-    extends _$LayerConfigCopyWithImpl<$Res, _$LayerConfig_PolygonLayerImpl>
-    implements _$$LayerConfig_PolygonLayerImplCopyWith<$Res> {
-  __$$LayerConfig_PolygonLayerImplCopyWithImpl(
-    _$LayerConfig_PolygonLayerImpl _value,
-    $Res Function(_$LayerConfig_PolygonLayerImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of LayerConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? features = null}) {
-    return _then(
-      _$LayerConfig_PolygonLayerImpl(
-        features:
-            null == features
-                ? _value._features
-                : features // ignore: cast_nullable_to_non_nullable
-                    as List<Polygon>,
-      ),
-    );
-  }
 }
 
 /// @nodoc
 
-class _$LayerConfig_PolygonLayerImpl extends LayerConfig_PolygonLayer {
-  const _$LayerConfig_PolygonLayerImpl({required final List<Polygon> features})
-    : _features = features,
-      super._();
 
-  /// Stores the Polygon features to be rendered
-  final List<Polygon> _features;
+class LayerConfig_PolygonLayer extends LayerConfig {
+  const LayerConfig_PolygonLayer({required  List<Polygon> features}): _features = features,super._();
+  
 
-  /// Stores the Polygon features to be rendered
-  @override
-  List<Polygon> get features {
-    if (_features is EqualUnmodifiableListView) return _features;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_features);
-  }
+/// Stores the Polygon features to be rendered
+ final  List<Polygon> _features;
+/// Stores the Polygon features to be rendered
+ List<Polygon> get features {
+  if (_features is EqualUnmodifiableListView) return _features;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_features);
+}
 
-  @override
-  String toString() {
+
+/// Create a copy of LayerConfig
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$LayerConfig_PolygonLayerCopyWith<LayerConfig_PolygonLayer> get copyWith => _$LayerConfig_PolygonLayerCopyWithImpl<LayerConfig_PolygonLayer>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is LayerConfig_PolygonLayer&&const DeepCollectionEquality().equals(other.features, _features));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_features));
+}
+
+@override
+String toString() {
     return 'LayerConfig.polygonLayer(features: $features)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$LayerConfig_PolygonLayerImpl &&
-            const DeepCollectionEquality().equals(other._features, _features));
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_features));
-
-  /// Create a copy of LayerConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$LayerConfig_PolygonLayerImplCopyWith<_$LayerConfig_PolygonLayerImpl>
-  get copyWith => __$$LayerConfig_PolygonLayerImplCopyWithImpl<
-    _$LayerConfig_PolygonLayerImpl
-  >(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() osm,
-    required TResult Function(String urlTemplate, String? attribution)
-    rasterTiles,
-    required TResult Function(
-      String urlTemplate,
-      String styleJson,
-      String? attribution,
-    )
-    vectorTiles,
-    required TResult Function(List<Polygon> features) polygonLayer,
-    required TResult Function(List<Point> features) pointLayer,
-    required TResult Function() widgetLayer,
-  }) {
-    return polygonLayer(features);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? osm,
-    TResult? Function(String urlTemplate, String? attribution)? rasterTiles,
-    TResult? Function(
-      String urlTemplate,
-      String styleJson,
-      String? attribution,
-    )?
-    vectorTiles,
-    TResult? Function(List<Polygon> features)? polygonLayer,
-    TResult? Function(List<Point> features)? pointLayer,
-    TResult? Function()? widgetLayer,
-  }) {
-    return polygonLayer?.call(features);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? osm,
-    TResult Function(String urlTemplate, String? attribution)? rasterTiles,
-    TResult Function(String urlTemplate, String styleJson, String? attribution)?
-    vectorTiles,
-    TResult Function(List<Polygon> features)? polygonLayer,
-    TResult Function(List<Point> features)? pointLayer,
-    TResult Function()? widgetLayer,
-    required TResult orElse(),
-  }) {
-    if (polygonLayer != null) {
-      return polygonLayer(features);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(LayerConfig_Osm value) osm,
-    required TResult Function(LayerConfig_RasterTiles value) rasterTiles,
-    required TResult Function(LayerConfig_VectorTiles value) vectorTiles,
-    required TResult Function(LayerConfig_PolygonLayer value) polygonLayer,
-    required TResult Function(LayerConfig_PointLayer value) pointLayer,
-    required TResult Function(LayerConfig_WidgetLayer value) widgetLayer,
-  }) {
-    return polygonLayer(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(LayerConfig_Osm value)? osm,
-    TResult? Function(LayerConfig_RasterTiles value)? rasterTiles,
-    TResult? Function(LayerConfig_VectorTiles value)? vectorTiles,
-    TResult? Function(LayerConfig_PolygonLayer value)? polygonLayer,
-    TResult? Function(LayerConfig_PointLayer value)? pointLayer,
-    TResult? Function(LayerConfig_WidgetLayer value)? widgetLayer,
-  }) {
-    return polygonLayer?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(LayerConfig_Osm value)? osm,
-    TResult Function(LayerConfig_RasterTiles value)? rasterTiles,
-    TResult Function(LayerConfig_VectorTiles value)? vectorTiles,
-    TResult Function(LayerConfig_PolygonLayer value)? polygonLayer,
-    TResult Function(LayerConfig_PointLayer value)? pointLayer,
-    TResult Function(LayerConfig_WidgetLayer value)? widgetLayer,
-    required TResult orElse(),
-  }) {
-    if (polygonLayer != null) {
-      return polygonLayer(this);
-    }
-    return orElse();
-  }
 }
 
-abstract class LayerConfig_PolygonLayer extends LayerConfig {
-  const factory LayerConfig_PolygonLayer({
-    required final List<Polygon> features,
-  }) = _$LayerConfig_PolygonLayerImpl;
-  const LayerConfig_PolygonLayer._() : super._();
 
-  /// Stores the Polygon features to be rendered
-  List<Polygon> get features;
-
-  /// Create a copy of LayerConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$LayerConfig_PolygonLayerImplCopyWith<_$LayerConfig_PolygonLayerImpl>
-  get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$LayerConfig_PointLayerImplCopyWith<$Res> {
-  factory _$$LayerConfig_PointLayerImplCopyWith(
-    _$LayerConfig_PointLayerImpl value,
-    $Res Function(_$LayerConfig_PointLayerImpl) then,
-  ) = __$$LayerConfig_PointLayerImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({List<Point> features});
+abstract mixin class $LayerConfig_PolygonLayerCopyWith<$Res> implements $LayerConfigCopyWith<$Res> {
+  factory $LayerConfig_PolygonLayerCopyWith(LayerConfig_PolygonLayer value, $Res Function(LayerConfig_PolygonLayer) _then) = _$LayerConfig_PolygonLayerCopyWithImpl;
+@useResult
+$Res call({
+ List<Polygon> features
+});
+
+
+
+
+}
+/// @nodoc
+class _$LayerConfig_PolygonLayerCopyWithImpl<$Res>
+    implements $LayerConfig_PolygonLayerCopyWith<$Res> {
+  _$LayerConfig_PolygonLayerCopyWithImpl(this._self, this._then);
+
+  final LayerConfig_PolygonLayer _self;
+  final $Res Function(LayerConfig_PolygonLayer) _then;
+
+/// Create a copy of LayerConfig
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? features = null,}) {
+  return _then(LayerConfig_PolygonLayer(
+features: null == features ? _self._features : features // ignore: cast_nullable_to_non_nullable
+as List<Polygon>,
+  ));
 }
 
-/// @nodoc
-class __$$LayerConfig_PointLayerImplCopyWithImpl<$Res>
-    extends _$LayerConfigCopyWithImpl<$Res, _$LayerConfig_PointLayerImpl>
-    implements _$$LayerConfig_PointLayerImplCopyWith<$Res> {
-  __$$LayerConfig_PointLayerImplCopyWithImpl(
-    _$LayerConfig_PointLayerImpl _value,
-    $Res Function(_$LayerConfig_PointLayerImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of LayerConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? features = null}) {
-    return _then(
-      _$LayerConfig_PointLayerImpl(
-        features:
-            null == features
-                ? _value._features
-                : features // ignore: cast_nullable_to_non_nullable
-                    as List<Point>,
-      ),
-    );
-  }
 }
 
 /// @nodoc
 
-class _$LayerConfig_PointLayerImpl extends LayerConfig_PointLayer {
-  const _$LayerConfig_PointLayerImpl({required final List<Point> features})
-    : _features = features,
-      super._();
 
-  /// Stores the Point features to be rendered
-  final List<Point> _features;
+class LayerConfig_PointLayer extends LayerConfig {
+  const LayerConfig_PointLayer({required  List<Point> features}): _features = features,super._();
+  
 
-  /// Stores the Point features to be rendered
-  @override
-  List<Point> get features {
-    if (_features is EqualUnmodifiableListView) return _features;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_features);
-  }
+/// Stores the Point features to be rendered
+ final  List<Point> _features;
+/// Stores the Point features to be rendered
+ List<Point> get features {
+  if (_features is EqualUnmodifiableListView) return _features;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_features);
+}
 
-  @override
-  String toString() {
+
+/// Create a copy of LayerConfig
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$LayerConfig_PointLayerCopyWith<LayerConfig_PointLayer> get copyWith => _$LayerConfig_PointLayerCopyWithImpl<LayerConfig_PointLayer>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is LayerConfig_PointLayer&&const DeepCollectionEquality().equals(other.features, _features));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_features));
+}
+
+@override
+String toString() {
     return 'LayerConfig.pointLayer(features: $features)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$LayerConfig_PointLayerImpl &&
-            const DeepCollectionEquality().equals(other._features, _features));
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_features));
-
-  /// Create a copy of LayerConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$LayerConfig_PointLayerImplCopyWith<_$LayerConfig_PointLayerImpl>
-  get copyWith =>
-      __$$LayerConfig_PointLayerImplCopyWithImpl<_$LayerConfig_PointLayerImpl>(
-        this,
-        _$identity,
-      );
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() osm,
-    required TResult Function(String urlTemplate, String? attribution)
-    rasterTiles,
-    required TResult Function(
-      String urlTemplate,
-      String styleJson,
-      String? attribution,
-    )
-    vectorTiles,
-    required TResult Function(List<Polygon> features) polygonLayer,
-    required TResult Function(List<Point> features) pointLayer,
-    required TResult Function() widgetLayer,
-  }) {
-    return pointLayer(features);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? osm,
-    TResult? Function(String urlTemplate, String? attribution)? rasterTiles,
-    TResult? Function(
-      String urlTemplate,
-      String styleJson,
-      String? attribution,
-    )?
-    vectorTiles,
-    TResult? Function(List<Polygon> features)? polygonLayer,
-    TResult? Function(List<Point> features)? pointLayer,
-    TResult? Function()? widgetLayer,
-  }) {
-    return pointLayer?.call(features);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? osm,
-    TResult Function(String urlTemplate, String? attribution)? rasterTiles,
-    TResult Function(String urlTemplate, String styleJson, String? attribution)?
-    vectorTiles,
-    TResult Function(List<Polygon> features)? polygonLayer,
-    TResult Function(List<Point> features)? pointLayer,
-    TResult Function()? widgetLayer,
-    required TResult orElse(),
-  }) {
-    if (pointLayer != null) {
-      return pointLayer(features);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(LayerConfig_Osm value) osm,
-    required TResult Function(LayerConfig_RasterTiles value) rasterTiles,
-    required TResult Function(LayerConfig_VectorTiles value) vectorTiles,
-    required TResult Function(LayerConfig_PolygonLayer value) polygonLayer,
-    required TResult Function(LayerConfig_PointLayer value) pointLayer,
-    required TResult Function(LayerConfig_WidgetLayer value) widgetLayer,
-  }) {
-    return pointLayer(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(LayerConfig_Osm value)? osm,
-    TResult? Function(LayerConfig_RasterTiles value)? rasterTiles,
-    TResult? Function(LayerConfig_VectorTiles value)? vectorTiles,
-    TResult? Function(LayerConfig_PolygonLayer value)? polygonLayer,
-    TResult? Function(LayerConfig_PointLayer value)? pointLayer,
-    TResult? Function(LayerConfig_WidgetLayer value)? widgetLayer,
-  }) {
-    return pointLayer?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(LayerConfig_Osm value)? osm,
-    TResult Function(LayerConfig_RasterTiles value)? rasterTiles,
-    TResult Function(LayerConfig_VectorTiles value)? vectorTiles,
-    TResult Function(LayerConfig_PolygonLayer value)? polygonLayer,
-    TResult Function(LayerConfig_PointLayer value)? pointLayer,
-    TResult Function(LayerConfig_WidgetLayer value)? widgetLayer,
-    required TResult orElse(),
-  }) {
-    if (pointLayer != null) {
-      return pointLayer(this);
-    }
-    return orElse();
-  }
 }
 
-abstract class LayerConfig_PointLayer extends LayerConfig {
-  const factory LayerConfig_PointLayer({required final List<Point> features}) =
-      _$LayerConfig_PointLayerImpl;
-  const LayerConfig_PointLayer._() : super._();
 
-  /// Stores the Point features to be rendered
-  List<Point> get features;
-
-  /// Create a copy of LayerConfig
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$LayerConfig_PointLayerImplCopyWith<_$LayerConfig_PointLayerImpl>
-  get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$LayerConfig_WidgetLayerImplCopyWith<$Res> {
-  factory _$$LayerConfig_WidgetLayerImplCopyWith(
-    _$LayerConfig_WidgetLayerImpl value,
-    $Res Function(_$LayerConfig_WidgetLayerImpl) then,
-  ) = __$$LayerConfig_WidgetLayerImplCopyWithImpl<$Res>;
+abstract mixin class $LayerConfig_PointLayerCopyWith<$Res> implements $LayerConfigCopyWith<$Res> {
+  factory $LayerConfig_PointLayerCopyWith(LayerConfig_PointLayer value, $Res Function(LayerConfig_PointLayer) _then) = _$LayerConfig_PointLayerCopyWithImpl;
+@useResult
+$Res call({
+ List<Point> features
+});
+
+
+
+
+}
+/// @nodoc
+class _$LayerConfig_PointLayerCopyWithImpl<$Res>
+    implements $LayerConfig_PointLayerCopyWith<$Res> {
+  _$LayerConfig_PointLayerCopyWithImpl(this._self, this._then);
+
+  final LayerConfig_PointLayer _self;
+  final $Res Function(LayerConfig_PointLayer) _then;
+
+/// Create a copy of LayerConfig
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? features = null,}) {
+  return _then(LayerConfig_PointLayer(
+features: null == features ? _self._features : features // ignore: cast_nullable_to_non_nullable
+as List<Point>,
+  ));
 }
 
-/// @nodoc
-class __$$LayerConfig_WidgetLayerImplCopyWithImpl<$Res>
-    extends _$LayerConfigCopyWithImpl<$Res, _$LayerConfig_WidgetLayerImpl>
-    implements _$$LayerConfig_WidgetLayerImplCopyWith<$Res> {
-  __$$LayerConfig_WidgetLayerImplCopyWithImpl(
-    _$LayerConfig_WidgetLayerImpl _value,
-    $Res Function(_$LayerConfig_WidgetLayerImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of LayerConfig
-  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
 
-class _$LayerConfig_WidgetLayerImpl extends LayerConfig_WidgetLayer {
-  const _$LayerConfig_WidgetLayerImpl() : super._();
 
-  @override
-  String toString() {
+class LayerConfig_WidgetLayer extends LayerConfig {
+  const LayerConfig_WidgetLayer(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is LayerConfig_WidgetLayer);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
     return 'LayerConfig.widgetLayer()';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$LayerConfig_WidgetLayerImpl);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() osm,
-    required TResult Function(String urlTemplate, String? attribution)
-    rasterTiles,
-    required TResult Function(
-      String urlTemplate,
-      String styleJson,
-      String? attribution,
-    )
-    vectorTiles,
-    required TResult Function(List<Polygon> features) polygonLayer,
-    required TResult Function(List<Point> features) pointLayer,
-    required TResult Function() widgetLayer,
-  }) {
-    return widgetLayer();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? osm,
-    TResult? Function(String urlTemplate, String? attribution)? rasterTiles,
-    TResult? Function(
-      String urlTemplate,
-      String styleJson,
-      String? attribution,
-    )?
-    vectorTiles,
-    TResult? Function(List<Polygon> features)? polygonLayer,
-    TResult? Function(List<Point> features)? pointLayer,
-    TResult? Function()? widgetLayer,
-  }) {
-    return widgetLayer?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? osm,
-    TResult Function(String urlTemplate, String? attribution)? rasterTiles,
-    TResult Function(String urlTemplate, String styleJson, String? attribution)?
-    vectorTiles,
-    TResult Function(List<Polygon> features)? polygonLayer,
-    TResult Function(List<Point> features)? pointLayer,
-    TResult Function()? widgetLayer,
-    required TResult orElse(),
-  }) {
-    if (widgetLayer != null) {
-      return widgetLayer();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(LayerConfig_Osm value) osm,
-    required TResult Function(LayerConfig_RasterTiles value) rasterTiles,
-    required TResult Function(LayerConfig_VectorTiles value) vectorTiles,
-    required TResult Function(LayerConfig_PolygonLayer value) polygonLayer,
-    required TResult Function(LayerConfig_PointLayer value) pointLayer,
-    required TResult Function(LayerConfig_WidgetLayer value) widgetLayer,
-  }) {
-    return widgetLayer(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(LayerConfig_Osm value)? osm,
-    TResult? Function(LayerConfig_RasterTiles value)? rasterTiles,
-    TResult? Function(LayerConfig_VectorTiles value)? vectorTiles,
-    TResult? Function(LayerConfig_PolygonLayer value)? polygonLayer,
-    TResult? Function(LayerConfig_PointLayer value)? pointLayer,
-    TResult? Function(LayerConfig_WidgetLayer value)? widgetLayer,
-  }) {
-    return widgetLayer?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(LayerConfig_Osm value)? osm,
-    TResult Function(LayerConfig_RasterTiles value)? rasterTiles,
-    TResult Function(LayerConfig_VectorTiles value)? vectorTiles,
-    TResult Function(LayerConfig_PolygonLayer value)? polygonLayer,
-    TResult Function(LayerConfig_PointLayer value)? pointLayer,
-    TResult Function(LayerConfig_WidgetLayer value)? widgetLayer,
-    required TResult orElse(),
-  }) {
-    if (widgetLayer != null) {
-      return widgetLayer(this);
-    }
-    return orElse();
-  }
 }
 
-abstract class LayerConfig_WidgetLayer extends LayerConfig {
-  const factory LayerConfig_WidgetLayer() = _$LayerConfig_WidgetLayerImpl;
-  const LayerConfig_WidgetLayer._() : super._();
+
 }
+
+
+
 
 /// @nodoc
 mixin _$UserEvent {
-  Object get field0 => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonPressed,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonReleased,
-    required TResult Function(MouseButton field0, MouseEvent field1) click,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    doubleClick,
-    required TResult Function(MouseEvent field0) pointerMoved,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    dragStarted,
-    required TResult Function(
-      MouseButton field0,
-      Vector2 field1,
-      MouseEvent field2,
-    )
-    drag,
-    required TResult Function(MouseButton field0, MouseEvent field1) dragEnded,
-    required TResult Function(double field0, MouseEvent field1) scroll,
-    required TResult Function(double field0, Point2 field1) zoom,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult? Function(MouseButton field0, MouseEvent field1)? click,
-    TResult? Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult? Function(MouseEvent field0)? pointerMoved,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult? Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult? Function(double field0, MouseEvent field1)? scroll,
-    TResult? Function(double field0, Point2 field1)? zoom,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult Function(MouseButton field0, MouseEvent field1)? click,
-    TResult Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult Function(MouseEvent field0)? pointerMoved,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult Function(double field0, MouseEvent field1)? scroll,
-    TResult Function(double field0, Point2 field1)? zoom,
-    required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(UserEvent_ButtonPressed value) buttonPressed,
-    required TResult Function(UserEvent_ButtonReleased value) buttonReleased,
-    required TResult Function(UserEvent_Click value) click,
-    required TResult Function(UserEvent_DoubleClick value) doubleClick,
-    required TResult Function(UserEvent_PointerMoved value) pointerMoved,
-    required TResult Function(UserEvent_DragStarted value) dragStarted,
-    required TResult Function(UserEvent_Drag value) drag,
-    required TResult Function(UserEvent_DragEnded value) dragEnded,
-    required TResult Function(UserEvent_Scroll value) scroll,
-    required TResult Function(UserEvent_Zoom value) zoom,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult? Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult? Function(UserEvent_Click value)? click,
-    TResult? Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult? Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult? Function(UserEvent_DragStarted value)? dragStarted,
-    TResult? Function(UserEvent_Drag value)? drag,
-    TResult? Function(UserEvent_DragEnded value)? dragEnded,
-    TResult? Function(UserEvent_Scroll value)? scroll,
-    TResult? Function(UserEvent_Zoom value)? zoom,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult Function(UserEvent_Click value)? click,
-    TResult Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult Function(UserEvent_DragStarted value)? dragStarted,
-    TResult Function(UserEvent_Drag value)? drag,
-    TResult Function(UserEvent_DragEnded value)? dragEnded,
-    TResult Function(UserEvent_Scroll value)? scroll,
-    TResult Function(UserEvent_Zoom value)? zoom,
-    required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+
+ Object get field0;
+
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as UserEvent;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEvent&&const DeepCollectionEquality().equals(other.field0, _this.field0));
+}
+
+
+@override
+int get hashCode {
+  final _this = this as UserEvent;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.field0));
+}
+
+@override
+String toString() {
+  final _this = this as UserEvent;
+  return 'UserEvent(field0: ${_this.field0})';
+}
+
+
 }
 
 /// @nodoc
-abstract class $UserEventCopyWith<$Res> {
-  factory $UserEventCopyWith(UserEvent value, $Res Function(UserEvent) then) =
-      _$UserEventCopyWithImpl<$Res, UserEvent>;
+class $UserEventCopyWith<$Res>  {
+$UserEventCopyWith(UserEvent _, $Res Function(UserEvent) __);
+}
+
+
+/// Adds pattern-matching-related methods to [UserEvent].
+extension UserEventPatterns on UserEvent {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( UserEvent_ButtonPressed value)?  buttonPressed,TResult Function( UserEvent_ButtonReleased value)?  buttonReleased,TResult Function( UserEvent_Click value)?  click,TResult Function( UserEvent_DoubleClick value)?  doubleClick,TResult Function( UserEvent_PointerMoved value)?  pointerMoved,TResult Function( UserEvent_DragStarted value)?  dragStarted,TResult Function( UserEvent_Drag value)?  drag,TResult Function( UserEvent_DragEnded value)?  dragEnded,TResult Function( UserEvent_Scroll value)?  scroll,TResult Function( UserEvent_Zoom value)?  zoom,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case UserEvent_ButtonPressed() when buttonPressed != null:
+return buttonPressed(_that);case UserEvent_ButtonReleased() when buttonReleased != null:
+return buttonReleased(_that);case UserEvent_Click() when click != null:
+return click(_that);case UserEvent_DoubleClick() when doubleClick != null:
+return doubleClick(_that);case UserEvent_PointerMoved() when pointerMoved != null:
+return pointerMoved(_that);case UserEvent_DragStarted() when dragStarted != null:
+return dragStarted(_that);case UserEvent_Drag() when drag != null:
+return drag(_that);case UserEvent_DragEnded() when dragEnded != null:
+return dragEnded(_that);case UserEvent_Scroll() when scroll != null:
+return scroll(_that);case UserEvent_Zoom() when zoom != null:
+return zoom(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( UserEvent_ButtonPressed value)  buttonPressed,required TResult Function( UserEvent_ButtonReleased value)  buttonReleased,required TResult Function( UserEvent_Click value)  click,required TResult Function( UserEvent_DoubleClick value)  doubleClick,required TResult Function( UserEvent_PointerMoved value)  pointerMoved,required TResult Function( UserEvent_DragStarted value)  dragStarted,required TResult Function( UserEvent_Drag value)  drag,required TResult Function( UserEvent_DragEnded value)  dragEnded,required TResult Function( UserEvent_Scroll value)  scroll,required TResult Function( UserEvent_Zoom value)  zoom,}){
+final _that = this;
+switch (_that) {
+case UserEvent_ButtonPressed():
+return buttonPressed(_that);case UserEvent_ButtonReleased():
+return buttonReleased(_that);case UserEvent_Click():
+return click(_that);case UserEvent_DoubleClick():
+return doubleClick(_that);case UserEvent_PointerMoved():
+return pointerMoved(_that);case UserEvent_DragStarted():
+return dragStarted(_that);case UserEvent_Drag():
+return drag(_that);case UserEvent_DragEnded():
+return dragEnded(_that);case UserEvent_Scroll():
+return scroll(_that);case UserEvent_Zoom():
+return zoom(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( UserEvent_ButtonPressed value)?  buttonPressed,TResult? Function( UserEvent_ButtonReleased value)?  buttonReleased,TResult? Function( UserEvent_Click value)?  click,TResult? Function( UserEvent_DoubleClick value)?  doubleClick,TResult? Function( UserEvent_PointerMoved value)?  pointerMoved,TResult? Function( UserEvent_DragStarted value)?  dragStarted,TResult? Function( UserEvent_Drag value)?  drag,TResult? Function( UserEvent_DragEnded value)?  dragEnded,TResult? Function( UserEvent_Scroll value)?  scroll,TResult? Function( UserEvent_Zoom value)?  zoom,}){
+final _that = this;
+switch (_that) {
+case UserEvent_ButtonPressed() when buttonPressed != null:
+return buttonPressed(_that);case UserEvent_ButtonReleased() when buttonReleased != null:
+return buttonReleased(_that);case UserEvent_Click() when click != null:
+return click(_that);case UserEvent_DoubleClick() when doubleClick != null:
+return doubleClick(_that);case UserEvent_PointerMoved() when pointerMoved != null:
+return pointerMoved(_that);case UserEvent_DragStarted() when dragStarted != null:
+return dragStarted(_that);case UserEvent_Drag() when drag != null:
+return drag(_that);case UserEvent_DragEnded() when dragEnded != null:
+return dragEnded(_that);case UserEvent_Scroll() when scroll != null:
+return scroll(_that);case UserEvent_Zoom() when zoom != null:
+return zoom(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( MouseButton field0,  MouseEvent field1)?  buttonPressed,TResult Function( MouseButton field0,  MouseEvent field1)?  buttonReleased,TResult Function( MouseButton field0,  MouseEvent field1)?  click,TResult Function( MouseButton field0,  MouseEvent field1)?  doubleClick,TResult Function( MouseEvent field0)?  pointerMoved,TResult Function( MouseButton field0,  MouseEvent field1)?  dragStarted,TResult Function( MouseButton field0,  Vector2 field1,  MouseEvent field2)?  drag,TResult Function( MouseButton field0,  MouseEvent field1)?  dragEnded,TResult Function( double field0,  MouseEvent field1)?  scroll,TResult Function( double field0,  Point2 field1)?  zoom,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case UserEvent_ButtonPressed() when buttonPressed != null:
+return buttonPressed(_that.field0,_that.field1);case UserEvent_ButtonReleased() when buttonReleased != null:
+return buttonReleased(_that.field0,_that.field1);case UserEvent_Click() when click != null:
+return click(_that.field0,_that.field1);case UserEvent_DoubleClick() when doubleClick != null:
+return doubleClick(_that.field0,_that.field1);case UserEvent_PointerMoved() when pointerMoved != null:
+return pointerMoved(_that.field0);case UserEvent_DragStarted() when dragStarted != null:
+return dragStarted(_that.field0,_that.field1);case UserEvent_Drag() when drag != null:
+return drag(_that.field0,_that.field1,_that.field2);case UserEvent_DragEnded() when dragEnded != null:
+return dragEnded(_that.field0,_that.field1);case UserEvent_Scroll() when scroll != null:
+return scroll(_that.field0,_that.field1);case UserEvent_Zoom() when zoom != null:
+return zoom(_that.field0,_that.field1);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( MouseButton field0,  MouseEvent field1)  buttonPressed,required TResult Function( MouseButton field0,  MouseEvent field1)  buttonReleased,required TResult Function( MouseButton field0,  MouseEvent field1)  click,required TResult Function( MouseButton field0,  MouseEvent field1)  doubleClick,required TResult Function( MouseEvent field0)  pointerMoved,required TResult Function( MouseButton field0,  MouseEvent field1)  dragStarted,required TResult Function( MouseButton field0,  Vector2 field1,  MouseEvent field2)  drag,required TResult Function( MouseButton field0,  MouseEvent field1)  dragEnded,required TResult Function( double field0,  MouseEvent field1)  scroll,required TResult Function( double field0,  Point2 field1)  zoom,}) {final _that = this;
+switch (_that) {
+case UserEvent_ButtonPressed():
+return buttonPressed(_that.field0,_that.field1);case UserEvent_ButtonReleased():
+return buttonReleased(_that.field0,_that.field1);case UserEvent_Click():
+return click(_that.field0,_that.field1);case UserEvent_DoubleClick():
+return doubleClick(_that.field0,_that.field1);case UserEvent_PointerMoved():
+return pointerMoved(_that.field0);case UserEvent_DragStarted():
+return dragStarted(_that.field0,_that.field1);case UserEvent_Drag():
+return drag(_that.field0,_that.field1,_that.field2);case UserEvent_DragEnded():
+return dragEnded(_that.field0,_that.field1);case UserEvent_Scroll():
+return scroll(_that.field0,_that.field1);case UserEvent_Zoom():
+return zoom(_that.field0,_that.field1);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( MouseButton field0,  MouseEvent field1)?  buttonPressed,TResult? Function( MouseButton field0,  MouseEvent field1)?  buttonReleased,TResult? Function( MouseButton field0,  MouseEvent field1)?  click,TResult? Function( MouseButton field0,  MouseEvent field1)?  doubleClick,TResult? Function( MouseEvent field0)?  pointerMoved,TResult? Function( MouseButton field0,  MouseEvent field1)?  dragStarted,TResult? Function( MouseButton field0,  Vector2 field1,  MouseEvent field2)?  drag,TResult? Function( MouseButton field0,  MouseEvent field1)?  dragEnded,TResult? Function( double field0,  MouseEvent field1)?  scroll,TResult? Function( double field0,  Point2 field1)?  zoom,}) {final _that = this;
+switch (_that) {
+case UserEvent_ButtonPressed() when buttonPressed != null:
+return buttonPressed(_that.field0,_that.field1);case UserEvent_ButtonReleased() when buttonReleased != null:
+return buttonReleased(_that.field0,_that.field1);case UserEvent_Click() when click != null:
+return click(_that.field0,_that.field1);case UserEvent_DoubleClick() when doubleClick != null:
+return doubleClick(_that.field0,_that.field1);case UserEvent_PointerMoved() when pointerMoved != null:
+return pointerMoved(_that.field0);case UserEvent_DragStarted() when dragStarted != null:
+return dragStarted(_that.field0,_that.field1);case UserEvent_Drag() when drag != null:
+return drag(_that.field0,_that.field1,_that.field2);case UserEvent_DragEnded() when dragEnded != null:
+return dragEnded(_that.field0,_that.field1);case UserEvent_Scroll() when scroll != null:
+return scroll(_that.field0,_that.field1);case UserEvent_Zoom() when zoom != null:
+return zoom(_that.field0,_that.field1);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
-class _$UserEventCopyWithImpl<$Res, $Val extends UserEvent>
-    implements $UserEventCopyWith<$Res> {
-  _$UserEventCopyWithImpl(this._value, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
 
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
+class UserEvent_ButtonPressed extends UserEvent {
+  const UserEvent_ButtonPressed(this.field0, this.field1): super._();
+  
+
+@override final  MouseButton field0;
+ final  MouseEvent field1;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UserEvent_ButtonPressedCopyWith<UserEvent_ButtonPressed> get copyWith => _$UserEvent_ButtonPressedCopyWithImpl<UserEvent_ButtonPressed>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEvent_ButtonPressed&&(identical(other.field0, field0) || other.field0 == field0)&&(identical(other.field1, field1) || other.field1 == field1));
 }
 
-/// @nodoc
-abstract class _$$UserEvent_ButtonPressedImplCopyWith<$Res> {
-  factory _$$UserEvent_ButtonPressedImplCopyWith(
-    _$UserEvent_ButtonPressedImpl value,
-    $Res Function(_$UserEvent_ButtonPressedImpl) then,
-  ) = __$$UserEvent_ButtonPressedImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({MouseButton field0, MouseEvent field1});
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,field0,field1);
 }
 
-/// @nodoc
-class __$$UserEvent_ButtonPressedImplCopyWithImpl<$Res>
-    extends _$UserEventCopyWithImpl<$Res, _$UserEvent_ButtonPressedImpl>
-    implements _$$UserEvent_ButtonPressedImplCopyWith<$Res> {
-  __$$UserEvent_ButtonPressedImplCopyWithImpl(
-    _$UserEvent_ButtonPressedImpl _value,
-    $Res Function(_$UserEvent_ButtonPressedImpl) _then,
-  ) : super(_value, _then);
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? field0 = null, Object? field1 = null}) {
-    return _then(
-      _$UserEvent_ButtonPressedImpl(
-        null == field0
-            ? _value.field0
-            : field0 // ignore: cast_nullable_to_non_nullable
-                as MouseButton,
-        null == field1
-            ? _value.field1
-            : field1 // ignore: cast_nullable_to_non_nullable
-                as MouseEvent,
-      ),
-    );
-  }
-}
-
-/// @nodoc
-
-class _$UserEvent_ButtonPressedImpl extends UserEvent_ButtonPressed {
-  const _$UserEvent_ButtonPressedImpl(this.field0, this.field1) : super._();
-
-  @override
-  final MouseButton field0;
-  @override
-  final MouseEvent field1;
-
-  @override
-  String toString() {
+@override
+String toString() {
     return 'UserEvent.buttonPressed(field0: $field0, field1: $field1)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$UserEvent_ButtonPressedImpl &&
-            (identical(other.field0, field0) || other.field0 == field0) &&
-            (identical(other.field1, field1) || other.field1 == field1));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, field0, field1);
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$UserEvent_ButtonPressedImplCopyWith<_$UserEvent_ButtonPressedImpl>
-  get copyWith => __$$UserEvent_ButtonPressedImplCopyWithImpl<
-    _$UserEvent_ButtonPressedImpl
-  >(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonPressed,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonReleased,
-    required TResult Function(MouseButton field0, MouseEvent field1) click,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    doubleClick,
-    required TResult Function(MouseEvent field0) pointerMoved,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    dragStarted,
-    required TResult Function(
-      MouseButton field0,
-      Vector2 field1,
-      MouseEvent field2,
-    )
-    drag,
-    required TResult Function(MouseButton field0, MouseEvent field1) dragEnded,
-    required TResult Function(double field0, MouseEvent field1) scroll,
-    required TResult Function(double field0, Point2 field1) zoom,
-  }) {
-    return buttonPressed(field0, field1);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult? Function(MouseButton field0, MouseEvent field1)? click,
-    TResult? Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult? Function(MouseEvent field0)? pointerMoved,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult? Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult? Function(double field0, MouseEvent field1)? scroll,
-    TResult? Function(double field0, Point2 field1)? zoom,
-  }) {
-    return buttonPressed?.call(field0, field1);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult Function(MouseButton field0, MouseEvent field1)? click,
-    TResult Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult Function(MouseEvent field0)? pointerMoved,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult Function(double field0, MouseEvent field1)? scroll,
-    TResult Function(double field0, Point2 field1)? zoom,
-    required TResult orElse(),
-  }) {
-    if (buttonPressed != null) {
-      return buttonPressed(field0, field1);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(UserEvent_ButtonPressed value) buttonPressed,
-    required TResult Function(UserEvent_ButtonReleased value) buttonReleased,
-    required TResult Function(UserEvent_Click value) click,
-    required TResult Function(UserEvent_DoubleClick value) doubleClick,
-    required TResult Function(UserEvent_PointerMoved value) pointerMoved,
-    required TResult Function(UserEvent_DragStarted value) dragStarted,
-    required TResult Function(UserEvent_Drag value) drag,
-    required TResult Function(UserEvent_DragEnded value) dragEnded,
-    required TResult Function(UserEvent_Scroll value) scroll,
-    required TResult Function(UserEvent_Zoom value) zoom,
-  }) {
-    return buttonPressed(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult? Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult? Function(UserEvent_Click value)? click,
-    TResult? Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult? Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult? Function(UserEvent_DragStarted value)? dragStarted,
-    TResult? Function(UserEvent_Drag value)? drag,
-    TResult? Function(UserEvent_DragEnded value)? dragEnded,
-    TResult? Function(UserEvent_Scroll value)? scroll,
-    TResult? Function(UserEvent_Zoom value)? zoom,
-  }) {
-    return buttonPressed?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult Function(UserEvent_Click value)? click,
-    TResult Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult Function(UserEvent_DragStarted value)? dragStarted,
-    TResult Function(UserEvent_Drag value)? drag,
-    TResult Function(UserEvent_DragEnded value)? dragEnded,
-    TResult Function(UserEvent_Scroll value)? scroll,
-    TResult Function(UserEvent_Zoom value)? zoom,
-    required TResult orElse(),
-  }) {
-    if (buttonPressed != null) {
-      return buttonPressed(this);
-    }
-    return orElse();
-  }
 }
 
-abstract class UserEvent_ButtonPressed extends UserEvent {
-  const factory UserEvent_ButtonPressed(
-    final MouseButton field0,
-    final MouseEvent field1,
-  ) = _$UserEvent_ButtonPressedImpl;
-  const UserEvent_ButtonPressed._() : super._();
 
-  @override
-  MouseButton get field0;
-  MouseEvent get field1;
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserEvent_ButtonPressedImplCopyWith<_$UserEvent_ButtonPressedImpl>
-  get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$UserEvent_ButtonReleasedImplCopyWith<$Res> {
-  factory _$$UserEvent_ButtonReleasedImplCopyWith(
-    _$UserEvent_ButtonReleasedImpl value,
-    $Res Function(_$UserEvent_ButtonReleasedImpl) then,
-  ) = __$$UserEvent_ButtonReleasedImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({MouseButton field0, MouseEvent field1});
+abstract mixin class $UserEvent_ButtonPressedCopyWith<$Res> implements $UserEventCopyWith<$Res> {
+  factory $UserEvent_ButtonPressedCopyWith(UserEvent_ButtonPressed value, $Res Function(UserEvent_ButtonPressed) _then) = _$UserEvent_ButtonPressedCopyWithImpl;
+@useResult
+$Res call({
+ MouseButton field0, MouseEvent field1
+});
+
+
+
+
+}
+/// @nodoc
+class _$UserEvent_ButtonPressedCopyWithImpl<$Res>
+    implements $UserEvent_ButtonPressedCopyWith<$Res> {
+  _$UserEvent_ButtonPressedCopyWithImpl(this._self, this._then);
+
+  final UserEvent_ButtonPressed _self;
+  final $Res Function(UserEvent_ButtonPressed) _then;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,Object? field1 = null,}) {
+  return _then(UserEvent_ButtonPressed(
+null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as MouseButton,null == field1 ? _self.field1 : field1 // ignore: cast_nullable_to_non_nullable
+as MouseEvent,
+  ));
 }
 
-/// @nodoc
-class __$$UserEvent_ButtonReleasedImplCopyWithImpl<$Res>
-    extends _$UserEventCopyWithImpl<$Res, _$UserEvent_ButtonReleasedImpl>
-    implements _$$UserEvent_ButtonReleasedImplCopyWith<$Res> {
-  __$$UserEvent_ButtonReleasedImplCopyWithImpl(
-    _$UserEvent_ButtonReleasedImpl _value,
-    $Res Function(_$UserEvent_ButtonReleasedImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? field0 = null, Object? field1 = null}) {
-    return _then(
-      _$UserEvent_ButtonReleasedImpl(
-        null == field0
-            ? _value.field0
-            : field0 // ignore: cast_nullable_to_non_nullable
-                as MouseButton,
-        null == field1
-            ? _value.field1
-            : field1 // ignore: cast_nullable_to_non_nullable
-                as MouseEvent,
-      ),
-    );
-  }
 }
 
 /// @nodoc
 
-class _$UserEvent_ButtonReleasedImpl extends UserEvent_ButtonReleased {
-  const _$UserEvent_ButtonReleasedImpl(this.field0, this.field1) : super._();
 
-  @override
-  final MouseButton field0;
-  @override
-  final MouseEvent field1;
+class UserEvent_ButtonReleased extends UserEvent {
+  const UserEvent_ButtonReleased(this.field0, this.field1): super._();
+  
 
-  @override
-  String toString() {
+@override final  MouseButton field0;
+ final  MouseEvent field1;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UserEvent_ButtonReleasedCopyWith<UserEvent_ButtonReleased> get copyWith => _$UserEvent_ButtonReleasedCopyWithImpl<UserEvent_ButtonReleased>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEvent_ButtonReleased&&(identical(other.field0, field0) || other.field0 == field0)&&(identical(other.field1, field1) || other.field1 == field1));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,field0,field1);
+}
+
+@override
+String toString() {
     return 'UserEvent.buttonReleased(field0: $field0, field1: $field1)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$UserEvent_ButtonReleasedImpl &&
-            (identical(other.field0, field0) || other.field0 == field0) &&
-            (identical(other.field1, field1) || other.field1 == field1));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, field0, field1);
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$UserEvent_ButtonReleasedImplCopyWith<_$UserEvent_ButtonReleasedImpl>
-  get copyWith => __$$UserEvent_ButtonReleasedImplCopyWithImpl<
-    _$UserEvent_ButtonReleasedImpl
-  >(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonPressed,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonReleased,
-    required TResult Function(MouseButton field0, MouseEvent field1) click,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    doubleClick,
-    required TResult Function(MouseEvent field0) pointerMoved,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    dragStarted,
-    required TResult Function(
-      MouseButton field0,
-      Vector2 field1,
-      MouseEvent field2,
-    )
-    drag,
-    required TResult Function(MouseButton field0, MouseEvent field1) dragEnded,
-    required TResult Function(double field0, MouseEvent field1) scroll,
-    required TResult Function(double field0, Point2 field1) zoom,
-  }) {
-    return buttonReleased(field0, field1);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult? Function(MouseButton field0, MouseEvent field1)? click,
-    TResult? Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult? Function(MouseEvent field0)? pointerMoved,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult? Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult? Function(double field0, MouseEvent field1)? scroll,
-    TResult? Function(double field0, Point2 field1)? zoom,
-  }) {
-    return buttonReleased?.call(field0, field1);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult Function(MouseButton field0, MouseEvent field1)? click,
-    TResult Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult Function(MouseEvent field0)? pointerMoved,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult Function(double field0, MouseEvent field1)? scroll,
-    TResult Function(double field0, Point2 field1)? zoom,
-    required TResult orElse(),
-  }) {
-    if (buttonReleased != null) {
-      return buttonReleased(field0, field1);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(UserEvent_ButtonPressed value) buttonPressed,
-    required TResult Function(UserEvent_ButtonReleased value) buttonReleased,
-    required TResult Function(UserEvent_Click value) click,
-    required TResult Function(UserEvent_DoubleClick value) doubleClick,
-    required TResult Function(UserEvent_PointerMoved value) pointerMoved,
-    required TResult Function(UserEvent_DragStarted value) dragStarted,
-    required TResult Function(UserEvent_Drag value) drag,
-    required TResult Function(UserEvent_DragEnded value) dragEnded,
-    required TResult Function(UserEvent_Scroll value) scroll,
-    required TResult Function(UserEvent_Zoom value) zoom,
-  }) {
-    return buttonReleased(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult? Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult? Function(UserEvent_Click value)? click,
-    TResult? Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult? Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult? Function(UserEvent_DragStarted value)? dragStarted,
-    TResult? Function(UserEvent_Drag value)? drag,
-    TResult? Function(UserEvent_DragEnded value)? dragEnded,
-    TResult? Function(UserEvent_Scroll value)? scroll,
-    TResult? Function(UserEvent_Zoom value)? zoom,
-  }) {
-    return buttonReleased?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult Function(UserEvent_Click value)? click,
-    TResult Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult Function(UserEvent_DragStarted value)? dragStarted,
-    TResult Function(UserEvent_Drag value)? drag,
-    TResult Function(UserEvent_DragEnded value)? dragEnded,
-    TResult Function(UserEvent_Scroll value)? scroll,
-    TResult Function(UserEvent_Zoom value)? zoom,
-    required TResult orElse(),
-  }) {
-    if (buttonReleased != null) {
-      return buttonReleased(this);
-    }
-    return orElse();
-  }
 }
 
-abstract class UserEvent_ButtonReleased extends UserEvent {
-  const factory UserEvent_ButtonReleased(
-    final MouseButton field0,
-    final MouseEvent field1,
-  ) = _$UserEvent_ButtonReleasedImpl;
-  const UserEvent_ButtonReleased._() : super._();
 
-  @override
-  MouseButton get field0;
-  MouseEvent get field1;
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserEvent_ButtonReleasedImplCopyWith<_$UserEvent_ButtonReleasedImpl>
-  get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$UserEvent_ClickImplCopyWith<$Res> {
-  factory _$$UserEvent_ClickImplCopyWith(
-    _$UserEvent_ClickImpl value,
-    $Res Function(_$UserEvent_ClickImpl) then,
-  ) = __$$UserEvent_ClickImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({MouseButton field0, MouseEvent field1});
+abstract mixin class $UserEvent_ButtonReleasedCopyWith<$Res> implements $UserEventCopyWith<$Res> {
+  factory $UserEvent_ButtonReleasedCopyWith(UserEvent_ButtonReleased value, $Res Function(UserEvent_ButtonReleased) _then) = _$UserEvent_ButtonReleasedCopyWithImpl;
+@useResult
+$Res call({
+ MouseButton field0, MouseEvent field1
+});
+
+
+
+
+}
+/// @nodoc
+class _$UserEvent_ButtonReleasedCopyWithImpl<$Res>
+    implements $UserEvent_ButtonReleasedCopyWith<$Res> {
+  _$UserEvent_ButtonReleasedCopyWithImpl(this._self, this._then);
+
+  final UserEvent_ButtonReleased _self;
+  final $Res Function(UserEvent_ButtonReleased) _then;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,Object? field1 = null,}) {
+  return _then(UserEvent_ButtonReleased(
+null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as MouseButton,null == field1 ? _self.field1 : field1 // ignore: cast_nullable_to_non_nullable
+as MouseEvent,
+  ));
 }
 
-/// @nodoc
-class __$$UserEvent_ClickImplCopyWithImpl<$Res>
-    extends _$UserEventCopyWithImpl<$Res, _$UserEvent_ClickImpl>
-    implements _$$UserEvent_ClickImplCopyWith<$Res> {
-  __$$UserEvent_ClickImplCopyWithImpl(
-    _$UserEvent_ClickImpl _value,
-    $Res Function(_$UserEvent_ClickImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? field0 = null, Object? field1 = null}) {
-    return _then(
-      _$UserEvent_ClickImpl(
-        null == field0
-            ? _value.field0
-            : field0 // ignore: cast_nullable_to_non_nullable
-                as MouseButton,
-        null == field1
-            ? _value.field1
-            : field1 // ignore: cast_nullable_to_non_nullable
-                as MouseEvent,
-      ),
-    );
-  }
 }
 
 /// @nodoc
 
-class _$UserEvent_ClickImpl extends UserEvent_Click {
-  const _$UserEvent_ClickImpl(this.field0, this.field1) : super._();
 
-  @override
-  final MouseButton field0;
-  @override
-  final MouseEvent field1;
+class UserEvent_Click extends UserEvent {
+  const UserEvent_Click(this.field0, this.field1): super._();
+  
 
-  @override
-  String toString() {
+@override final  MouseButton field0;
+ final  MouseEvent field1;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UserEvent_ClickCopyWith<UserEvent_Click> get copyWith => _$UserEvent_ClickCopyWithImpl<UserEvent_Click>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEvent_Click&&(identical(other.field0, field0) || other.field0 == field0)&&(identical(other.field1, field1) || other.field1 == field1));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,field0,field1);
+}
+
+@override
+String toString() {
     return 'UserEvent.click(field0: $field0, field1: $field1)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$UserEvent_ClickImpl &&
-            (identical(other.field0, field0) || other.field0 == field0) &&
-            (identical(other.field1, field1) || other.field1 == field1));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, field0, field1);
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$UserEvent_ClickImplCopyWith<_$UserEvent_ClickImpl> get copyWith =>
-      __$$UserEvent_ClickImplCopyWithImpl<_$UserEvent_ClickImpl>(
-        this,
-        _$identity,
-      );
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonPressed,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonReleased,
-    required TResult Function(MouseButton field0, MouseEvent field1) click,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    doubleClick,
-    required TResult Function(MouseEvent field0) pointerMoved,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    dragStarted,
-    required TResult Function(
-      MouseButton field0,
-      Vector2 field1,
-      MouseEvent field2,
-    )
-    drag,
-    required TResult Function(MouseButton field0, MouseEvent field1) dragEnded,
-    required TResult Function(double field0, MouseEvent field1) scroll,
-    required TResult Function(double field0, Point2 field1) zoom,
-  }) {
-    return click(field0, field1);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult? Function(MouseButton field0, MouseEvent field1)? click,
-    TResult? Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult? Function(MouseEvent field0)? pointerMoved,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult? Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult? Function(double field0, MouseEvent field1)? scroll,
-    TResult? Function(double field0, Point2 field1)? zoom,
-  }) {
-    return click?.call(field0, field1);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult Function(MouseButton field0, MouseEvent field1)? click,
-    TResult Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult Function(MouseEvent field0)? pointerMoved,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult Function(double field0, MouseEvent field1)? scroll,
-    TResult Function(double field0, Point2 field1)? zoom,
-    required TResult orElse(),
-  }) {
-    if (click != null) {
-      return click(field0, field1);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(UserEvent_ButtonPressed value) buttonPressed,
-    required TResult Function(UserEvent_ButtonReleased value) buttonReleased,
-    required TResult Function(UserEvent_Click value) click,
-    required TResult Function(UserEvent_DoubleClick value) doubleClick,
-    required TResult Function(UserEvent_PointerMoved value) pointerMoved,
-    required TResult Function(UserEvent_DragStarted value) dragStarted,
-    required TResult Function(UserEvent_Drag value) drag,
-    required TResult Function(UserEvent_DragEnded value) dragEnded,
-    required TResult Function(UserEvent_Scroll value) scroll,
-    required TResult Function(UserEvent_Zoom value) zoom,
-  }) {
-    return click(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult? Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult? Function(UserEvent_Click value)? click,
-    TResult? Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult? Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult? Function(UserEvent_DragStarted value)? dragStarted,
-    TResult? Function(UserEvent_Drag value)? drag,
-    TResult? Function(UserEvent_DragEnded value)? dragEnded,
-    TResult? Function(UserEvent_Scroll value)? scroll,
-    TResult? Function(UserEvent_Zoom value)? zoom,
-  }) {
-    return click?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult Function(UserEvent_Click value)? click,
-    TResult Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult Function(UserEvent_DragStarted value)? dragStarted,
-    TResult Function(UserEvent_Drag value)? drag,
-    TResult Function(UserEvent_DragEnded value)? dragEnded,
-    TResult Function(UserEvent_Scroll value)? scroll,
-    TResult Function(UserEvent_Zoom value)? zoom,
-    required TResult orElse(),
-  }) {
-    if (click != null) {
-      return click(this);
-    }
-    return orElse();
-  }
 }
 
-abstract class UserEvent_Click extends UserEvent {
-  const factory UserEvent_Click(
-    final MouseButton field0,
-    final MouseEvent field1,
-  ) = _$UserEvent_ClickImpl;
-  const UserEvent_Click._() : super._();
 
-  @override
-  MouseButton get field0;
-  MouseEvent get field1;
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserEvent_ClickImplCopyWith<_$UserEvent_ClickImpl> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$UserEvent_DoubleClickImplCopyWith<$Res> {
-  factory _$$UserEvent_DoubleClickImplCopyWith(
-    _$UserEvent_DoubleClickImpl value,
-    $Res Function(_$UserEvent_DoubleClickImpl) then,
-  ) = __$$UserEvent_DoubleClickImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({MouseButton field0, MouseEvent field1});
+abstract mixin class $UserEvent_ClickCopyWith<$Res> implements $UserEventCopyWith<$Res> {
+  factory $UserEvent_ClickCopyWith(UserEvent_Click value, $Res Function(UserEvent_Click) _then) = _$UserEvent_ClickCopyWithImpl;
+@useResult
+$Res call({
+ MouseButton field0, MouseEvent field1
+});
+
+
+
+
+}
+/// @nodoc
+class _$UserEvent_ClickCopyWithImpl<$Res>
+    implements $UserEvent_ClickCopyWith<$Res> {
+  _$UserEvent_ClickCopyWithImpl(this._self, this._then);
+
+  final UserEvent_Click _self;
+  final $Res Function(UserEvent_Click) _then;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,Object? field1 = null,}) {
+  return _then(UserEvent_Click(
+null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as MouseButton,null == field1 ? _self.field1 : field1 // ignore: cast_nullable_to_non_nullable
+as MouseEvent,
+  ));
 }
 
-/// @nodoc
-class __$$UserEvent_DoubleClickImplCopyWithImpl<$Res>
-    extends _$UserEventCopyWithImpl<$Res, _$UserEvent_DoubleClickImpl>
-    implements _$$UserEvent_DoubleClickImplCopyWith<$Res> {
-  __$$UserEvent_DoubleClickImplCopyWithImpl(
-    _$UserEvent_DoubleClickImpl _value,
-    $Res Function(_$UserEvent_DoubleClickImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? field0 = null, Object? field1 = null}) {
-    return _then(
-      _$UserEvent_DoubleClickImpl(
-        null == field0
-            ? _value.field0
-            : field0 // ignore: cast_nullable_to_non_nullable
-                as MouseButton,
-        null == field1
-            ? _value.field1
-            : field1 // ignore: cast_nullable_to_non_nullable
-                as MouseEvent,
-      ),
-    );
-  }
 }
 
 /// @nodoc
 
-class _$UserEvent_DoubleClickImpl extends UserEvent_DoubleClick {
-  const _$UserEvent_DoubleClickImpl(this.field0, this.field1) : super._();
 
-  @override
-  final MouseButton field0;
-  @override
-  final MouseEvent field1;
+class UserEvent_DoubleClick extends UserEvent {
+  const UserEvent_DoubleClick(this.field0, this.field1): super._();
+  
 
-  @override
-  String toString() {
+@override final  MouseButton field0;
+ final  MouseEvent field1;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UserEvent_DoubleClickCopyWith<UserEvent_DoubleClick> get copyWith => _$UserEvent_DoubleClickCopyWithImpl<UserEvent_DoubleClick>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEvent_DoubleClick&&(identical(other.field0, field0) || other.field0 == field0)&&(identical(other.field1, field1) || other.field1 == field1));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,field0,field1);
+}
+
+@override
+String toString() {
     return 'UserEvent.doubleClick(field0: $field0, field1: $field1)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$UserEvent_DoubleClickImpl &&
-            (identical(other.field0, field0) || other.field0 == field0) &&
-            (identical(other.field1, field1) || other.field1 == field1));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, field0, field1);
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$UserEvent_DoubleClickImplCopyWith<_$UserEvent_DoubleClickImpl>
-  get copyWith =>
-      __$$UserEvent_DoubleClickImplCopyWithImpl<_$UserEvent_DoubleClickImpl>(
-        this,
-        _$identity,
-      );
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonPressed,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonReleased,
-    required TResult Function(MouseButton field0, MouseEvent field1) click,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    doubleClick,
-    required TResult Function(MouseEvent field0) pointerMoved,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    dragStarted,
-    required TResult Function(
-      MouseButton field0,
-      Vector2 field1,
-      MouseEvent field2,
-    )
-    drag,
-    required TResult Function(MouseButton field0, MouseEvent field1) dragEnded,
-    required TResult Function(double field0, MouseEvent field1) scroll,
-    required TResult Function(double field0, Point2 field1) zoom,
-  }) {
-    return doubleClick(field0, field1);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult? Function(MouseButton field0, MouseEvent field1)? click,
-    TResult? Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult? Function(MouseEvent field0)? pointerMoved,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult? Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult? Function(double field0, MouseEvent field1)? scroll,
-    TResult? Function(double field0, Point2 field1)? zoom,
-  }) {
-    return doubleClick?.call(field0, field1);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult Function(MouseButton field0, MouseEvent field1)? click,
-    TResult Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult Function(MouseEvent field0)? pointerMoved,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult Function(double field0, MouseEvent field1)? scroll,
-    TResult Function(double field0, Point2 field1)? zoom,
-    required TResult orElse(),
-  }) {
-    if (doubleClick != null) {
-      return doubleClick(field0, field1);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(UserEvent_ButtonPressed value) buttonPressed,
-    required TResult Function(UserEvent_ButtonReleased value) buttonReleased,
-    required TResult Function(UserEvent_Click value) click,
-    required TResult Function(UserEvent_DoubleClick value) doubleClick,
-    required TResult Function(UserEvent_PointerMoved value) pointerMoved,
-    required TResult Function(UserEvent_DragStarted value) dragStarted,
-    required TResult Function(UserEvent_Drag value) drag,
-    required TResult Function(UserEvent_DragEnded value) dragEnded,
-    required TResult Function(UserEvent_Scroll value) scroll,
-    required TResult Function(UserEvent_Zoom value) zoom,
-  }) {
-    return doubleClick(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult? Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult? Function(UserEvent_Click value)? click,
-    TResult? Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult? Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult? Function(UserEvent_DragStarted value)? dragStarted,
-    TResult? Function(UserEvent_Drag value)? drag,
-    TResult? Function(UserEvent_DragEnded value)? dragEnded,
-    TResult? Function(UserEvent_Scroll value)? scroll,
-    TResult? Function(UserEvent_Zoom value)? zoom,
-  }) {
-    return doubleClick?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult Function(UserEvent_Click value)? click,
-    TResult Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult Function(UserEvent_DragStarted value)? dragStarted,
-    TResult Function(UserEvent_Drag value)? drag,
-    TResult Function(UserEvent_DragEnded value)? dragEnded,
-    TResult Function(UserEvent_Scroll value)? scroll,
-    TResult Function(UserEvent_Zoom value)? zoom,
-    required TResult orElse(),
-  }) {
-    if (doubleClick != null) {
-      return doubleClick(this);
-    }
-    return orElse();
-  }
 }
 
-abstract class UserEvent_DoubleClick extends UserEvent {
-  const factory UserEvent_DoubleClick(
-    final MouseButton field0,
-    final MouseEvent field1,
-  ) = _$UserEvent_DoubleClickImpl;
-  const UserEvent_DoubleClick._() : super._();
 
-  @override
-  MouseButton get field0;
-  MouseEvent get field1;
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserEvent_DoubleClickImplCopyWith<_$UserEvent_DoubleClickImpl>
-  get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$UserEvent_PointerMovedImplCopyWith<$Res> {
-  factory _$$UserEvent_PointerMovedImplCopyWith(
-    _$UserEvent_PointerMovedImpl value,
-    $Res Function(_$UserEvent_PointerMovedImpl) then,
-  ) = __$$UserEvent_PointerMovedImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({MouseEvent field0});
+abstract mixin class $UserEvent_DoubleClickCopyWith<$Res> implements $UserEventCopyWith<$Res> {
+  factory $UserEvent_DoubleClickCopyWith(UserEvent_DoubleClick value, $Res Function(UserEvent_DoubleClick) _then) = _$UserEvent_DoubleClickCopyWithImpl;
+@useResult
+$Res call({
+ MouseButton field0, MouseEvent field1
+});
+
+
+
+
+}
+/// @nodoc
+class _$UserEvent_DoubleClickCopyWithImpl<$Res>
+    implements $UserEvent_DoubleClickCopyWith<$Res> {
+  _$UserEvent_DoubleClickCopyWithImpl(this._self, this._then);
+
+  final UserEvent_DoubleClick _self;
+  final $Res Function(UserEvent_DoubleClick) _then;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,Object? field1 = null,}) {
+  return _then(UserEvent_DoubleClick(
+null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as MouseButton,null == field1 ? _self.field1 : field1 // ignore: cast_nullable_to_non_nullable
+as MouseEvent,
+  ));
 }
 
-/// @nodoc
-class __$$UserEvent_PointerMovedImplCopyWithImpl<$Res>
-    extends _$UserEventCopyWithImpl<$Res, _$UserEvent_PointerMovedImpl>
-    implements _$$UserEvent_PointerMovedImplCopyWith<$Res> {
-  __$$UserEvent_PointerMovedImplCopyWithImpl(
-    _$UserEvent_PointerMovedImpl _value,
-    $Res Function(_$UserEvent_PointerMovedImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? field0 = null}) {
-    return _then(
-      _$UserEvent_PointerMovedImpl(
-        null == field0
-            ? _value.field0
-            : field0 // ignore: cast_nullable_to_non_nullable
-                as MouseEvent,
-      ),
-    );
-  }
 }
 
 /// @nodoc
 
-class _$UserEvent_PointerMovedImpl extends UserEvent_PointerMoved {
-  const _$UserEvent_PointerMovedImpl(this.field0) : super._();
 
-  @override
-  final MouseEvent field0;
+class UserEvent_PointerMoved extends UserEvent {
+  const UserEvent_PointerMoved(this.field0): super._();
+  
 
-  @override
-  String toString() {
+@override final  MouseEvent field0;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UserEvent_PointerMovedCopyWith<UserEvent_PointerMoved> get copyWith => _$UserEvent_PointerMovedCopyWithImpl<UserEvent_PointerMoved>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEvent_PointerMoved&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,field0);
+}
+
+@override
+String toString() {
     return 'UserEvent.pointerMoved(field0: $field0)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$UserEvent_PointerMovedImpl &&
-            (identical(other.field0, field0) || other.field0 == field0));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, field0);
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$UserEvent_PointerMovedImplCopyWith<_$UserEvent_PointerMovedImpl>
-  get copyWith =>
-      __$$UserEvent_PointerMovedImplCopyWithImpl<_$UserEvent_PointerMovedImpl>(
-        this,
-        _$identity,
-      );
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonPressed,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonReleased,
-    required TResult Function(MouseButton field0, MouseEvent field1) click,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    doubleClick,
-    required TResult Function(MouseEvent field0) pointerMoved,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    dragStarted,
-    required TResult Function(
-      MouseButton field0,
-      Vector2 field1,
-      MouseEvent field2,
-    )
-    drag,
-    required TResult Function(MouseButton field0, MouseEvent field1) dragEnded,
-    required TResult Function(double field0, MouseEvent field1) scroll,
-    required TResult Function(double field0, Point2 field1) zoom,
-  }) {
-    return pointerMoved(field0);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult? Function(MouseButton field0, MouseEvent field1)? click,
-    TResult? Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult? Function(MouseEvent field0)? pointerMoved,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult? Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult? Function(double field0, MouseEvent field1)? scroll,
-    TResult? Function(double field0, Point2 field1)? zoom,
-  }) {
-    return pointerMoved?.call(field0);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult Function(MouseButton field0, MouseEvent field1)? click,
-    TResult Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult Function(MouseEvent field0)? pointerMoved,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult Function(double field0, MouseEvent field1)? scroll,
-    TResult Function(double field0, Point2 field1)? zoom,
-    required TResult orElse(),
-  }) {
-    if (pointerMoved != null) {
-      return pointerMoved(field0);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(UserEvent_ButtonPressed value) buttonPressed,
-    required TResult Function(UserEvent_ButtonReleased value) buttonReleased,
-    required TResult Function(UserEvent_Click value) click,
-    required TResult Function(UserEvent_DoubleClick value) doubleClick,
-    required TResult Function(UserEvent_PointerMoved value) pointerMoved,
-    required TResult Function(UserEvent_DragStarted value) dragStarted,
-    required TResult Function(UserEvent_Drag value) drag,
-    required TResult Function(UserEvent_DragEnded value) dragEnded,
-    required TResult Function(UserEvent_Scroll value) scroll,
-    required TResult Function(UserEvent_Zoom value) zoom,
-  }) {
-    return pointerMoved(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult? Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult? Function(UserEvent_Click value)? click,
-    TResult? Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult? Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult? Function(UserEvent_DragStarted value)? dragStarted,
-    TResult? Function(UserEvent_Drag value)? drag,
-    TResult? Function(UserEvent_DragEnded value)? dragEnded,
-    TResult? Function(UserEvent_Scroll value)? scroll,
-    TResult? Function(UserEvent_Zoom value)? zoom,
-  }) {
-    return pointerMoved?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult Function(UserEvent_Click value)? click,
-    TResult Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult Function(UserEvent_DragStarted value)? dragStarted,
-    TResult Function(UserEvent_Drag value)? drag,
-    TResult Function(UserEvent_DragEnded value)? dragEnded,
-    TResult Function(UserEvent_Scroll value)? scroll,
-    TResult Function(UserEvent_Zoom value)? zoom,
-    required TResult orElse(),
-  }) {
-    if (pointerMoved != null) {
-      return pointerMoved(this);
-    }
-    return orElse();
-  }
 }
 
-abstract class UserEvent_PointerMoved extends UserEvent {
-  const factory UserEvent_PointerMoved(final MouseEvent field0) =
-      _$UserEvent_PointerMovedImpl;
-  const UserEvent_PointerMoved._() : super._();
 
-  @override
-  MouseEvent get field0;
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserEvent_PointerMovedImplCopyWith<_$UserEvent_PointerMovedImpl>
-  get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$UserEvent_DragStartedImplCopyWith<$Res> {
-  factory _$$UserEvent_DragStartedImplCopyWith(
-    _$UserEvent_DragStartedImpl value,
-    $Res Function(_$UserEvent_DragStartedImpl) then,
-  ) = __$$UserEvent_DragStartedImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({MouseButton field0, MouseEvent field1});
+abstract mixin class $UserEvent_PointerMovedCopyWith<$Res> implements $UserEventCopyWith<$Res> {
+  factory $UserEvent_PointerMovedCopyWith(UserEvent_PointerMoved value, $Res Function(UserEvent_PointerMoved) _then) = _$UserEvent_PointerMovedCopyWithImpl;
+@useResult
+$Res call({
+ MouseEvent field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$UserEvent_PointerMovedCopyWithImpl<$Res>
+    implements $UserEvent_PointerMovedCopyWith<$Res> {
+  _$UserEvent_PointerMovedCopyWithImpl(this._self, this._then);
+
+  final UserEvent_PointerMoved _self;
+  final $Res Function(UserEvent_PointerMoved) _then;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(UserEvent_PointerMoved(
+null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as MouseEvent,
+  ));
 }
 
-/// @nodoc
-class __$$UserEvent_DragStartedImplCopyWithImpl<$Res>
-    extends _$UserEventCopyWithImpl<$Res, _$UserEvent_DragStartedImpl>
-    implements _$$UserEvent_DragStartedImplCopyWith<$Res> {
-  __$$UserEvent_DragStartedImplCopyWithImpl(
-    _$UserEvent_DragStartedImpl _value,
-    $Res Function(_$UserEvent_DragStartedImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? field0 = null, Object? field1 = null}) {
-    return _then(
-      _$UserEvent_DragStartedImpl(
-        null == field0
-            ? _value.field0
-            : field0 // ignore: cast_nullable_to_non_nullable
-                as MouseButton,
-        null == field1
-            ? _value.field1
-            : field1 // ignore: cast_nullable_to_non_nullable
-                as MouseEvent,
-      ),
-    );
-  }
 }
 
 /// @nodoc
 
-class _$UserEvent_DragStartedImpl extends UserEvent_DragStarted {
-  const _$UserEvent_DragStartedImpl(this.field0, this.field1) : super._();
 
-  @override
-  final MouseButton field0;
-  @override
-  final MouseEvent field1;
+class UserEvent_DragStarted extends UserEvent {
+  const UserEvent_DragStarted(this.field0, this.field1): super._();
+  
 
-  @override
-  String toString() {
+@override final  MouseButton field0;
+ final  MouseEvent field1;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UserEvent_DragStartedCopyWith<UserEvent_DragStarted> get copyWith => _$UserEvent_DragStartedCopyWithImpl<UserEvent_DragStarted>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEvent_DragStarted&&(identical(other.field0, field0) || other.field0 == field0)&&(identical(other.field1, field1) || other.field1 == field1));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,field0,field1);
+}
+
+@override
+String toString() {
     return 'UserEvent.dragStarted(field0: $field0, field1: $field1)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$UserEvent_DragStartedImpl &&
-            (identical(other.field0, field0) || other.field0 == field0) &&
-            (identical(other.field1, field1) || other.field1 == field1));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, field0, field1);
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$UserEvent_DragStartedImplCopyWith<_$UserEvent_DragStartedImpl>
-  get copyWith =>
-      __$$UserEvent_DragStartedImplCopyWithImpl<_$UserEvent_DragStartedImpl>(
-        this,
-        _$identity,
-      );
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonPressed,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonReleased,
-    required TResult Function(MouseButton field0, MouseEvent field1) click,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    doubleClick,
-    required TResult Function(MouseEvent field0) pointerMoved,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    dragStarted,
-    required TResult Function(
-      MouseButton field0,
-      Vector2 field1,
-      MouseEvent field2,
-    )
-    drag,
-    required TResult Function(MouseButton field0, MouseEvent field1) dragEnded,
-    required TResult Function(double field0, MouseEvent field1) scroll,
-    required TResult Function(double field0, Point2 field1) zoom,
-  }) {
-    return dragStarted(field0, field1);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult? Function(MouseButton field0, MouseEvent field1)? click,
-    TResult? Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult? Function(MouseEvent field0)? pointerMoved,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult? Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult? Function(double field0, MouseEvent field1)? scroll,
-    TResult? Function(double field0, Point2 field1)? zoom,
-  }) {
-    return dragStarted?.call(field0, field1);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult Function(MouseButton field0, MouseEvent field1)? click,
-    TResult Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult Function(MouseEvent field0)? pointerMoved,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult Function(double field0, MouseEvent field1)? scroll,
-    TResult Function(double field0, Point2 field1)? zoom,
-    required TResult orElse(),
-  }) {
-    if (dragStarted != null) {
-      return dragStarted(field0, field1);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(UserEvent_ButtonPressed value) buttonPressed,
-    required TResult Function(UserEvent_ButtonReleased value) buttonReleased,
-    required TResult Function(UserEvent_Click value) click,
-    required TResult Function(UserEvent_DoubleClick value) doubleClick,
-    required TResult Function(UserEvent_PointerMoved value) pointerMoved,
-    required TResult Function(UserEvent_DragStarted value) dragStarted,
-    required TResult Function(UserEvent_Drag value) drag,
-    required TResult Function(UserEvent_DragEnded value) dragEnded,
-    required TResult Function(UserEvent_Scroll value) scroll,
-    required TResult Function(UserEvent_Zoom value) zoom,
-  }) {
-    return dragStarted(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult? Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult? Function(UserEvent_Click value)? click,
-    TResult? Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult? Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult? Function(UserEvent_DragStarted value)? dragStarted,
-    TResult? Function(UserEvent_Drag value)? drag,
-    TResult? Function(UserEvent_DragEnded value)? dragEnded,
-    TResult? Function(UserEvent_Scroll value)? scroll,
-    TResult? Function(UserEvent_Zoom value)? zoom,
-  }) {
-    return dragStarted?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult Function(UserEvent_Click value)? click,
-    TResult Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult Function(UserEvent_DragStarted value)? dragStarted,
-    TResult Function(UserEvent_Drag value)? drag,
-    TResult Function(UserEvent_DragEnded value)? dragEnded,
-    TResult Function(UserEvent_Scroll value)? scroll,
-    TResult Function(UserEvent_Zoom value)? zoom,
-    required TResult orElse(),
-  }) {
-    if (dragStarted != null) {
-      return dragStarted(this);
-    }
-    return orElse();
-  }
 }
 
-abstract class UserEvent_DragStarted extends UserEvent {
-  const factory UserEvent_DragStarted(
-    final MouseButton field0,
-    final MouseEvent field1,
-  ) = _$UserEvent_DragStartedImpl;
-  const UserEvent_DragStarted._() : super._();
 
-  @override
-  MouseButton get field0;
-  MouseEvent get field1;
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserEvent_DragStartedImplCopyWith<_$UserEvent_DragStartedImpl>
-  get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$UserEvent_DragImplCopyWith<$Res> {
-  factory _$$UserEvent_DragImplCopyWith(
-    _$UserEvent_DragImpl value,
-    $Res Function(_$UserEvent_DragImpl) then,
-  ) = __$$UserEvent_DragImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({MouseButton field0, Vector2 field1, MouseEvent field2});
+abstract mixin class $UserEvent_DragStartedCopyWith<$Res> implements $UserEventCopyWith<$Res> {
+  factory $UserEvent_DragStartedCopyWith(UserEvent_DragStarted value, $Res Function(UserEvent_DragStarted) _then) = _$UserEvent_DragStartedCopyWithImpl;
+@useResult
+$Res call({
+ MouseButton field0, MouseEvent field1
+});
+
+
+
+
+}
+/// @nodoc
+class _$UserEvent_DragStartedCopyWithImpl<$Res>
+    implements $UserEvent_DragStartedCopyWith<$Res> {
+  _$UserEvent_DragStartedCopyWithImpl(this._self, this._then);
+
+  final UserEvent_DragStarted _self;
+  final $Res Function(UserEvent_DragStarted) _then;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,Object? field1 = null,}) {
+  return _then(UserEvent_DragStarted(
+null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as MouseButton,null == field1 ? _self.field1 : field1 // ignore: cast_nullable_to_non_nullable
+as MouseEvent,
+  ));
 }
 
-/// @nodoc
-class __$$UserEvent_DragImplCopyWithImpl<$Res>
-    extends _$UserEventCopyWithImpl<$Res, _$UserEvent_DragImpl>
-    implements _$$UserEvent_DragImplCopyWith<$Res> {
-  __$$UserEvent_DragImplCopyWithImpl(
-    _$UserEvent_DragImpl _value,
-    $Res Function(_$UserEvent_DragImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? field0 = null,
-    Object? field1 = null,
-    Object? field2 = null,
-  }) {
-    return _then(
-      _$UserEvent_DragImpl(
-        null == field0
-            ? _value.field0
-            : field0 // ignore: cast_nullable_to_non_nullable
-                as MouseButton,
-        null == field1
-            ? _value.field1
-            : field1 // ignore: cast_nullable_to_non_nullable
-                as Vector2,
-        null == field2
-            ? _value.field2
-            : field2 // ignore: cast_nullable_to_non_nullable
-                as MouseEvent,
-      ),
-    );
-  }
 }
 
 /// @nodoc
 
-class _$UserEvent_DragImpl extends UserEvent_Drag {
-  const _$UserEvent_DragImpl(this.field0, this.field1, this.field2) : super._();
 
-  @override
-  final MouseButton field0;
-  @override
-  final Vector2 field1;
-  @override
-  final MouseEvent field2;
+class UserEvent_Drag extends UserEvent {
+  const UserEvent_Drag(this.field0, this.field1, this.field2): super._();
+  
 
-  @override
-  String toString() {
+@override final  MouseButton field0;
+ final  Vector2 field1;
+ final  MouseEvent field2;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UserEvent_DragCopyWith<UserEvent_Drag> get copyWith => _$UserEvent_DragCopyWithImpl<UserEvent_Drag>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEvent_Drag&&(identical(other.field0, field0) || other.field0 == field0)&&(identical(other.field1, field1) || other.field1 == field1)&&(identical(other.field2, field2) || other.field2 == field2));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,field0,field1,field2);
+}
+
+@override
+String toString() {
     return 'UserEvent.drag(field0: $field0, field1: $field1, field2: $field2)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$UserEvent_DragImpl &&
-            (identical(other.field0, field0) || other.field0 == field0) &&
-            (identical(other.field1, field1) || other.field1 == field1) &&
-            (identical(other.field2, field2) || other.field2 == field2));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, field0, field1, field2);
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$UserEvent_DragImplCopyWith<_$UserEvent_DragImpl> get copyWith =>
-      __$$UserEvent_DragImplCopyWithImpl<_$UserEvent_DragImpl>(
-        this,
-        _$identity,
-      );
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonPressed,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonReleased,
-    required TResult Function(MouseButton field0, MouseEvent field1) click,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    doubleClick,
-    required TResult Function(MouseEvent field0) pointerMoved,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    dragStarted,
-    required TResult Function(
-      MouseButton field0,
-      Vector2 field1,
-      MouseEvent field2,
-    )
-    drag,
-    required TResult Function(MouseButton field0, MouseEvent field1) dragEnded,
-    required TResult Function(double field0, MouseEvent field1) scroll,
-    required TResult Function(double field0, Point2 field1) zoom,
-  }) {
-    return drag(field0, field1, field2);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult? Function(MouseButton field0, MouseEvent field1)? click,
-    TResult? Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult? Function(MouseEvent field0)? pointerMoved,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult? Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult? Function(double field0, MouseEvent field1)? scroll,
-    TResult? Function(double field0, Point2 field1)? zoom,
-  }) {
-    return drag?.call(field0, field1, field2);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult Function(MouseButton field0, MouseEvent field1)? click,
-    TResult Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult Function(MouseEvent field0)? pointerMoved,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult Function(double field0, MouseEvent field1)? scroll,
-    TResult Function(double field0, Point2 field1)? zoom,
-    required TResult orElse(),
-  }) {
-    if (drag != null) {
-      return drag(field0, field1, field2);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(UserEvent_ButtonPressed value) buttonPressed,
-    required TResult Function(UserEvent_ButtonReleased value) buttonReleased,
-    required TResult Function(UserEvent_Click value) click,
-    required TResult Function(UserEvent_DoubleClick value) doubleClick,
-    required TResult Function(UserEvent_PointerMoved value) pointerMoved,
-    required TResult Function(UserEvent_DragStarted value) dragStarted,
-    required TResult Function(UserEvent_Drag value) drag,
-    required TResult Function(UserEvent_DragEnded value) dragEnded,
-    required TResult Function(UserEvent_Scroll value) scroll,
-    required TResult Function(UserEvent_Zoom value) zoom,
-  }) {
-    return drag(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult? Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult? Function(UserEvent_Click value)? click,
-    TResult? Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult? Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult? Function(UserEvent_DragStarted value)? dragStarted,
-    TResult? Function(UserEvent_Drag value)? drag,
-    TResult? Function(UserEvent_DragEnded value)? dragEnded,
-    TResult? Function(UserEvent_Scroll value)? scroll,
-    TResult? Function(UserEvent_Zoom value)? zoom,
-  }) {
-    return drag?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult Function(UserEvent_Click value)? click,
-    TResult Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult Function(UserEvent_DragStarted value)? dragStarted,
-    TResult Function(UserEvent_Drag value)? drag,
-    TResult Function(UserEvent_DragEnded value)? dragEnded,
-    TResult Function(UserEvent_Scroll value)? scroll,
-    TResult Function(UserEvent_Zoom value)? zoom,
-    required TResult orElse(),
-  }) {
-    if (drag != null) {
-      return drag(this);
-    }
-    return orElse();
-  }
 }
 
-abstract class UserEvent_Drag extends UserEvent {
-  const factory UserEvent_Drag(
-    final MouseButton field0,
-    final Vector2 field1,
-    final MouseEvent field2,
-  ) = _$UserEvent_DragImpl;
-  const UserEvent_Drag._() : super._();
 
-  @override
-  MouseButton get field0;
-  Vector2 get field1;
-  MouseEvent get field2;
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserEvent_DragImplCopyWith<_$UserEvent_DragImpl> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$UserEvent_DragEndedImplCopyWith<$Res> {
-  factory _$$UserEvent_DragEndedImplCopyWith(
-    _$UserEvent_DragEndedImpl value,
-    $Res Function(_$UserEvent_DragEndedImpl) then,
-  ) = __$$UserEvent_DragEndedImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({MouseButton field0, MouseEvent field1});
+abstract mixin class $UserEvent_DragCopyWith<$Res> implements $UserEventCopyWith<$Res> {
+  factory $UserEvent_DragCopyWith(UserEvent_Drag value, $Res Function(UserEvent_Drag) _then) = _$UserEvent_DragCopyWithImpl;
+@useResult
+$Res call({
+ MouseButton field0, Vector2 field1, MouseEvent field2
+});
+
+
+
+
+}
+/// @nodoc
+class _$UserEvent_DragCopyWithImpl<$Res>
+    implements $UserEvent_DragCopyWith<$Res> {
+  _$UserEvent_DragCopyWithImpl(this._self, this._then);
+
+  final UserEvent_Drag _self;
+  final $Res Function(UserEvent_Drag) _then;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,Object? field1 = null,Object? field2 = null,}) {
+  return _then(UserEvent_Drag(
+null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as MouseButton,null == field1 ? _self.field1 : field1 // ignore: cast_nullable_to_non_nullable
+as Vector2,null == field2 ? _self.field2 : field2 // ignore: cast_nullable_to_non_nullable
+as MouseEvent,
+  ));
 }
 
-/// @nodoc
-class __$$UserEvent_DragEndedImplCopyWithImpl<$Res>
-    extends _$UserEventCopyWithImpl<$Res, _$UserEvent_DragEndedImpl>
-    implements _$$UserEvent_DragEndedImplCopyWith<$Res> {
-  __$$UserEvent_DragEndedImplCopyWithImpl(
-    _$UserEvent_DragEndedImpl _value,
-    $Res Function(_$UserEvent_DragEndedImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? field0 = null, Object? field1 = null}) {
-    return _then(
-      _$UserEvent_DragEndedImpl(
-        null == field0
-            ? _value.field0
-            : field0 // ignore: cast_nullable_to_non_nullable
-                as MouseButton,
-        null == field1
-            ? _value.field1
-            : field1 // ignore: cast_nullable_to_non_nullable
-                as MouseEvent,
-      ),
-    );
-  }
 }
 
 /// @nodoc
 
-class _$UserEvent_DragEndedImpl extends UserEvent_DragEnded {
-  const _$UserEvent_DragEndedImpl(this.field0, this.field1) : super._();
 
-  @override
-  final MouseButton field0;
-  @override
-  final MouseEvent field1;
+class UserEvent_DragEnded extends UserEvent {
+  const UserEvent_DragEnded(this.field0, this.field1): super._();
+  
 
-  @override
-  String toString() {
+@override final  MouseButton field0;
+ final  MouseEvent field1;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UserEvent_DragEndedCopyWith<UserEvent_DragEnded> get copyWith => _$UserEvent_DragEndedCopyWithImpl<UserEvent_DragEnded>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEvent_DragEnded&&(identical(other.field0, field0) || other.field0 == field0)&&(identical(other.field1, field1) || other.field1 == field1));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,field0,field1);
+}
+
+@override
+String toString() {
     return 'UserEvent.dragEnded(field0: $field0, field1: $field1)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$UserEvent_DragEndedImpl &&
-            (identical(other.field0, field0) || other.field0 == field0) &&
-            (identical(other.field1, field1) || other.field1 == field1));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, field0, field1);
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$UserEvent_DragEndedImplCopyWith<_$UserEvent_DragEndedImpl> get copyWith =>
-      __$$UserEvent_DragEndedImplCopyWithImpl<_$UserEvent_DragEndedImpl>(
-        this,
-        _$identity,
-      );
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonPressed,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonReleased,
-    required TResult Function(MouseButton field0, MouseEvent field1) click,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    doubleClick,
-    required TResult Function(MouseEvent field0) pointerMoved,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    dragStarted,
-    required TResult Function(
-      MouseButton field0,
-      Vector2 field1,
-      MouseEvent field2,
-    )
-    drag,
-    required TResult Function(MouseButton field0, MouseEvent field1) dragEnded,
-    required TResult Function(double field0, MouseEvent field1) scroll,
-    required TResult Function(double field0, Point2 field1) zoom,
-  }) {
-    return dragEnded(field0, field1);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult? Function(MouseButton field0, MouseEvent field1)? click,
-    TResult? Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult? Function(MouseEvent field0)? pointerMoved,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult? Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult? Function(double field0, MouseEvent field1)? scroll,
-    TResult? Function(double field0, Point2 field1)? zoom,
-  }) {
-    return dragEnded?.call(field0, field1);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult Function(MouseButton field0, MouseEvent field1)? click,
-    TResult Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult Function(MouseEvent field0)? pointerMoved,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult Function(double field0, MouseEvent field1)? scroll,
-    TResult Function(double field0, Point2 field1)? zoom,
-    required TResult orElse(),
-  }) {
-    if (dragEnded != null) {
-      return dragEnded(field0, field1);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(UserEvent_ButtonPressed value) buttonPressed,
-    required TResult Function(UserEvent_ButtonReleased value) buttonReleased,
-    required TResult Function(UserEvent_Click value) click,
-    required TResult Function(UserEvent_DoubleClick value) doubleClick,
-    required TResult Function(UserEvent_PointerMoved value) pointerMoved,
-    required TResult Function(UserEvent_DragStarted value) dragStarted,
-    required TResult Function(UserEvent_Drag value) drag,
-    required TResult Function(UserEvent_DragEnded value) dragEnded,
-    required TResult Function(UserEvent_Scroll value) scroll,
-    required TResult Function(UserEvent_Zoom value) zoom,
-  }) {
-    return dragEnded(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult? Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult? Function(UserEvent_Click value)? click,
-    TResult? Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult? Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult? Function(UserEvent_DragStarted value)? dragStarted,
-    TResult? Function(UserEvent_Drag value)? drag,
-    TResult? Function(UserEvent_DragEnded value)? dragEnded,
-    TResult? Function(UserEvent_Scroll value)? scroll,
-    TResult? Function(UserEvent_Zoom value)? zoom,
-  }) {
-    return dragEnded?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult Function(UserEvent_Click value)? click,
-    TResult Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult Function(UserEvent_DragStarted value)? dragStarted,
-    TResult Function(UserEvent_Drag value)? drag,
-    TResult Function(UserEvent_DragEnded value)? dragEnded,
-    TResult Function(UserEvent_Scroll value)? scroll,
-    TResult Function(UserEvent_Zoom value)? zoom,
-    required TResult orElse(),
-  }) {
-    if (dragEnded != null) {
-      return dragEnded(this);
-    }
-    return orElse();
-  }
 }
 
-abstract class UserEvent_DragEnded extends UserEvent {
-  const factory UserEvent_DragEnded(
-    final MouseButton field0,
-    final MouseEvent field1,
-  ) = _$UserEvent_DragEndedImpl;
-  const UserEvent_DragEnded._() : super._();
 
-  @override
-  MouseButton get field0;
-  MouseEvent get field1;
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserEvent_DragEndedImplCopyWith<_$UserEvent_DragEndedImpl> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$UserEvent_ScrollImplCopyWith<$Res> {
-  factory _$$UserEvent_ScrollImplCopyWith(
-    _$UserEvent_ScrollImpl value,
-    $Res Function(_$UserEvent_ScrollImpl) then,
-  ) = __$$UserEvent_ScrollImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({double field0, MouseEvent field1});
+abstract mixin class $UserEvent_DragEndedCopyWith<$Res> implements $UserEventCopyWith<$Res> {
+  factory $UserEvent_DragEndedCopyWith(UserEvent_DragEnded value, $Res Function(UserEvent_DragEnded) _then) = _$UserEvent_DragEndedCopyWithImpl;
+@useResult
+$Res call({
+ MouseButton field0, MouseEvent field1
+});
+
+
+
+
+}
+/// @nodoc
+class _$UserEvent_DragEndedCopyWithImpl<$Res>
+    implements $UserEvent_DragEndedCopyWith<$Res> {
+  _$UserEvent_DragEndedCopyWithImpl(this._self, this._then);
+
+  final UserEvent_DragEnded _self;
+  final $Res Function(UserEvent_DragEnded) _then;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,Object? field1 = null,}) {
+  return _then(UserEvent_DragEnded(
+null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as MouseButton,null == field1 ? _self.field1 : field1 // ignore: cast_nullable_to_non_nullable
+as MouseEvent,
+  ));
 }
 
-/// @nodoc
-class __$$UserEvent_ScrollImplCopyWithImpl<$Res>
-    extends _$UserEventCopyWithImpl<$Res, _$UserEvent_ScrollImpl>
-    implements _$$UserEvent_ScrollImplCopyWith<$Res> {
-  __$$UserEvent_ScrollImplCopyWithImpl(
-    _$UserEvent_ScrollImpl _value,
-    $Res Function(_$UserEvent_ScrollImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? field0 = null, Object? field1 = null}) {
-    return _then(
-      _$UserEvent_ScrollImpl(
-        null == field0
-            ? _value.field0
-            : field0 // ignore: cast_nullable_to_non_nullable
-                as double,
-        null == field1
-            ? _value.field1
-            : field1 // ignore: cast_nullable_to_non_nullable
-                as MouseEvent,
-      ),
-    );
-  }
 }
 
 /// @nodoc
 
-class _$UserEvent_ScrollImpl extends UserEvent_Scroll {
-  const _$UserEvent_ScrollImpl(this.field0, this.field1) : super._();
 
-  @override
-  final double field0;
-  @override
-  final MouseEvent field1;
+class UserEvent_Scroll extends UserEvent {
+  const UserEvent_Scroll(this.field0, this.field1): super._();
+  
 
-  @override
-  String toString() {
+@override final  double field0;
+ final  MouseEvent field1;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UserEvent_ScrollCopyWith<UserEvent_Scroll> get copyWith => _$UserEvent_ScrollCopyWithImpl<UserEvent_Scroll>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEvent_Scroll&&(identical(other.field0, field0) || other.field0 == field0)&&(identical(other.field1, field1) || other.field1 == field1));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,field0,field1);
+}
+
+@override
+String toString() {
     return 'UserEvent.scroll(field0: $field0, field1: $field1)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$UserEvent_ScrollImpl &&
-            (identical(other.field0, field0) || other.field0 == field0) &&
-            (identical(other.field1, field1) || other.field1 == field1));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, field0, field1);
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$UserEvent_ScrollImplCopyWith<_$UserEvent_ScrollImpl> get copyWith =>
-      __$$UserEvent_ScrollImplCopyWithImpl<_$UserEvent_ScrollImpl>(
-        this,
-        _$identity,
-      );
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonPressed,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonReleased,
-    required TResult Function(MouseButton field0, MouseEvent field1) click,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    doubleClick,
-    required TResult Function(MouseEvent field0) pointerMoved,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    dragStarted,
-    required TResult Function(
-      MouseButton field0,
-      Vector2 field1,
-      MouseEvent field2,
-    )
-    drag,
-    required TResult Function(MouseButton field0, MouseEvent field1) dragEnded,
-    required TResult Function(double field0, MouseEvent field1) scroll,
-    required TResult Function(double field0, Point2 field1) zoom,
-  }) {
-    return scroll(field0, field1);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult? Function(MouseButton field0, MouseEvent field1)? click,
-    TResult? Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult? Function(MouseEvent field0)? pointerMoved,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult? Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult? Function(double field0, MouseEvent field1)? scroll,
-    TResult? Function(double field0, Point2 field1)? zoom,
-  }) {
-    return scroll?.call(field0, field1);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult Function(MouseButton field0, MouseEvent field1)? click,
-    TResult Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult Function(MouseEvent field0)? pointerMoved,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult Function(double field0, MouseEvent field1)? scroll,
-    TResult Function(double field0, Point2 field1)? zoom,
-    required TResult orElse(),
-  }) {
-    if (scroll != null) {
-      return scroll(field0, field1);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(UserEvent_ButtonPressed value) buttonPressed,
-    required TResult Function(UserEvent_ButtonReleased value) buttonReleased,
-    required TResult Function(UserEvent_Click value) click,
-    required TResult Function(UserEvent_DoubleClick value) doubleClick,
-    required TResult Function(UserEvent_PointerMoved value) pointerMoved,
-    required TResult Function(UserEvent_DragStarted value) dragStarted,
-    required TResult Function(UserEvent_Drag value) drag,
-    required TResult Function(UserEvent_DragEnded value) dragEnded,
-    required TResult Function(UserEvent_Scroll value) scroll,
-    required TResult Function(UserEvent_Zoom value) zoom,
-  }) {
-    return scroll(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult? Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult? Function(UserEvent_Click value)? click,
-    TResult? Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult? Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult? Function(UserEvent_DragStarted value)? dragStarted,
-    TResult? Function(UserEvent_Drag value)? drag,
-    TResult? Function(UserEvent_DragEnded value)? dragEnded,
-    TResult? Function(UserEvent_Scroll value)? scroll,
-    TResult? Function(UserEvent_Zoom value)? zoom,
-  }) {
-    return scroll?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult Function(UserEvent_Click value)? click,
-    TResult Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult Function(UserEvent_DragStarted value)? dragStarted,
-    TResult Function(UserEvent_Drag value)? drag,
-    TResult Function(UserEvent_DragEnded value)? dragEnded,
-    TResult Function(UserEvent_Scroll value)? scroll,
-    TResult Function(UserEvent_Zoom value)? zoom,
-    required TResult orElse(),
-  }) {
-    if (scroll != null) {
-      return scroll(this);
-    }
-    return orElse();
-  }
 }
 
-abstract class UserEvent_Scroll extends UserEvent {
-  const factory UserEvent_Scroll(final double field0, final MouseEvent field1) =
-      _$UserEvent_ScrollImpl;
-  const UserEvent_Scroll._() : super._();
 
-  @override
-  double get field0;
-  MouseEvent get field1;
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserEvent_ScrollImplCopyWith<_$UserEvent_ScrollImpl> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$UserEvent_ZoomImplCopyWith<$Res> {
-  factory _$$UserEvent_ZoomImplCopyWith(
-    _$UserEvent_ZoomImpl value,
-    $Res Function(_$UserEvent_ZoomImpl) then,
-  ) = __$$UserEvent_ZoomImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({double field0, Point2 field1});
+abstract mixin class $UserEvent_ScrollCopyWith<$Res> implements $UserEventCopyWith<$Res> {
+  factory $UserEvent_ScrollCopyWith(UserEvent_Scroll value, $Res Function(UserEvent_Scroll) _then) = _$UserEvent_ScrollCopyWithImpl;
+@useResult
+$Res call({
+ double field0, MouseEvent field1
+});
+
+
+
+
+}
+/// @nodoc
+class _$UserEvent_ScrollCopyWithImpl<$Res>
+    implements $UserEvent_ScrollCopyWith<$Res> {
+  _$UserEvent_ScrollCopyWithImpl(this._self, this._then);
+
+  final UserEvent_Scroll _self;
+  final $Res Function(UserEvent_Scroll) _then;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,Object? field1 = null,}) {
+  return _then(UserEvent_Scroll(
+null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as double,null == field1 ? _self.field1 : field1 // ignore: cast_nullable_to_non_nullable
+as MouseEvent,
+  ));
 }
 
-/// @nodoc
-class __$$UserEvent_ZoomImplCopyWithImpl<$Res>
-    extends _$UserEventCopyWithImpl<$Res, _$UserEvent_ZoomImpl>
-    implements _$$UserEvent_ZoomImplCopyWith<$Res> {
-  __$$UserEvent_ZoomImplCopyWithImpl(
-    _$UserEvent_ZoomImpl _value,
-    $Res Function(_$UserEvent_ZoomImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? field0 = null, Object? field1 = null}) {
-    return _then(
-      _$UserEvent_ZoomImpl(
-        null == field0
-            ? _value.field0
-            : field0 // ignore: cast_nullable_to_non_nullable
-                as double,
-        null == field1
-            ? _value.field1
-            : field1 // ignore: cast_nullable_to_non_nullable
-                as Point2,
-      ),
-    );
-  }
 }
 
 /// @nodoc
 
-class _$UserEvent_ZoomImpl extends UserEvent_Zoom {
-  const _$UserEvent_ZoomImpl(this.field0, this.field1) : super._();
 
-  @override
-  final double field0;
-  @override
-  final Point2 field1;
+class UserEvent_Zoom extends UserEvent {
+  const UserEvent_Zoom(this.field0, this.field1): super._();
+  
 
-  @override
-  String toString() {
+@override final  double field0;
+ final  Point2 field1;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UserEvent_ZoomCopyWith<UserEvent_Zoom> get copyWith => _$UserEvent_ZoomCopyWithImpl<UserEvent_Zoom>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEvent_Zoom&&(identical(other.field0, field0) || other.field0 == field0)&&(identical(other.field1, field1) || other.field1 == field1));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,field0,field1);
+}
+
+@override
+String toString() {
     return 'UserEvent.zoom(field0: $field0, field1: $field1)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$UserEvent_ZoomImpl &&
-            (identical(other.field0, field0) || other.field0 == field0) &&
-            (identical(other.field1, field1) || other.field1 == field1));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, field0, field1);
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$UserEvent_ZoomImplCopyWith<_$UserEvent_ZoomImpl> get copyWith =>
-      __$$UserEvent_ZoomImplCopyWithImpl<_$UserEvent_ZoomImpl>(
-        this,
-        _$identity,
-      );
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonPressed,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    buttonReleased,
-    required TResult Function(MouseButton field0, MouseEvent field1) click,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    doubleClick,
-    required TResult Function(MouseEvent field0) pointerMoved,
-    required TResult Function(MouseButton field0, MouseEvent field1)
-    dragStarted,
-    required TResult Function(
-      MouseButton field0,
-      Vector2 field1,
-      MouseEvent field2,
-    )
-    drag,
-    required TResult Function(MouseButton field0, MouseEvent field1) dragEnded,
-    required TResult Function(double field0, MouseEvent field1) scroll,
-    required TResult Function(double field0, Point2 field1) zoom,
-  }) {
-    return zoom(field0, field1);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult? Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult? Function(MouseButton field0, MouseEvent field1)? click,
-    TResult? Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult? Function(MouseEvent field0)? pointerMoved,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult? Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult? Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult? Function(double field0, MouseEvent field1)? scroll,
-    TResult? Function(double field0, Point2 field1)? zoom,
-  }) {
-    return zoom?.call(field0, field1);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonPressed,
-    TResult Function(MouseButton field0, MouseEvent field1)? buttonReleased,
-    TResult Function(MouseButton field0, MouseEvent field1)? click,
-    TResult Function(MouseButton field0, MouseEvent field1)? doubleClick,
-    TResult Function(MouseEvent field0)? pointerMoved,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragStarted,
-    TResult Function(MouseButton field0, Vector2 field1, MouseEvent field2)?
-    drag,
-    TResult Function(MouseButton field0, MouseEvent field1)? dragEnded,
-    TResult Function(double field0, MouseEvent field1)? scroll,
-    TResult Function(double field0, Point2 field1)? zoom,
-    required TResult orElse(),
-  }) {
-    if (zoom != null) {
-      return zoom(field0, field1);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(UserEvent_ButtonPressed value) buttonPressed,
-    required TResult Function(UserEvent_ButtonReleased value) buttonReleased,
-    required TResult Function(UserEvent_Click value) click,
-    required TResult Function(UserEvent_DoubleClick value) doubleClick,
-    required TResult Function(UserEvent_PointerMoved value) pointerMoved,
-    required TResult Function(UserEvent_DragStarted value) dragStarted,
-    required TResult Function(UserEvent_Drag value) drag,
-    required TResult Function(UserEvent_DragEnded value) dragEnded,
-    required TResult Function(UserEvent_Scroll value) scroll,
-    required TResult Function(UserEvent_Zoom value) zoom,
-  }) {
-    return zoom(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult? Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult? Function(UserEvent_Click value)? click,
-    TResult? Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult? Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult? Function(UserEvent_DragStarted value)? dragStarted,
-    TResult? Function(UserEvent_Drag value)? drag,
-    TResult? Function(UserEvent_DragEnded value)? dragEnded,
-    TResult? Function(UserEvent_Scroll value)? scroll,
-    TResult? Function(UserEvent_Zoom value)? zoom,
-  }) {
-    return zoom?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(UserEvent_ButtonPressed value)? buttonPressed,
-    TResult Function(UserEvent_ButtonReleased value)? buttonReleased,
-    TResult Function(UserEvent_Click value)? click,
-    TResult Function(UserEvent_DoubleClick value)? doubleClick,
-    TResult Function(UserEvent_PointerMoved value)? pointerMoved,
-    TResult Function(UserEvent_DragStarted value)? dragStarted,
-    TResult Function(UserEvent_Drag value)? drag,
-    TResult Function(UserEvent_DragEnded value)? dragEnded,
-    TResult Function(UserEvent_Scroll value)? scroll,
-    TResult Function(UserEvent_Zoom value)? zoom,
-    required TResult orElse(),
-  }) {
-    if (zoom != null) {
-      return zoom(this);
-    }
-    return orElse();
-  }
 }
 
-abstract class UserEvent_Zoom extends UserEvent {
-  const factory UserEvent_Zoom(final double field0, final Point2 field1) =
-      _$UserEvent_ZoomImpl;
-  const UserEvent_Zoom._() : super._();
 
-  @override
-  double get field0;
-  Point2 get field1;
-
-  /// Create a copy of UserEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserEvent_ZoomImplCopyWith<_$UserEvent_ZoomImpl> get copyWith =>
-      throw _privateConstructorUsedError;
 }
+
+/// @nodoc
+abstract mixin class $UserEvent_ZoomCopyWith<$Res> implements $UserEventCopyWith<$Res> {
+  factory $UserEvent_ZoomCopyWith(UserEvent_Zoom value, $Res Function(UserEvent_Zoom) _then) = _$UserEvent_ZoomCopyWithImpl;
+@useResult
+$Res call({
+ double field0, Point2 field1
+});
+
+
+
+
+}
+/// @nodoc
+class _$UserEvent_ZoomCopyWithImpl<$Res>
+    implements $UserEvent_ZoomCopyWith<$Res> {
+  _$UserEvent_ZoomCopyWithImpl(this._self, this._then);
+
+  final UserEvent_Zoom _self;
+  final $Res Function(UserEvent_Zoom) _then;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,Object? field1 = null,}) {
+  return _then(UserEvent_Zoom(
+null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as double,null == field1 ? _self.field1 : field1 // ignore: cast_nullable_to_non_nullable
+as Point2,
+  ));
+}
+
+
+}
+
+// dart format on
