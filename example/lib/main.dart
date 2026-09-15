@@ -9,6 +9,9 @@ import 'package:galileo_flutter/galileo_flutter.dart';
 const MAP_TILER_API_KEY = '';
 const MAP_TILER_URL_TEMPLATE =
     'https://api.maptiler.com/tiles/v3-openmaptiles/{z}/{x}/{y}.pbf?key=$MAP_TILER_API_KEY';
+const MAPBOX_ACCESS_TOKEN = '';
+const MAPBOX_SATELLITE_URL_TEMPLATE =
+    'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/256/{z}/{x}/{y}?access_token=$MAPBOX_ACCESS_TOKEN';
 
 const _kMapSize = MapSize(width: 800, height: 600);
 final _kMapConfig = MapInitConfig(
@@ -375,6 +378,13 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                       switch (value) {
                         case 'osm_tile_layer':
                           await _switchLayer(LayerConfig.osm());
+                        case 'mapbox_satellite':
+                          await _switchLayer(
+                            LayerConfig.rasterTiles(
+                              urlTemplate: MAPBOX_SATELLITE_URL_TEMPLATE,
+                              attribution: 'Mapbox',
+                            ),
+                          );
                         case 'vector_tile_layer_1':
                           final style = await rootBundle.loadString(
                             'assets/vt_style.json',
@@ -403,6 +413,10 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                       DropdownMenuItem(
                         value: 'osm_tile_layer',
                         child: Text('OSM Tile Layer'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'mapbox_satellite',
+                        child: Text('Mapbox Satellite'),
                       ),
                       DropdownMenuItem(
                         value: 'vector_tile_layer_1',
