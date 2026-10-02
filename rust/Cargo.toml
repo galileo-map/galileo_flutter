@@ -10,8 +10,6 @@ crate-type = ["cdylib", "rlib", "staticlib"]
 flutter_rust_bridge = "=2.13.0"
 flutter-plugin-sdk = "0.1.0"
 
-# irondash
-irondash_dart_ffi = "*"
 galileo = { git = "https://github.com/shri-acha/galileo", default-features = false, features = [
     "wgpu",
     "rustybuzz",

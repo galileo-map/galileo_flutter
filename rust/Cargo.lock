@@ -1434,7 +1434,6 @@ dependencies = [
  "font-kit",
  "futures",
  "galileo",
- "irondash_dart_ffi",
  "lazy_static",
  "log",
  "parking_lot 0.12.5",
@@ -2012,15 +2011,6 @@ name = "ipnet"
 version = "2.12.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "791930b43c0d5973160d90a8f3894509f2b273430f5c5c73b668636d0287c5c0"
-
-[[package]]
-name = "irondash_dart_ffi"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "88ed3ea8413fd024d89154472f7aea14e820eb600d0c4318bc001b14dd9b3ddc"
-dependencies = [
- "once_cell",
-]
 
 [[package]]
 name = "is-terminal"

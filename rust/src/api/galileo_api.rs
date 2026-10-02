@@ -30,16 +30,15 @@ pub fn init_galileo_flutter() {
     flutter_rust_bridge::setup_default_user_utils();
 }
 
-/// Initialize the Galileo Flutter plugin with FFI pointer for irondash
-pub fn galileo_flutter_init(ffi_ptr: i64) {
+/// Initialize the Galileo Flutter plugin runtime.
+pub fn galileo_flutter_init(_ffi_ptr: i64) {
     if IS_INITIALIZED.load(Ordering::SeqCst) {
         return;
     }
 
-    irondash_dart_ffi::irondash_init_ffi(ffi_ptr as *mut std::ffi::c_void);
     init_logger();
     initialize_font_service();
-    info!("Galileo Flutter plugin initialized with FFI and texture support");
+    info!("Galileo Flutter plugin initialized with texture support");
     IS_INITIALIZED.store(true, Ordering::SeqCst);
 }
 
