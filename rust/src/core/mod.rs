@@ -56,15 +56,18 @@ pub(crate) fn init_logger() {
         .or_else(|_| EnvFilter::try_new("warn")) // Default to info level if RUST_LOG is not set
         .unwrap();
     // 5. Combine the layers and initialize the global subscriber
-    tracing_subscriber::registry()
+    let result = tracing_subscriber::registry()
         .with(env_filter) // Apply the environment filter
         .with(console_layer) // Add the stdout layer
         .with(file_layer) // Add the file layer
-        .try_init()
-        .unwrap(); // Set as the global default subscriber
+        .try_init(); // Set as the global default subscriber if possible.
 
-    // leak the guard to keep the file writer alive
-    WORKER_GUARD.lock().unwrap().replace(guard);
+    if result.is_ok() {
+        // leak the guard to keep the file writer alive
+        WORKER_GUARD.lock().unwrap().replace(guard);
+    } else {
+        debug!("Tracing subscriber already initialized; skipping duplicate logger setup");
+    }
     // Default utilities - feel free to custom
     flutter_rust_bridge::setup_default_user_utils();
     debug!("Done initializing");

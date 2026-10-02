@@ -140,12 +140,7 @@ pub async fn destroy_session(session_id: SessionID) {
     };
 
     let flctx = session.terminate().await;
-
-    if let Some(ctx) = flctx {
-        crate::utils::invoke_on_platform_main_thread(move || {
-            drop(ctx);
-        });
-    }
+    drop(flctx);
 
     info!("Session {} destroyed with full cleanup", session_id);
 }

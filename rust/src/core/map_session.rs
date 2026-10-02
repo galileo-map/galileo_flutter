@@ -15,29 +15,23 @@ use std::sync::Arc;
 use std::time::Duration;
 use tokio::sync::Mutex;
 
+use flutter_plugin_sdk::PixelBufferTexture;
+
 use crate::api::dart_types::{MapInitConfig, MapSize, MapViewport, RenderedMapFrame};
-use crate::core::flutter::pixel_texture::{
-    create_flutter_texture, PixelPayloadHolder, SharedPixelPayloadHolder,
-    SharedSendablePixelTexture,
-};
+use crate::core::flutter::pixel_texture::{create_flutter_texture, SharedPixelTexture};
 
 pub type SessionID = u32;
 
 pub struct FlutterCtx {
-    payload_holder: SharedPixelPayloadHolder,
-    sendable_texture: SharedSendablePixelTexture,
+    texture: SharedPixelTexture,
     pub texture_id: i64,
 }
 
 impl FlutterCtx {
-    fn new(engine_handle: i64, size: MapSize) -> anyhow::Result<Self> {
-        // Create texture provider and Flutter texture
-        let pixel_texture_payload_holder = PixelPayloadHolder::new(size);
-        let (sendable_texture, texture_id) =
-            create_flutter_texture(engine_handle, pixel_texture_payload_holder.clone())?;
+    fn new(size: MapSize) -> anyhow::Result<Self> {
+        let (texture, texture_id) = create_flutter_texture(size)?;
         Ok(FlutterCtx {
-            payload_holder: pixel_texture_payload_holder,
-            sendable_texture,
+            texture,
             texture_id,
         })
     }
@@ -123,7 +117,7 @@ impl MapSession {
         let map = create_galileo_map_v2(&config)?;
         let map = Arc::new(Mutex::new(map));
 
-        let flutter_ctx = FlutterCtx::new(engine_handle, size)?;
+        let flutter_ctx = FlutterCtx::new(size)?;
         let (rendered_frame_tx, _) = tokio::sync::watch::channel(None);
 
         let session = Arc::new(MapSession {
@@ -332,15 +326,12 @@ impl MapSession {
 
     /// Renders a single frame for the session.
     pub async fn redraw(&self) -> anyhow::Result<()> {
-        let (payload_holder, sendable_texture) = {
+        let texture = {
             let flctx = self.flutter_ctx.read();
             let flutter_ctx = flctx
                 .as_ref()
                 .ok_or(anyhow!("flutter context not available"))?;
-            (
-                flutter_ctx.payload_holder.clone(),
-                flutter_ctx.sendable_texture.clone(),
-            )
+            flutter_ctx.texture.clone()
         };
 
         let is_first_render = self.is_first_render.swap(false, Ordering::Relaxed);
@@ -378,10 +369,7 @@ impl MapSession {
             (renderer.render(&map).await, viewport, map_size)
         };
 
-        // Update texture provider
-        payload_holder.update_pixels(pixels);
-        // Mark frame available for Flutter
-        sendable_texture.mark_frame_available();
+        Self::publish_pixels(&texture, pixels, map_size).await?;
         if let Some(viewport) = viewport {
             let frame = RenderedMapFrame {
                 sequence: self.rendered_frame_sequence.fetch_add(1, Ordering::Relaxed) + 1,
@@ -390,6 +378,35 @@ impl MapSession {
             };
             let _ = self.rendered_frame_tx.send(Some(frame));
         }
+        Ok(())
+    }
+
+    async fn publish_pixels(
+        texture: &Arc<PixelBufferTexture>,
+        pixels: Vec<u8>,
+        size: MapSize,
+    ) -> anyhow::Result<()> {
+        let width = size.width as usize;
+        let height = size.height as usize;
+        let mut frame = texture.next_frame().await.map_err(|error| {
+            anyhow::anyhow!("failed to acquire Rust shell texture frame: {error:?}")
+        })?;
+        frame
+            .write_pixels(move |buffer, row_bytes| {
+                for (destination_row, source_row) in buffer
+                    .chunks_mut(row_bytes)
+                    .take(height)
+                    .zip(pixels.chunks_exact(width * 4))
+                {
+                    destination_row[..source_row.len()].copy_from_slice(source_row);
+                }
+            })
+            .map_err(|error| {
+                anyhow::anyhow!("failed to write Rust shell texture pixels: {error:?}")
+            })?;
+        frame
+            .present()
+            .map_err(|error| anyhow::anyhow!("failed to present Rust shell texture: {error:?}"))?;
         Ok(())
     }
 
@@ -431,15 +448,12 @@ impl MapSession {
             map.set_size(size.cast::<f64>());
         }
 
-        let payload_holder = {
-            let flctx = self.flutter_ctx.read();
-            flctx.as_ref().map(|ctx| ctx.payload_holder.clone())
-        };
-
-        if let Some(holder) = payload_holder {
-            holder.resize(new_size);
-            self.redraw().await?;
+        let new_ctx = FlutterCtx::new(new_size)?;
+        {
+            let mut flctx = self.flutter_ctx.write();
+            *flctx = Some(new_ctx);
         }
+        self.redraw().await?;
         Ok(())
     }
 
