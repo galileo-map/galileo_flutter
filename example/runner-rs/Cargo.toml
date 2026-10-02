@@ -18,6 +18,7 @@ flutter-plugin-sdk = { path = "../.dart_tool/flutter_rs/sdk/crates/flutter-plugi
 flutter-shell-winit = { path = "../.dart_tool/flutter_rs/sdk/crates/flutter-shell-winit" }
 
 # === BEGIN FLUTTER GENERATED RUST PLUGINS ===
+flutter_rs_plugin_galileo_flutter = { package = "galileo_flutter", path = "../.dart_tool/flutter_rs/plugins/galileo_flutter" }
 # === END FLUTTER GENERATED RUST PLUGINS ===
 
 [patch.crates-io]

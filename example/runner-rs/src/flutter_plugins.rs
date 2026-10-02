@@ -3,6 +3,6 @@
 use flutter_plugin_sdk::{PluginRegistrar, Result};
 
 pub(crate) fn register_plugins(registrar: &mut PluginRegistrar) -> Result<()> {
-    let _ = registrar;
+    flutter_rs_plugin_galileo_flutter::register_application(registrar)?;
     Ok(())
 }

@@ -8,6 +8,11 @@ use flutter_shell_winit::{ShellConfig, run_application};
 use galileo_flutter_example::register_application;
 
 fn main() -> ExitCode {
+    // SAFETY: main has not spawned worker threads yet, so mutating the process
+    // environment is still single-threaded.
+    unsafe {
+        std::env::set_var("FLUTTER_RUST_SHELL", "1");
+    }
     let Some(assets_path) = env::args_os().nth(1).map(PathBuf::from) else {
         eprintln!("usage: galileo_flutter_example <flutter-assets-directory>");
         return ExitCode::FAILURE;

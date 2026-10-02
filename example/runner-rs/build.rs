@@ -10,7 +10,9 @@ fn main() {
     // matching engine (JIT vs AOT-capable) under the same name so `cargo
     // build --release` links the engine that can actually run an AOT app.
     let profile = env::var("PROFILE").unwrap();
-    let engine_dir = manifest_dir.join("../.dart_tool/flutter_rs/sdk/lib").join(&profile);
+    let engine_dir = manifest_dir
+        .join("../.dart_tool/flutter_rs/sdk/lib")
+        .join(&profile);
     let engine_library = engine_dir.join("libflutter_rust_engine.so");
     assert!(
         engine_library.is_file(),
