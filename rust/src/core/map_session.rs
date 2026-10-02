@@ -383,14 +383,16 @@ impl MapSession {
             (renderer.render(&map).await, viewport, map_size)
         };
 
-        Self::publish_pixels(texture, pixels, map_size).await?;
-        if let Some(viewport) = viewport {
-            let frame = RenderedMapFrame {
-                sequence: self.rendered_frame_sequence.fetch_add(1, Ordering::Relaxed) + 1,
-                viewport,
-                map_size,
-            };
-            let _ = self.rendered_frame_tx.send(Some(frame));
+        let published = Self::publish_pixels(texture, pixels, map_size).await?;
+        if published {
+            if let Some(viewport) = viewport {
+                let frame = RenderedMapFrame {
+                    sequence: self.rendered_frame_sequence.fetch_add(1, Ordering::Relaxed) + 1,
+                    viewport,
+                    map_size,
+                };
+                let _ = self.rendered_frame_tx.send(Some(frame));
+            }
         }
         Ok(())
     }
@@ -407,12 +409,18 @@ impl MapSession {
         texture: &Arc<PixelBufferTexture>,
         pixels: Vec<u8>,
         size: MapSize,
-    ) -> anyhow::Result<()> {
+    ) -> anyhow::Result<bool> {
         let width = size.width as usize;
         let height = size.height as usize;
-        let mut frame = texture.next_frame().await.map_err(|error| {
-            anyhow::anyhow!("failed to acquire Rust shell texture frame: {error:?}")
-        })?;
+        let mut frame = match texture.try_next_frame() {
+            Ok(frame) => frame,
+            Err(flutter_plugin_sdk::PluginError::Busy) => return Ok(false),
+            Err(error) => {
+                return Err(anyhow::anyhow!(
+                    "failed to acquire Rust shell texture frame: {error:?}"
+                ));
+            }
+        };
         frame
             .write_pixels(move |buffer, row_bytes| {
                 for (destination_row, source_row) in buffer
@@ -429,7 +437,7 @@ impl MapSession {
         frame
             .present()
             .map_err(|error| anyhow::anyhow!("failed to present Rust shell texture: {error:?}"))?;
-        Ok(())
+        Ok(true)
     }
 
     pub fn subscribe_rendered_frames(
@@ -454,6 +462,9 @@ impl MapSession {
             "Resizing session {} to {}x{}",
             self.session_id, new_size.width, new_size.height
         );
+        let new_ctx = FlutterCtx::new(new_size)?;
+        let new_texture_id = new_ctx.texture_id;
+        let _render_guard = self.render_lock.lock().await;
         let size = galileo_types::cartesian::Size::new(new_size.width, new_size.height);
 
         // Resize renderer
@@ -470,9 +481,6 @@ impl MapSession {
             map.set_size(size.cast::<f64>());
         }
 
-        let new_ctx = FlutterCtx::new(new_size)?;
-        let new_texture_id = new_ctx.texture_id;
-        let _render_guard = self.render_lock.lock().await;
         let _ = self.retired_ctx.write().take();
         self.redraw_to(&new_ctx.texture).await?;
         let old_ctx = self.flutter_ctx.write().replace(new_ctx);
