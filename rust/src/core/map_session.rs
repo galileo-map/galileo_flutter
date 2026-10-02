@@ -3,7 +3,7 @@ use crate::core::galileo_ref::create_galileo_map_v2;
 pub use crate::core::pixel_buffer::PixelBuffer;
 use crate::core::{WindowlessRenderer, SESSIONS, SESSION_COUNTER};
 use anyhow::anyhow;
-use galileo::layer::{FeatureId, FeatureLayer};
+use galileo::layer::{FeatureId, FeatureLayer, RasterTileLayer};
 use galileo::{galileo_types, DummyMessenger, Messenger};
 use galileo_types::geo::impls::GeoPoint2d;
 use galileo_types::geometry_type::GeoSpace2d;
@@ -365,6 +365,7 @@ impl MapSession {
                 renderer.size()
             );
             debug!("Map view is: {:?}", map.view());
+            self.load_raster_tiles(&map).await;
             map.load_layers();
             (renderer.render(&map).await, viewport, map_size)
         };
@@ -379,6 +380,14 @@ impl MapSession {
             let _ = self.rendered_frame_tx.send(Some(frame));
         }
         Ok(())
+    }
+
+    async fn load_raster_tiles(&self, map: &galileo::Map) {
+        for layer in map.layers().iter_visible() {
+            if let Some(raster_layer) = layer.as_any().downcast_ref::<RasterTileLayer>() {
+                raster_layer.load_tiles(&map.view()).await;
+            }
+        }
     }
 
     async fn publish_pixels(
