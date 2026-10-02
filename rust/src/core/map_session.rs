@@ -427,7 +427,7 @@ impl MapSession {
     }
 
     /// Resizes the rendering session.
-    pub async fn resize(&self, new_size: MapSize) -> anyhow::Result<()> {
+    pub async fn resize(&self, new_size: MapSize) -> anyhow::Result<i64> {
         info!(
             "Resizing session {} to {}x{}",
             self.session_id, new_size.width, new_size.height
@@ -449,12 +449,13 @@ impl MapSession {
         }
 
         let new_ctx = FlutterCtx::new(new_size)?;
+        let new_texture_id = new_ctx.texture_id;
         {
             let mut flctx = self.flutter_ctx.write();
             *flctx = Some(new_ctx);
         }
         self.redraw().await?;
-        Ok(())
+        Ok(new_texture_id)
     }
 
     async fn _draw_no_res(&self) {

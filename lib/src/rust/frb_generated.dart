@@ -166,7 +166,7 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateApiGalileoApiRequestMapRedraw({required int sessionId});
 
-  Future<void> crateApiGalileoApiResizeSession({
+  Future<PlatformInt64> crateApiGalileoApiResizeSession({
     required int sessionId,
     required MapSize newSize,
   });
@@ -858,7 +858,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<void> crateApiGalileoApiResizeSession({
+  Future<PlatformInt64> crateApiGalileoApiResizeSession({
     required int sessionId,
     required MapSize newSize,
   }) {
@@ -876,7 +876,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
         },
         codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
+          decodeSuccessData: sse_decode_i_64,
           decodeErrorData: sse_decode_AnyhowException,
         ),
         constMeta: kCrateApiGalileoApiResizeSessionConstMeta,

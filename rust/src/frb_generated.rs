@@ -431,12 +431,12 @@ fn wire__crate__api__galileo_api__galileo_flutter_init_impl(
             };
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_ffi_ptr = <i64>::sse_decode(&mut deserializer);
+            let api__ffi_ptr = <i64>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Ok::<_, ()>({
-                        crate::api::galileo_api::galileo_flutter_init(api_ffi_ptr);
+                        crate::api::galileo_api::galileo_flutter_init(api__ffi_ptr);
                     })?;
                     std::result::Result::Ok(output_ok)
                 })())

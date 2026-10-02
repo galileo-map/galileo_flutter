@@ -414,7 +414,7 @@ pub async fn handle_event_for_session(session_id: SessionID, event: UserEvent) {
     }
 }
 
-pub async fn resize_session(session_id: SessionID, new_size: MapSize) -> anyhow::Result<()> {
+pub async fn resize_session(session_id: SessionID, new_size: MapSize) -> anyhow::Result<i64> {
     let session = {
         SESSIONS
             .lock()

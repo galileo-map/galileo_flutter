@@ -191,8 +191,13 @@ class GalileoMapController {
   Future<void> resize(MapSize newSize) async {
     if (!_running) return;
     try {
-      await rlib.resizeSession(sessionId: sessionId, newSize: newSize);
+      final newTextureId = await rlib.resizeSession(
+        sessionId: sessionId,
+        newSize: newSize,
+      );
+      _textureId = newTextureId;
       _size = newSize;
+      _stateBroadcast.add(GalileoMapState.ready);
     } catch (e) {
       _log.severe('Error resizing map', e);
     }
