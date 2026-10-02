@@ -47,6 +47,12 @@ pub struct MapSession {
     renderer: Arc<Mutex<WindowlessRenderer>>,
     /// this is optional because we wanna drop this on the platform thread.
     flutter_ctx: RwLock<Option<FlutterCtx>>,
+    /// Texture that was replaced by the latest resize and is kept alive until
+    /// Flutter has switched to the new texture id.
+    retired_ctx: RwLock<Option<FlutterCtx>>,
+    /// Serializes resize and redraw operations so a queued redraw can never
+    /// publish pixels for the previous texture size.
+    render_lock: Mutex<()>,
     pub engine_handle: i64,
     is_alive: AtomicBool,
     pub controller: galileo::control::MapController,
@@ -125,6 +131,8 @@ impl MapSession {
             map: map.clone(),
             renderer: renderer.clone(),
             flutter_ctx: RwLock::new(Some(flutter_ctx)),
+            retired_ctx: RwLock::new(None),
+            render_lock: Mutex::new(()),
             engine_handle,
             is_alive: AtomicBool::new(true),
             controller: galileo::control::MapController::default(),
@@ -326,6 +334,7 @@ impl MapSession {
 
     /// Renders a single frame for the session.
     pub async fn redraw(&self) -> anyhow::Result<()> {
+        let _render_guard = self.render_lock.lock().await;
         let texture = {
             let flctx = self.flutter_ctx.read();
             let flutter_ctx = flctx
@@ -334,6 +343,10 @@ impl MapSession {
             flutter_ctx.texture.clone()
         };
 
+        self.redraw_to(&texture).await
+    }
+
+    async fn redraw_to(&self, texture: &SharedPixelTexture) -> anyhow::Result<()> {
         let is_first_render = self.is_first_render.swap(false, Ordering::Relaxed);
 
         if is_first_render {
@@ -370,7 +383,7 @@ impl MapSession {
             (renderer.render(&map).await, viewport, map_size)
         };
 
-        Self::publish_pixels(&texture, pixels, map_size).await?;
+        Self::publish_pixels(texture, pixels, map_size).await?;
         if let Some(viewport) = viewport {
             let frame = RenderedMapFrame {
                 sequence: self.rendered_frame_sequence.fetch_add(1, Ordering::Relaxed) + 1,
@@ -459,11 +472,11 @@ impl MapSession {
 
         let new_ctx = FlutterCtx::new(new_size)?;
         let new_texture_id = new_ctx.texture_id;
-        {
-            let mut flctx = self.flutter_ctx.write();
-            *flctx = Some(new_ctx);
-        }
-        self.redraw().await?;
+        let _render_guard = self.render_lock.lock().await;
+        let _ = self.retired_ctx.write().take();
+        self.redraw_to(&new_ctx.texture).await?;
+        let old_ctx = self.flutter_ctx.write().replace(new_ctx);
+        *self.retired_ctx.write() = old_ctx;
         Ok(new_texture_id)
     }
 
@@ -475,6 +488,7 @@ impl MapSession {
         self.is_alive.store(false, Ordering::SeqCst);
 
         let flctx = self.flutter_ctx.write().take();
+        let _ = self.retired_ctx.write().take();
         self.managed_layers.lock().await.clear();
 
         // clear all layers

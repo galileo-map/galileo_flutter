@@ -120,6 +120,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
 
   Offset? _lastPointerPosition;
   MapSize? _lastMapSize;
+  Timer? resizeTimer;
   double _lastPinchScaleValue = 1;
   bool _isPinchScaling = false;
 
@@ -147,11 +148,18 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
         });
       }
     });
+    widget.controller.textureIdListenable.addListener(_handleTextureIdChanged);
     viewportSubscription = widget.controller.renderedViewportStream.listen((
       vp,
     ) {
       if (mounted) widget.onViewportChanged?.call(vp);
     });
+  }
+
+  void _handleTextureIdChanged() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> _sendPanEvent(Offset delta, Offset position) {
@@ -380,19 +388,21 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
     return LayoutBuilder(
       builder: (context, constraints) {
         final size = Size(constraints.maxWidth, constraints.maxHeight);
+        final scale = _devicePixelRatio;
         final newMapSize = MapSize(
-          width: size.width.toInt(),
-          height: size.height.toInt(),
+          width: (size.width * scale).round(),
+          height: (size.height * scale).round(),
         );
 
         if (_lastMapSize == null ||
             _lastMapSize!.width != newMapSize.width ||
             _lastMapSize!.height != newMapSize.height) {
           _lastMapSize = newMapSize;
-          // resize in next frame
-          Future.microtask(() async {
-            if (!mounted) return;
-            await widget.controller.resize(newMapSize);
+          resizeTimer?.cancel();
+          resizeTimer = Timer(const Duration(milliseconds: 50), () {
+            if (mounted) {
+              widget.controller.resize(newMapSize);
+            }
           });
         }
 
@@ -493,6 +503,10 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
       HardwareKeyboard.instance.removeHandler(_handleKeyEvent);
     }
 
+    resizeTimer?.cancel();
+    widget.controller.textureIdListenable.removeListener(
+      _handleTextureIdChanged,
+    );
     super.dispose();
 
     Future.microtask(() async {
