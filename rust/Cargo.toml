@@ -14,7 +14,8 @@ galileo = { git = "https://github.com/shri-acha/galileo", default-features = fal
     "wgpu",
     "rustybuzz",
     "image",
-    "fontconfig-dlopen"
+    "fontconfig-dlopen",
+    "reqwest-default-tls"
 ]}
 
 wgpu = "27.0.1"
