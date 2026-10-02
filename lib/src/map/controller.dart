@@ -5,7 +5,6 @@ import 'package:galileo_flutter/src/rust/api/galileo_api.dart' as rlib;
 import 'package:galileo_flutter/src/layer/controller.dart';
 import 'package:logging/logging.dart';
 
-import 'package:irondash_engine_context/irondash_engine_context.dart';
 import "package:rxdart/rxdart.dart" as rx;
 
 final _log = Logger('GalileoMapController');
@@ -79,12 +78,9 @@ class GalileoMapController {
     List<LayerConfig> layers = const [LayerConfig.osm()],
   }) async {
     try {
-      // Get Flutter engine handle for texture registration
-      final handle = await EngineContext.instance.getEngineHandle();
-
       // Create the map instance
       final newSessionResp = await rlib.createNewMapSession(
-        engineHandle: handle,
+        engineHandle: 0,
         config: config,
       );
 

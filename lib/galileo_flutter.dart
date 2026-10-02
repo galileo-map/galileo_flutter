@@ -1,7 +1,10 @@
 library;
 
 import 'dart:ffi' as ffi;
+import 'dart:io';
 
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart'
+    show ExternalLibrary;
 import 'package:path_provider/path_provider.dart';
 
 export 'package:galileo_flutter/src/map/widget.dart' show GalileoMapWidget;
@@ -22,7 +25,7 @@ export 'package:galileo_flutter/src/rust/api/dart_types.dart'
         GalileoColor,
         Point2,
         Point,
-		  UserEvent,
+        UserEvent,
         PointStyle;
 export 'package:galileo_flutter/src/map/widget.dart';
 export 'package:galileo_flutter/src/extensions/color.dart';
@@ -39,7 +42,11 @@ export 'package:galileo_flutter/src/widgets/cluster/cluster_controller.dart';
 export 'package:galileo_flutter/src/widgets/cluster/cluster_overlay.dart';
 
 Future<void> initGalileo({String? cachePath}) async {
-  await rlib_gen.RustLib.init();
+  final isRustShell = Platform.environment['FLUTTER_RUST_SHELL'] == '1';
+  await rlib_gen.RustLib.init(
+    externalLibrary:
+        isRustShell ? ExternalLibrary.process(iKnowHowToUseIt: true) : null,
+  );
   rlib.galileoFlutterInit(ffiPtr: ffi.NativeApi.initializeApiDLData.address);
 
   String? tileCachePath = cachePath;
