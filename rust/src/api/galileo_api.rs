@@ -20,6 +20,7 @@ use galileo::render::text::RustybuzzRasterizer;
 use galileo::tile_schema::TileSchemaBuilder;
 use log::{debug, info};
 use std::sync::atomic::Ordering;
+use std::sync::Arc;
 
 use crate::api::dart_types::*;
 use crate::core::map_session::{MapSession, SessionID};
@@ -179,6 +180,7 @@ pub async fn add_session_layer(
             let layer = builder
                 .build()
                 .map_err(|e| anyhow::anyhow!("Failed to create OSM layer: {}", e))?;
+            let layer = Arc::new(parking_lot::RwLock::new(layer));
             session.add_layer(layer).await;
         }
         LayerConfig::RasterTiles {
@@ -204,6 +206,7 @@ pub async fn add_session_layer(
             let layer = builder
                 .build()
                 .map_err(|e| anyhow::anyhow!("Failed to create raster tile layer: {}", e))?;
+            let layer = Arc::new(parking_lot::RwLock::new(layer));
             session.add_layer(layer).await;
         }
         LayerConfig::VectorTiles {

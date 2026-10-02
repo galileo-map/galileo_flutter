@@ -4,8 +4,8 @@ use std::{
 };
 
 use flutter_plugin_sdk::{
-    FlutterRustPlugin, GpuTextures, MainThreadDispatcher, PixelBufferTexture, PluginError,
-    PluginRegistrar, TextureDescriptor, TextureFormat,
+    FlutterRustPlugin, GpuTextures, MainThreadDispatcher, PluginError, PluginRegistrar,
+    TextureDescriptor, TextureFormat, WgpuTexture,
 };
 
 use crate::api::dart_types::MapSize;
@@ -32,9 +32,7 @@ pub fn register_application(registrar: &mut PluginRegistrar) -> Result<(), Plugi
     GalileoRustShellPlugin.register(registrar)
 }
 
-pub(crate) fn create_pixel_buffer_texture(
-    size: MapSize,
-) -> anyhow::Result<(PixelBufferTexture, i64)> {
+pub(crate) fn create_wgpu_texture(size: MapSize) -> anyhow::Result<(WgpuTexture, i64)> {
     let textures = GPU_TEXTURES
         .get()
         .ok_or_else(|| anyhow::anyhow!("Rust shell plugin was not registered"))?;
@@ -46,7 +44,7 @@ pub(crate) fn create_pixel_buffer_texture(
     dispatcher
         .dispatch(move || {
             let result = textures
-                .create_pixel_buffer_texture(TextureDescriptor {
+                .create_texture(TextureDescriptor {
                     width: size.width,
                     height: size.height,
                     format: TextureFormat::Rgba8Unorm,

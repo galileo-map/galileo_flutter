@@ -1,13 +1,11 @@
 pub mod flutter;
 pub mod galileo_ref;
 pub mod map_session;
-pub mod pixel_buffer;
 pub mod windowless_renderer;
 
 use galileo::galileo_types;
 use log::debug;
 use parking_lot::Mutex;
-pub use pixel_buffer::PixelBuffer;
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::sync::{Arc, OnceLock};

@@ -1,1 +1,1 @@
-pub mod pixel_texture;
+pub mod wgpu_texture;
