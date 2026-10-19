@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// flutter-rust-runner-version: 4
+// flutter-rust-runner-version: 3
 
 use std::{env, path::PathBuf, process::ExitCode};
 
@@ -10,6 +10,14 @@ use flutter_shell_winit::{ShellConfig, run_application};
 use galileo_flutter_example::register_application;
 
 fn main() -> ExitCode {
+    // The Dart plugin layer detects the Rust shell through this flag and then
+    // resolves flutter_rust_bridge symbols from this process (`--export-dynamic`
+    // in build.rs) instead of trying to dlopen `libgalileo_flutter.so`.
+    // Safe: this runs at process start, before the engine spawns any threads.
+    unsafe {
+        std::env::set_var("FLUTTER_RUST_SHELL", "1");
+    }
+
     // Assets and ICU data are bundled next to the executable by
     // `flutter build rust` (`<exe dir>/data/{flutter_assets,icudtl.dat}`).
     // An explicit first argument overrides the assets directory, which is how
