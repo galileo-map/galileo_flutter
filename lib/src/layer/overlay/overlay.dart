@@ -75,14 +75,14 @@ class MapOverlayFlowDelegate extends FlowDelegate {
           context.getChildSize(i) ?? Size(overlay.width, overlay.height);
 
       final screenPos = screenPositions[i];
-      final transformMatrix =
-          Matrix4.identity()..translateByVector3(
-            Vector3(
-              screenPos.x - (childSize.width / 2),
-              screenPos.y - (childSize.height / 2),
-              0,
-            ),
-          );
+      final transformMatrix = Matrix4.identity()
+        ..translateByVector3(
+          Vector3(
+            screenPos.x - (childSize.width / 2),
+            screenPos.y - (childSize.height / 2),
+            0,
+          ),
+        );
 
       context.paintChild(i, transform: transformMatrix);
     }

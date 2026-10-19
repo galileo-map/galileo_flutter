@@ -44,8 +44,9 @@ export 'package:galileo_flutter/src/widgets/cluster/cluster_overlay.dart';
 Future<void> initGalileo({String? cachePath}) async {
   final isRustShell = Platform.environment['FLUTTER_RUST_SHELL'] == '1';
   await rlib_gen.RustLib.init(
-    externalLibrary:
-        isRustShell ? ExternalLibrary.process(iKnowHowToUseIt: true) : null,
+    externalLibrary: isRustShell
+        ? ExternalLibrary.process(iKnowHowToUseIt: true)
+        : null,
   );
   rlib.galileoFlutterInit(ffiPtr: ffi.NativeApi.initializeApiDLData.address);
 

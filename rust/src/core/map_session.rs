@@ -4,6 +4,7 @@ use crate::core::{WindowlessRenderer, SESSIONS, SESSION_COUNTER};
 use anyhow::anyhow;
 use galileo::layer::{FeatureId, FeatureLayer, RasterTileLayer};
 use galileo::{galileo_types, DummyMessenger, Messenger};
+use galileo_types::cartesian::Rect;
 use galileo_types::geo::impls::GeoPoint2d;
 use galileo_types::geometry_type::GeoSpace2d;
 use log::{debug, error, info, warn};
@@ -35,6 +36,15 @@ impl FlutterCtx {
         })
     }
 }
+
+/// Identifies the map view that raster tiles were last scheduled for, so a
+/// new tile-loading batch is only spawned when the view actually changed.
+#[derive(Clone, Debug, PartialEq)]
+struct ScheduledTileView {
+    resolution: f64,
+    bbox: Option<Rect<f64>>,
+}
+
 /// Internal map session that manages the Galileo map with rendering.
 pub struct MapSession {
     pub session_id: SessionID,
@@ -59,8 +69,7 @@ pub struct MapSession {
     runtime_handle: tokio::runtime::Handle,
     /// The last map view for which raster tiles were scheduled. Used to avoid
     /// spawning a new batch of tile-loading tasks on every frame.
-    scheduled_tile_view: parking_lot::Mutex<Option<(f64, Option<(f64, f64, f64, f64)>)>>,
-    pub engine_handle: i64,
+    scheduled_tile_view: parking_lot::Mutex<Option<ScheduledTileView>>,
     is_alive: AtomicBool,
     pub controller: galileo::control::MapController,
     // The map is initially built without layers, so the configured zoom level cannot be
@@ -106,7 +115,7 @@ impl galileo::Messenger for SessionMessenger {
 }
 
 impl MapSession {
-    pub async fn new(engine_handle: i64, config: MapInitConfig) -> anyhow::Result<Arc<MapSession>> {
+    pub async fn new(config: MapInitConfig) -> anyhow::Result<Arc<MapSession>> {
         let session_id = create_new_session();
         let runtime_handle = tokio::runtime::Handle::current();
         // Create windowless renderer
@@ -141,7 +150,6 @@ impl MapSession {
             render_lock: Mutex::new(()),
             runtime_handle,
             scheduled_tile_view: parking_lot::Mutex::new(None),
-            engine_handle,
             is_alive: AtomicBool::new(true),
             controller: galileo::control::MapController::default(),
             zoom_level: config.zoom_level,
@@ -432,10 +440,10 @@ impl MapSession {
 
     fn schedule_raster_tiles(&self, map: &galileo::Map) {
         let view = map.view().clone();
-        let bbox = view
-            .get_bbox()
-            .map(|rect| (rect.x_min(), rect.y_min(), rect.x_max(), rect.y_max()));
-        let view_key = (view.resolution(), bbox);
+        let view_key = ScheduledTileView {
+            resolution: view.resolution(),
+            bbox: view.get_bbox(),
+        };
 
         let mut last_scheduled = self.scheduled_tile_view.lock();
         if last_scheduled.as_ref() == Some(&view_key) {
@@ -583,7 +591,6 @@ mod tests {
             render_lock: Mutex::new(()),
             runtime_handle: runtime_handle.clone(),
             scheduled_tile_view: parking_lot::Mutex::new(None),
-            engine_handle: 0,
             is_alive: AtomicBool::new(true),
             controller: galileo::control::MapController::default(),
             zoom_level: 0,

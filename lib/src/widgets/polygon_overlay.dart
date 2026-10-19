@@ -7,15 +7,13 @@ const _kMidpointR = 8.0;
 
 const _kHandleRed = Color(0xFFE53935);
 
-Paint _fillPaint(Color c) =>
-    Paint()
-      ..color = c
-      ..style = PaintingStyle.fill;
-Paint _strokePaint(Color c, double w) =>
-    Paint()
-      ..color = c
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = w;
+Paint _fillPaint(Color c) => Paint()
+  ..color = c
+  ..style = PaintingStyle.fill;
+Paint _strokePaint(Color c, double w) => Paint()
+  ..color = c
+  ..style = PaintingStyle.stroke
+  ..strokeWidth = w;
 
 final Paint _sharedPaint = Paint();
 

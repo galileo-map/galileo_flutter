@@ -84,10 +84,7 @@ class GalileoMapController {
   }) async {
     try {
       // Create the map instance
-      final newSessionResp = await rlib.createNewMapSession(
-        engineHandle: 0,
-        config: config,
-      );
+      final newSessionResp = await rlib.createNewMapSession(config: config);
 
       // Create state broadcast
       final stateBroadcast = rx.BehaviorSubject<GalileoMapState>.seeded(

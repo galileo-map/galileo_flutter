@@ -5,6 +5,7 @@
 
 import '../frb_generated.dart';
 import 'dart_types.dart';
+
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `create_url_source`, `initialize_font_service`
@@ -18,12 +19,9 @@ Future<void> setTileCachePath({String? path}) =>
     RustLib.instance.api.crateApiGalileoApiSetTileCachePath(path: path);
 
 Future<CreateNewSessionResponse> createNewMapSession({
-  required PlatformInt64 engineHandle,
   required MapInitConfig config,
-}) => RustLib.instance.api.crateApiGalileoApiCreateNewMapSession(
-  engineHandle: engineHandle,
-  config: config,
-);
+}) =>
+    RustLib.instance.api.crateApiGalileoApiCreateNewMapSession(config: config);
 
 /// Triggers a map update and re-render.
 Future<void> requestMapRedraw({required int sessionId}) => RustLib.instance.api
@@ -32,12 +30,6 @@ Future<void> requestMapRedraw({required int sessionId}) => RustLib.instance.api
 /// Marks the session as alive (called periodically from Flutter)
 Future<void> markSessionAlive({required int sessionId}) => RustLib.instance.api
     .crateApiGalileoApiMarkSessionAlive(sessionId: sessionId);
-
-/// Destroys all streams for a given engine
-Future<void> destroyAllEngineSessions({required PlatformInt64 engineId}) =>
-    RustLib.instance.api.crateApiGalileoApiDestroyAllEngineSessions(
-      engineId: engineId,
-    );
 
 /// Destroys a specific session
 Future<void> destroySession({required int sessionId}) =>

@@ -15,7 +15,7 @@ flutter-plugin-sdk = "0.1.0"
 # these features on the shared wgpu instance at application build time.
 wgpu = { git = "https://github.com/gfx-rs/wgpu.git", rev = "014d9e84813a2946febfa4888694c0b70565b2f5", default-features = false, features = ["wgsl", "vulkan"] }
 
-galileo = { path = "vendor/galileo/galileo", default-features = false, features = [
+galileo = { git = "https://github.com/shri-acha/galileo", branch = "feature/additive-renderer", default-features = false, features = [
     "wgpu",
     "rustybuzz",
     "image",

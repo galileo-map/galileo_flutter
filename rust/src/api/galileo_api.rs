@@ -7,7 +7,6 @@ use crate::frb_generated::StreamSink;
 use flutter_rust_bridge::frb;
 use font_kit::handle::Handle;
 use font_kit::source::SystemSource;
-use futures::future::join_all;
 use galileo::control::UserEventHandler;
 use galileo::galileo_types::geo::Crs;
 use galileo::layer::data_provider::remove_parameters_modifier;
@@ -79,12 +78,11 @@ pub struct CreateNewSessionResponse {
 }
 
 pub async fn create_new_map_session(
-    engine_handle: i64,
     config: MapInitConfig,
 ) -> anyhow::Result<CreateNewSessionResponse> {
     info!("create_new_map_session was called");
     TOKIO_HANDLE.get_or_init(|| tokio::runtime::Handle::current());
-    let session = MapSession::new(engine_handle, config).await?;
+    let session = MapSession::new(config).await?;
     info!("New map session created with ID {}", session.session_id);
     Ok(CreateNewSessionResponse {
         session_id: session.session_id,
@@ -111,20 +109,6 @@ pub fn mark_session_alive(session_id: SessionID) {
         session.mark_alive();
         debug!("Session {} marked as alive", session_id);
     }
-}
-
-/// Destroys all streams for a given engine
-pub async fn destroy_all_engine_sessions(engine_id: i64) {
-    debug!("destroy_engine_streams called for engine {}", engine_id);
-
-    let session_ids: Vec<_> = SESSIONS
-        .lock()
-        .iter()
-        .filter(|(_, s)| s.engine_handle == engine_id)
-        .map(|(id, _)| *id)
-        .collect();
-
-    join_all(session_ids.into_iter().map(destroy_session)).await;
 }
 
 /// Destroys a specific session

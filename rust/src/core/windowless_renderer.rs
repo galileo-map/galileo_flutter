@@ -69,7 +69,7 @@ impl WindowlessRenderer {
             .as_mut()
             .expect("renderer initialized above");
         renderer.trim_textures();
-        renderer.render_to_texture_view(map, view, encoder);
+        renderer.render_to_texture_view_with_encoder(map, view, encoder);
     }
 }
 

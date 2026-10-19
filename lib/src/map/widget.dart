@@ -313,8 +313,9 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
       onPointerSignal: (event) {
         if (event is PointerScrollEvent) {
           const zoomSensitivity = 0.002;
-          final zoomFactor =
-              math.pow(1.0 - zoomSensitivity, -event.scrollDelta.dy).toDouble();
+          final zoomFactor = math
+              .pow(1.0 - zoomSensitivity, -event.scrollDelta.dy)
+              .toDouble();
           _sendZoomEvent(zoomFactor, event.localPosition);
         }
       },
@@ -371,8 +372,9 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
           if (details.scale != _lastPinchScaleValue) {
             final scaleDelta = details.scale / _lastPinchScaleValue;
             const zoomSensitivity = 2.5;
-            final amplifiedDelta =
-                math.pow(scaleDelta, zoomSensitivity).toDouble();
+            final amplifiedDelta = math
+                .pow(scaleDelta, zoomSensitivity)
+                .toDouble();
             _lastPinchScaleValue = details.scale;
             _sendZoomEvent(1.0 / amplifiedDelta, details.localFocalPoint);
           }
