@@ -20,6 +20,7 @@ use galileo::tile_schema::TileSchemaBuilder;
 use log::{debug, info};
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
+use std::time::Duration;
 
 use crate::api::dart_types::*;
 use crate::core::map_session::{MapSession, SessionID};
@@ -161,9 +162,13 @@ pub async fn add_session_layer(
                     .with_file_cache_modifier_checked(path, Box::new(remove_parameters_modifier));
             }
 
-            let layer = builder
+            let mut layer = builder
                 .build()
                 .map_err(|e| anyhow::anyhow!("Failed to create OSM layer: {}", e))?;
+            // Tiles appear instantly; the default 300ms fade-in re-requests a
+            // redraw from every frame while any tile is fading, which keeps
+            // the render loop running at full rate on an otherwise static map.
+            layer.set_fade_in_duration(Duration::ZERO);
             let layer = Arc::new(parking_lot::RwLock::new(layer));
             session.add_layer(layer).await;
         }
@@ -187,9 +192,10 @@ pub async fn add_session_layer(
                 builder = builder.with_attribution(attr, "".to_string());
             }
 
-            let layer = builder
+            let mut layer = builder
                 .build()
                 .map_err(|e| anyhow::anyhow!("Failed to create raster tile layer: {}", e))?;
+            layer.set_fade_in_duration(Duration::ZERO);
             let layer = Arc::new(parking_lot::RwLock::new(layer));
             session.add_layer(layer).await;
         }

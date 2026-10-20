@@ -69,8 +69,9 @@ class PolygonDrawController extends ChangeNotifier {
   int? _hitVertex(Offset pos, Size size) {
     final vp = _viewport;
     if (vp == null) return null;
-    for (int i = 0; i < _pendingVertices.length; i++) {
-      final scr = geoToOffset(_pendingVertices[i], size, vp);
+    final offsets = geosToOffsets(_pendingVertices, size, vp);
+    for (int i = 0; i < offsets.length; i++) {
+      final scr = offsets[i];
       if ((scr - pos).distance < _vertexHitR) return i;
     }
     return null;

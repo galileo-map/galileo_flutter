@@ -231,8 +231,9 @@ class PolygonEditController extends FeatureEditController {
   int? _hitVertex(Offset pos, Size size) {
     final vp = _viewport;
     if (vp == null) return null;
-    for (int i = 0; i < _editingVertices.length; i++) {
-      final scr = geoToOffset(_editingVertices[i], size, vp);
+    final offsets = geosToOffsets(_editingVertices, size, vp);
+    for (int i = 0; i < offsets.length; i++) {
+      final scr = offsets[i];
       if ((scr - pos).distance < _vertexHitR) return i;
     }
     return null;
@@ -241,13 +242,10 @@ class PolygonEditController extends FeatureEditController {
   int? _hitEdgeMidpoint(Offset pos, Size size) {
     final vp = _viewport;
     if (vp == null) return null;
-    for (int i = 0; i < _editingVertices.length; i++) {
-      final a = geoToOffset(_editingVertices[i], size, vp);
-      final b = geoToOffset(
-        _editingVertices[(i + 1) % _editingVertices.length],
-        size,
-        vp,
-      );
+    final offsets = geosToOffsets(_editingVertices, size, vp);
+    for (int i = 0; i < offsets.length; i++) {
+      final a = offsets[i];
+      final b = offsets[(i + 1) % offsets.length];
       final mid = (a + b) / 2;
       if ((mid - pos).distance < _midpointHitR) return i;
     }
@@ -258,10 +256,7 @@ class PolygonEditController extends FeatureEditController {
     final poly = _features?.polygons[id];
     final vp = _viewport;
     if (poly == null || vp == null) return false;
-    return pointInPolygon(
-      pos,
-      poly.points.map((t) => geoToOffset(t, size, vp)).toList(),
-    );
+    return pointInPolygon(pos, geosToOffsets(poly.points, size, vp));
   }
 
   @override
