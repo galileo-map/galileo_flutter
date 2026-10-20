@@ -7,7 +7,6 @@ use crate::frb_generated::StreamSink;
 use flutter_rust_bridge::frb;
 use font_kit::handle::Handle;
 use font_kit::source::SystemSource;
-use futures::future::join_all;
 use galileo::control::UserEventHandler;
 use galileo::galileo_types::geo::Crs;
 use galileo::layer::data_provider::remove_parameters_modifier;
@@ -20,6 +19,7 @@ use galileo::render::text::RustybuzzRasterizer;
 use galileo::tile_schema::TileSchemaBuilder;
 use log::{debug, info};
 use std::sync::atomic::Ordering;
+use std::sync::Arc;
 
 use crate::api::dart_types::*;
 use crate::core::map_session::{MapSession, SessionID};
@@ -30,16 +30,15 @@ pub fn init_galileo_flutter() {
     flutter_rust_bridge::setup_default_user_utils();
 }
 
-/// Initialize the Galileo Flutter plugin with FFI pointer for irondash
-pub fn galileo_flutter_init(ffi_ptr: i64) {
+/// Initialize the Galileo Flutter plugin runtime.
+pub fn galileo_flutter_init(_ffi_ptr: i64) {
     if IS_INITIALIZED.load(Ordering::SeqCst) {
         return;
     }
 
-    irondash_dart_ffi::irondash_init_ffi(ffi_ptr as *mut std::ffi::c_void);
     init_logger();
     initialize_font_service();
-    info!("Galileo Flutter plugin initialized with FFI and texture support");
+    info!("Galileo Flutter plugin initialized with texture support");
     IS_INITIALIZED.store(true, Ordering::SeqCst);
 }
 
@@ -79,12 +78,11 @@ pub struct CreateNewSessionResponse {
 }
 
 pub async fn create_new_map_session(
-    engine_handle: i64,
     config: MapInitConfig,
 ) -> anyhow::Result<CreateNewSessionResponse> {
     info!("create_new_map_session was called");
     TOKIO_HANDLE.get_or_init(|| tokio::runtime::Handle::current());
-    let session = MapSession::new(engine_handle, config).await?;
+    let session = MapSession::new(config).await?;
     info!("New map session created with ID {}", session.session_id);
     Ok(CreateNewSessionResponse {
         session_id: session.session_id,
@@ -113,20 +111,6 @@ pub fn mark_session_alive(session_id: SessionID) {
     }
 }
 
-/// Destroys all streams for a given engine
-pub async fn destroy_all_engine_sessions(engine_id: i64) {
-    debug!("destroy_engine_streams called for engine {}", engine_id);
-
-    let session_ids: Vec<_> = SESSIONS
-        .lock()
-        .iter()
-        .filter(|(_, s)| s.engine_handle == engine_id)
-        .map(|(id, _)| *id)
-        .collect();
-
-    join_all(session_ids.into_iter().map(destroy_session)).await;
-}
-
 /// Destroys a specific session
 pub async fn destroy_session(session_id: SessionID) {
     debug!("destroy_session called for session {}", session_id);
@@ -140,12 +124,7 @@ pub async fn destroy_session(session_id: SessionID) {
     };
 
     let flctx = session.terminate().await;
-
-    if let Some(ctx) = flctx {
-        crate::utils::invoke_on_platform_main_thread(move || {
-            drop(ctx);
-        });
-    }
+    drop(flctx);
 
     info!("Session {} destroyed with full cleanup", session_id);
 }
@@ -185,6 +164,7 @@ pub async fn add_session_layer(
             let layer = builder
                 .build()
                 .map_err(|e| anyhow::anyhow!("Failed to create OSM layer: {}", e))?;
+            let layer = Arc::new(parking_lot::RwLock::new(layer));
             session.add_layer(layer).await;
         }
         LayerConfig::RasterTiles {
@@ -210,6 +190,7 @@ pub async fn add_session_layer(
             let layer = builder
                 .build()
                 .map_err(|e| anyhow::anyhow!("Failed to create raster tile layer: {}", e))?;
+            let layer = Arc::new(parking_lot::RwLock::new(layer));
             session.add_layer(layer).await;
         }
         LayerConfig::VectorTiles {
@@ -420,7 +401,7 @@ pub async fn handle_event_for_session(session_id: SessionID, event: UserEvent) {
     }
 }
 
-pub async fn resize_session(session_id: SessionID, new_size: MapSize) -> anyhow::Result<()> {
+pub async fn resize_session(session_id: SessionID, new_size: MapSize) -> anyhow::Result<i64> {
     let session = {
         SESSIONS
             .lock()

@@ -5,12 +5,13 @@
 
 import '../frb_generated.dart';
 import 'dart_types.dart';
+
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `create_url_source`, `initialize_font_service`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`
 
-/// Initialize the Galileo Flutter plugin with FFI pointer for irondash
+/// Initialize the Galileo Flutter plugin runtime.
 Future<void> galileoFlutterInit({required PlatformInt64 ffiPtr}) =>
     RustLib.instance.api.crateApiGalileoApiGalileoFlutterInit(ffiPtr: ffiPtr);
 
@@ -18,12 +19,9 @@ Future<void> setTileCachePath({String? path}) =>
     RustLib.instance.api.crateApiGalileoApiSetTileCachePath(path: path);
 
 Future<CreateNewSessionResponse> createNewMapSession({
-  required PlatformInt64 engineHandle,
   required MapInitConfig config,
-}) => RustLib.instance.api.crateApiGalileoApiCreateNewMapSession(
-  engineHandle: engineHandle,
-  config: config,
-);
+}) =>
+    RustLib.instance.api.crateApiGalileoApiCreateNewMapSession(config: config);
 
 /// Triggers a map update and re-render.
 Future<void> requestMapRedraw({required int sessionId}) => RustLib.instance.api
@@ -32,12 +30,6 @@ Future<void> requestMapRedraw({required int sessionId}) => RustLib.instance.api
 /// Marks the session as alive (called periodically from Flutter)
 Future<void> markSessionAlive({required int sessionId}) => RustLib.instance.api
     .crateApiGalileoApiMarkSessionAlive(sessionId: sessionId);
-
-/// Destroys all streams for a given engine
-Future<void> destroyAllEngineSessions({required PlatformInt64 engineId}) =>
-    RustLib.instance.api.crateApiGalileoApiDestroyAllEngineSessions(
-      engineId: engineId,
-    );
 
 /// Destroys a specific session
 Future<void> destroySession({required int sessionId}) =>
@@ -128,7 +120,7 @@ Future<void> handleEventForSession({
   event: event,
 );
 
-Future<void> resizeSession({
+Future<PlatformInt64> resizeSession({
   required int sessionId,
   required MapSize newSize,
 }) => RustLib.instance.api.crateApiGalileoApiResizeSession(

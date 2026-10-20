@@ -1,10 +1,10 @@
 use crate::api::dart_types::{Point, PointSymbol, Polygon, PolygonSymbol};
 use crate::core::galileo_ref::create_galileo_map_v2;
-pub use crate::core::pixel_buffer::PixelBuffer;
 use crate::core::{WindowlessRenderer, SESSIONS, SESSION_COUNTER};
 use anyhow::anyhow;
-use galileo::layer::{FeatureId, FeatureLayer};
+use galileo::layer::{FeatureId, FeatureLayer, RasterTileLayer};
 use galileo::{galileo_types, DummyMessenger, Messenger};
+use galileo_types::cartesian::Rect;
 use galileo_types::geo::impls::GeoPoint2d;
 use galileo_types::geometry_type::GeoSpace2d;
 use log::{debug, error, info, warn};
@@ -15,33 +15,36 @@ use std::sync::Arc;
 use std::time::Duration;
 use tokio::sync::Mutex;
 
+use flutter_plugin_sdk::PluginError;
+
 use crate::api::dart_types::{MapInitConfig, MapSize, MapViewport, RenderedMapFrame};
-use crate::core::flutter::pixel_texture::{
-    create_flutter_texture, PixelPayloadHolder, SharedPixelPayloadHolder,
-    SharedSendablePixelTexture,
-};
+use crate::core::flutter::wgpu_texture::{create_flutter_texture, SharedWgpuTexture};
 
 pub type SessionID = u32;
 
 pub struct FlutterCtx {
-    payload_holder: SharedPixelPayloadHolder,
-    sendable_texture: SharedSendablePixelTexture,
+    texture: SharedWgpuTexture,
     pub texture_id: i64,
 }
 
 impl FlutterCtx {
-    fn new(engine_handle: i64, size: MapSize) -> anyhow::Result<Self> {
-        // Create texture provider and Flutter texture
-        let pixel_texture_payload_holder = PixelPayloadHolder::new(size);
-        let (sendable_texture, texture_id) =
-            create_flutter_texture(engine_handle, pixel_texture_payload_holder.clone())?;
+    fn new(size: MapSize) -> anyhow::Result<Self> {
+        let (texture, texture_id) = create_flutter_texture(size)?;
         Ok(FlutterCtx {
-            payload_holder: pixel_texture_payload_holder,
-            sendable_texture,
+            texture,
             texture_id,
         })
     }
 }
+
+/// Identifies the map view that raster tiles were last scheduled for, so a
+/// new tile-loading batch is only spawned when the view actually changed.
+#[derive(Clone, Debug, PartialEq)]
+struct ScheduledTileView {
+    resolution: f64,
+    bbox: Option<Rect<f64>>,
+}
+
 /// Internal map session that manages the Galileo map with rendering.
 pub struct MapSession {
     pub session_id: SessionID,
@@ -53,7 +56,20 @@ pub struct MapSession {
     renderer: Arc<Mutex<WindowlessRenderer>>,
     /// this is optional because we wanna drop this on the platform thread.
     flutter_ctx: RwLock<Option<FlutterCtx>>,
-    pub engine_handle: i64,
+    /// Texture that was replaced by the latest resize and is kept alive until
+    /// Flutter has switched to the new texture id.
+    retired_ctx: RwLock<Option<FlutterCtx>>,
+    /// Serializes resize and redraw operations so a queued redraw can never
+    /// publish pixels for the previous texture size.
+    render_lock: Mutex<()>,
+    /// Runtime that owns the session's async work. Redraw requests can arrive
+    /// from the Rust shell's frame-acquire thread (outside any Tokio runtime),
+    /// so redraw loops are spawned on this captured handle instead of relying
+    /// on an ambient runtime context.
+    runtime_handle: tokio::runtime::Handle,
+    /// The last map view for which raster tiles were scheduled. Used to avoid
+    /// spawning a new batch of tile-loading tasks on every frame.
+    scheduled_tile_view: parking_lot::Mutex<Option<ScheduledTileView>>,
     is_alive: AtomicBool,
     pub controller: galileo::control::MapController,
     // The map is initially built without layers, so the configured zoom level cannot be
@@ -83,7 +99,7 @@ impl galileo::Messenger for SessionMessenger {
         }
 
         let session = self.0.clone();
-        tokio::spawn(async move {
+        self.0.runtime_handle.spawn(async move {
             loop {
                 const FRAME_THROTTLE_MS: u64 = 16;
                 tokio::time::sleep(Duration::from_millis(FRAME_THROTTLE_MS)).await; // throttle to ~60fps
@@ -99,13 +115,12 @@ impl galileo::Messenger for SessionMessenger {
 }
 
 impl MapSession {
-    pub async fn new(engine_handle: i64, config: MapInitConfig) -> anyhow::Result<Arc<MapSession>> {
+    pub async fn new(config: MapInitConfig) -> anyhow::Result<Arc<MapSession>> {
         let session_id = create_new_session();
+        let runtime_handle = tokio::runtime::Handle::current();
         // Create windowless renderer
         let renderer_size = config.map_size.as_galileo();
-        let renderer = WindowlessRenderer::new(renderer_size)
-            .await
-            .map_err(|e| anyhow::anyhow!("Failed to create renderer: {}", e))?;
+        let renderer = WindowlessRenderer::new(renderer_size);
         let renderer = Arc::new(Mutex::new(renderer));
 
         // Create OSM layer for background
@@ -123,7 +138,7 @@ impl MapSession {
         let map = create_galileo_map_v2(&config)?;
         let map = Arc::new(Mutex::new(map));
 
-        let flutter_ctx = FlutterCtx::new(engine_handle, size)?;
+        let flutter_ctx = FlutterCtx::new(size)?;
         let (rendered_frame_tx, _) = tokio::sync::watch::channel(None);
 
         let session = Arc::new(MapSession {
@@ -131,7 +146,10 @@ impl MapSession {
             map: map.clone(),
             renderer: renderer.clone(),
             flutter_ctx: RwLock::new(Some(flutter_ctx)),
-            engine_handle,
+            retired_ctx: RwLock::new(None),
+            render_lock: Mutex::new(()),
+            runtime_handle,
+            scheduled_tile_view: parking_lot::Mutex::new(None),
             is_alive: AtomicBool::new(true),
             controller: galileo::control::MapController::default(),
             zoom_level: config.zoom_level,
@@ -200,6 +218,7 @@ impl MapSession {
 
         map.layers_mut().push(layer);
         map.redraw();
+        self.schedule_raster_tiles(&map);
     }
 
     pub async fn add_managed_layer(&self, mut layer: impl galileo::layer::Layer + 'static) -> u32 {
@@ -332,24 +351,28 @@ impl MapSession {
 
     /// Renders a single frame for the session.
     pub async fn redraw(&self) -> anyhow::Result<()> {
-        let (payload_holder, sendable_texture) = {
+        let _render_guard = self.render_lock.lock().await;
+        let texture = {
             let flctx = self.flutter_ctx.read();
             let flutter_ctx = flctx
                 .as_ref()
                 .ok_or(anyhow!("flutter context not available"))?;
-            (
-                flutter_ctx.payload_holder.clone(),
-                flutter_ctx.sendable_texture.clone(),
-            )
+            flutter_ctx.texture.clone()
         };
 
+        self.redraw_to(&texture).await
+    }
+
+    async fn redraw_to(&self, texture: &SharedWgpuTexture) -> anyhow::Result<()> {
         let is_first_render = self.is_first_render.swap(false, Ordering::Relaxed);
 
         if is_first_render {
             tokio::time::sleep(Duration::from_millis(1000)).await;
         }
 
-        let (pixels, viewport, map_size) = {
+        // Prepare the map on the FRB worker thread. GPU command recording is
+        // deferred to the shell's frame-acquire callback.
+        let (viewport, map_size) = {
             let renderer = self.renderer.lock().await;
             let mut map = self.map.lock().await;
 
@@ -374,14 +397,36 @@ impl MapSession {
                 renderer.size()
             );
             debug!("Map view is: {:?}", map.view());
-            map.load_layers();
-            (renderer.render(&map).await, viewport, map_size)
+            self.schedule_raster_tiles(&map);
+            Self::prepare_non_raster_layers(&map);
+            (viewport, map_size)
         };
 
-        // Update texture provider
-        payload_holder.update_pixels(pixels);
-        // Mark frame available for Flutter
-        sendable_texture.mark_frame_available();
+        let mut frame = match texture.try_next_frame() {
+            Ok(frame) => frame,
+            Err(PluginError::Busy) => return Ok(()),
+            Err(error) => {
+                return Err(anyhow::anyhow!(
+                    "failed to acquire Rust shell texture frame: {error:?}"
+                ));
+            }
+        };
+
+        let map = self.map.clone();
+        let renderer = self.renderer.clone();
+        frame
+            .render(move |device, encoder, view| {
+                let map = map.blocking_lock();
+                let mut renderer = renderer.blocking_lock();
+                renderer.render(&map, device, encoder, view);
+            })
+            .map_err(|error| {
+                anyhow::anyhow!("failed to record Rust shell texture render: {error:?}")
+            })?;
+        frame
+            .present()
+            .map_err(|error| anyhow::anyhow!("failed to present Rust shell texture: {error:?}"))?;
+
         if let Some(viewport) = viewport {
             let frame = RenderedMapFrame {
                 sequence: self.rendered_frame_sequence.fetch_add(1, Ordering::Relaxed) + 1,
@@ -391,6 +436,54 @@ impl MapSession {
             let _ = self.rendered_frame_tx.send(Some(frame));
         }
         Ok(())
+    }
+
+    fn schedule_raster_tiles(&self, map: &galileo::Map) {
+        let view = map.view().clone();
+        let view_key = ScheduledTileView {
+            resolution: view.resolution(),
+            bbox: view.get_bbox(),
+        };
+
+        let mut last_scheduled = self.scheduled_tile_view.lock();
+        if last_scheduled.as_ref() == Some(&view_key) {
+            return;
+        }
+        *last_scheduled = Some(view_key);
+
+        for layer in map.layers().iter_visible() {
+            let Some(raster_layer) = layer
+                .as_any()
+                .downcast_ref::<Arc<RwLock<RasterTileLayer>>>()
+            else {
+                continue;
+            };
+            let raster_layer = Arc::clone(raster_layer);
+            let view = view.clone();
+            let runtime = self.runtime_handle.clone();
+            runtime.spawn_blocking(move || {
+                let tile_runtime = tokio::runtime::Builder::new_current_thread()
+                    .enable_all()
+                    .build()
+                    .expect("failed to build tile-loading runtime");
+                tile_runtime.block_on(async move {
+                    let layer = raster_layer.read();
+                    layer.load_tiles(&view).await;
+                });
+            });
+        }
+    }
+
+    fn prepare_non_raster_layers(map: &galileo::Map) {
+        for layer in map.layers().iter_visible() {
+            if layer
+                .as_any()
+                .downcast_ref::<Arc<RwLock<RasterTileLayer>>>()
+                .is_none()
+            {
+                layer.prepare(map.view());
+            }
+        }
     }
 
     pub fn subscribe_rendered_frames(
@@ -410,37 +503,33 @@ impl MapSession {
     }
 
     /// Resizes the rendering session.
-    pub async fn resize(&self, new_size: MapSize) -> anyhow::Result<()> {
+    pub async fn resize(&self, new_size: MapSize) -> anyhow::Result<i64> {
         info!(
             "Resizing session {} to {}x{}",
             self.session_id, new_size.width, new_size.height
         );
+        let new_ctx = FlutterCtx::new(new_size)?;
+        let new_texture_id = new_ctx.texture_id;
+        let _render_guard = self.render_lock.lock().await;
         let size = galileo_types::cartesian::Size::new(new_size.width, new_size.height);
 
         // Resize renderer
         {
             let mut renderer = self.renderer.lock().await;
-            renderer
-                .resize(size)
-                .map_err(|e| anyhow::anyhow!("Failed to resize renderer: {}", e))?;
+            renderer.resize(size);
         }
 
-        // Resize pixel buffer
+        // Resize map view
         {
             let mut map = self.map.lock().await;
             map.set_size(size.cast::<f64>());
         }
 
-        let payload_holder = {
-            let flctx = self.flutter_ctx.read();
-            flctx.as_ref().map(|ctx| ctx.payload_holder.clone())
-        };
-
-        if let Some(holder) = payload_holder {
-            holder.resize(new_size);
-            self.redraw().await?;
-        }
-        Ok(())
+        let _ = self.retired_ctx.write().take();
+        self.redraw_to(&new_ctx.texture).await?;
+        let old_ctx = self.flutter_ctx.write().replace(new_ctx);
+        *self.retired_ctx.write() = old_ctx;
+        Ok(new_texture_id)
     }
 
     async fn _draw_no_res(&self) {
@@ -451,6 +540,7 @@ impl MapSession {
         self.is_alive.store(false, Ordering::SeqCst);
 
         let flctx = self.flutter_ctx.write().take();
+        let _ = self.retired_ctx.write().take();
         self.managed_layers.lock().await.clear();
 
         // clear all layers
@@ -472,4 +562,60 @@ fn create_new_session() -> SessionID {
         SESSION_COUNTER.load(Ordering::Relaxed)
     );
     SESSION_COUNTER.fetch_add(1, Ordering::SeqCst) + 1
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn request_redraw_works_without_an_ambient_runtime() {
+        let runtime = tokio::runtime::Builder::new_multi_thread()
+            .worker_threads(1)
+            .enable_all()
+            .build()
+            .expect("failed to build test runtime");
+        let runtime_handle = runtime.handle().clone();
+
+        let (rendered_frame_tx, _) = tokio::sync::watch::channel(None);
+        let session = Arc::new(MapSession {
+            session_id: 0,
+            map: Arc::new(Mutex::new(galileo::MapBuilder::default().build())),
+            managed_layers: Arc::new(Mutex::new(HashMap::default())),
+            managed_layer_id: std::sync::atomic::AtomicU32::new(0),
+            renderer: Arc::new(Mutex::new(WindowlessRenderer::new(
+                galileo_types::cartesian::Size::new(1, 1),
+            ))),
+            flutter_ctx: RwLock::new(None),
+            retired_ctx: RwLock::new(None),
+            render_lock: Mutex::new(()),
+            runtime_handle: runtime_handle.clone(),
+            scheduled_tile_view: parking_lot::Mutex::new(None),
+            is_alive: AtomicBool::new(true),
+            controller: galileo::control::MapController::default(),
+            zoom_level: 0,
+            initial_view_resolved: AtomicBool::new(true),
+            is_first_render: AtomicBool::new(false),
+            requires_redraw: AtomicBool::new(false),
+            redraw_scheduled: AtomicBool::new(false),
+            rendered_frame_sequence: AtomicU64::new(0),
+            rendered_frame_tx,
+        });
+
+        let messenger = SessionMessenger(session.clone());
+        // Simulate Galileo asking for another frame from the Rust shell's
+        // frame-acquire thread, where no Tokio runtime is in scope.
+        std::thread::spawn(move || messenger.request_redraw())
+            .join()
+            .expect("redraw request thread panicked");
+
+        runtime.block_on(async {
+            tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+        });
+
+        assert!(
+            !session.redraw_scheduled.load(Ordering::Acquire),
+            "the redraw loop should have completed and cleared its guard"
+        );
+    }
 }

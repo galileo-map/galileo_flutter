@@ -4,24 +4,25 @@ version = "0.1.0"
 edition = "2021"
 
 [lib]
-crate-type = ["cdylib", "staticlib"]
+crate-type = ["cdylib", "rlib", "staticlib"]
 
 [dependencies]
 flutter_rust_bridge = "=2.13.0"
+flutter-plugin-sdk = "0.1.0"
+# The SDK re-exports its own wgpu (30.0.0). Depending on the same revision and
+# enabling the `wgsl` feature keeps shader compilation available when the
+# plugin is checked against the crates.io SDK; the Rust shell already enables
+# these features on the shared wgpu instance at application build time.
+wgpu = { git = "https://github.com/gfx-rs/wgpu.git", rev = "014d9e84813a2946febfa4888694c0b70565b2f5", default-features = false, features = ["wgsl", "vulkan"] }
 
-# irondash
-irondash_texture = "*"
-irondash_run_loop = "*"
-irondash_engine_context = "*"
-irondash_dart_ffi = "*"
-galileo = { git = "https://github.com/shri-acha/galileo", default-features = false, features = [
+galileo = { git = "https://github.com/shri-acha/galileo", branch = "feature/additive-renderer", default-features = false, features = [
     "wgpu",
     "rustybuzz",
     "image",
-    "fontconfig-dlopen"
+    "fontconfig-dlopen",
+    "reqwest-default-tls"
 ]}
 
-wgpu = "27.0.1"
 tokio = { version = "1.0", features = ["full"] }
 futures = "0.3"
 parking_lot = "0.12"
@@ -39,3 +40,13 @@ font-kit = "0.14.3"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
+
+[package.metadata.flutter]
+plugin = true
+registrar = "register_application"
+
+[patch.crates-io]
+# In the standalone `cargo check` build the crates.io flutter-plugin-sdk links
+# the registry wgpu 30.0.0. Redirect it to the same revision as the Rust shell
+# so every crate in this plugin shares one wgpu instance.
+wgpu = { git = "https://github.com/gfx-rs/wgpu.git", rev = "014d9e84813a2946febfa4888694c0b70565b2f5" }

@@ -13,28 +13,56 @@ class LayerController extends ChangeNotifier {
   MapViewport? _viewportBounds;
   MapViewport? get viewportBounds => _viewportBounds;
 
+  final ValueNotifier<MapViewport?> _viewportNotifier =
+      ValueNotifier<MapViewport?>(null);
+
+  /// Fires only when the viewport actually changes. Use this as a repaint
+  /// trigger (e.g. `FlowDelegate(repaint: ...)`) so widgets are repositioned
+  /// without being rebuilt on every rendered frame.
+  Listenable get viewportListenable => _viewportNotifier;
+
   double _zoomScale = 1.0;
   double get zoomScale => _zoomScale;
 
   double? _initialResolution;
 
   final List<OverlayWidget> _overlays = [];
-  List<OverlayWidget> get overlays => List.unmodifiable(_overlays);
+  List<OverlayWidget> _overlaysView = const [];
+
+  /// Stable identity across reads; only recreated when overlays are
+  /// added/removed/cleared, so `shouldRepaint` can compare by identity.
+  List<OverlayWidget> get overlays => _overlaysView;
+
+  final ValueNotifier<int> _overlaysRevision = ValueNotifier<int>(0);
+
+  /// Fires only when the overlay list membership changes. Use this to rebuild
+  /// the overlay layer instead of listening to every viewport notification.
+  Listenable get overlaysRevision => _overlaysRevision;
+
+  void _overlaysChanged() {
+    _overlaysView = List.unmodifiable(_overlays);
+    _overlaysRevision.value++;
+  }
 
   void addOverlay(OverlayWidget overlay) {
     _overlays.add(overlay);
+    _overlaysChanged();
     notifyListeners();
   }
 
   void removeOverlay(OverlayWidget overlay) {
     if (_overlays.remove(overlay)) {
+      _overlaysChanged();
       notifyListeners();
     }
   }
 
   void clearOverlays() {
-    _overlays.clear();
-    notifyListeners();
+    if (_overlays.isNotEmpty) {
+      _overlays.clear();
+      _overlaysChanged();
+      notifyListeners();
+    }
   }
 
   T? editorFor<T extends FeatureEditController>(String layerName) {
@@ -61,34 +89,46 @@ class LayerController extends ChangeNotifier {
   /// Applies the viewport that was used to render the current texture frame.
   void updateViewport(MapViewport? nativeViewport, MapSize mapSize) {
     if (nativeViewport == null) return;
-    _viewportBounds = MapViewport(
+    final viewport = MapViewport(
       xMin: nativeViewport.xMin,
       xMax: nativeViewport.xMax,
       yMin: nativeViewport.yMin,
       yMax: nativeViewport.yMax,
     );
 
-    final coordWidth = nativeViewport.xMax - nativeViewport.xMin;
+    final coordWidth = viewport.xMax - viewport.xMin;
+    double zoomScale = _zoomScale;
     if (coordWidth > 0 && mapSize.width > 0) {
       final resolution = coordWidth / mapSize.width;
       _initialResolution ??= resolution;
-      _zoomScale = _initialResolution! / resolution;
+      zoomScale = _initialResolution! / resolution;
     }
+
+    // Skip notifications entirely when nothing changed; rendered frames often
+    // repeat the same viewport and would otherwise rebuild/repaint the whole
+    // overlay layer for nothing.
+    if (viewport == _viewportBounds && zoomScale == _zoomScale) {
+      return;
+    }
+
+    _viewportBounds = viewport;
+    _zoomScale = zoomScale;
 
     for (final editor in _editors.values) {
-      editor.updateViewport(_viewportBounds!);
+      editor.updateViewport(viewport);
     }
 
+    _viewportNotifier.value = viewport;
     notifyListeners();
   }
 
   /// Add a layer to the map
   Future<void> addLayer(LayerConfig layer) async {
     try {
-      switch (layer){
-		case LayerConfig.widgetLayer:
-		break;
-		default:
+      switch (layer) {
+        case LayerConfig.widgetLayer:
+          break;
+        default:
           await rlib.addSessionLayer(sessionId: sessionId, layerConfig: layer);
       }
     } catch (e) {
@@ -210,6 +250,8 @@ class LayerController extends ChangeNotifier {
       editor.dispose();
     }
     _editors.clear();
+    _viewportNotifier.dispose();
+    _overlaysRevision.dispose();
     super.dispose();
   }
 }

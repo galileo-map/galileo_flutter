@@ -136,7 +136,9 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
       config: _kMapConfig,
       layers: [newLayer],
     );
-    setState(() => _controllerFuture = f);
+    setState(() {
+      _controllerFuture = f;
+    });
 
     final (ctrl, err) = await f;
     if (!mounted) return;

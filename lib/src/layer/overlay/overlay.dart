@@ -1,6 +1,6 @@
 import 'package:galileo_flutter/galileo_flutter.dart';
+import 'package:galileo_flutter/src/utils.dart';
 import 'package:flutter/widgets.dart';
-import 'package:vector_math/vector_math_64.dart';
 
 class MapOverlayLayer extends StatelessWidget {
   final LayerController controller;
@@ -37,16 +37,12 @@ class MapOverlayFlowDelegate extends FlowDelegate {
   final LayerController controller;
   final Size mapSize;
   final List<OverlayWidget> overlays;
-  final MapViewport? viewportBounds;
-  final double zoomScale;
 
   MapOverlayFlowDelegate({
     required this.controller,
     required this.mapSize,
     required this.overlays,
-  }) : viewportBounds = controller.viewportBounds,
-       zoomScale = controller.zoomScale,
-       super(repaint: controller);
+  }) : super(repaint: controller.viewportListenable);
 
   // Should constrain the size of the child with their own height and width
   @override
@@ -58,12 +54,7 @@ class MapOverlayFlowDelegate extends FlowDelegate {
   void paintChildren(FlowPaintingContext context) {
     final vp = controller.viewportBounds;
     if (vp == null) return;
-    final screenPositions = GeoLocation.pointsToScreen(
-      points: overlays.map((overlay) => overlay.loc).toList(growable: false),
-      height: mapSize.height,
-      width: mapSize.width,
-      vp: vp,
-    );
+    final zoomScale = controller.zoomScale;
 
     for (int i = 0; i < overlays.length; i++) {
       final overlay = overlays[i];
@@ -74,15 +65,24 @@ class MapOverlayFlowDelegate extends FlowDelegate {
       final childSize =
           context.getChildSize(i) ?? Size(overlay.width, overlay.height);
 
-      final screenPos = screenPositions[i];
-      final transformMatrix =
-          Matrix4.identity()..translateByVector3(
-            Vector3(
-              screenPos.x - (childSize.width / 2),
-              screenPos.y - (childSize.height / 2),
-              0,
-            ),
-          );
+      final screenPos = geoToOffset(overlay.loc, mapSize, vp);
+      final halfWidth = childSize.width / 2;
+      final halfHeight = childSize.height / 2;
+
+      // Skip overlays entirely outside the viewport; the flow clips anyway,
+      // so painting them only wastes raster time.
+      if (screenPos.dx + halfWidth < 0 ||
+          screenPos.dx - halfWidth > mapSize.width ||
+          screenPos.dy + halfHeight < 0 ||
+          screenPos.dy - halfHeight > mapSize.height) {
+        continue;
+      }
+
+      final transformMatrix = Matrix4.translationValues(
+        screenPos.dx - halfWidth,
+        screenPos.dy - halfHeight,
+        0,
+      );
 
       context.paintChild(i, transform: transformMatrix);
     }
@@ -92,8 +92,6 @@ class MapOverlayFlowDelegate extends FlowDelegate {
   bool shouldRepaint(covariant MapOverlayFlowDelegate oldDelegate) {
     return oldDelegate.controller != controller ||
         oldDelegate.mapSize != mapSize ||
-        oldDelegate.overlays != overlays ||
-        oldDelegate.viewportBounds != viewportBounds ||
-        oldDelegate.zoomScale != zoomScale;
+        oldDelegate.overlays != overlays;
   }
 }
