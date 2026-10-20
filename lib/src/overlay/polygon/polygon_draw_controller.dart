@@ -56,6 +56,7 @@ class PolygonDrawController extends ChangeNotifier {
   }
 
   void updateViewport(MapViewport viewport) {
+    if (_viewport == viewport) return;
     _viewport = viewport;
     notifyListeners();
   }

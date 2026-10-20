@@ -57,6 +57,7 @@ class PolygonEditController extends FeatureEditController {
 
   @override
   void updateViewport(MapViewport viewport) {
+    if (_viewport == viewport) return;
     _viewport = viewport;
     notifyListeners();
   }
