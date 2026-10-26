@@ -319,13 +319,21 @@ class MouseEvent {
   /// State of the mouse buttons.
   final MouseButtonsState buttons;
 
+  /// Flutter's monotonic pointer timestamp, in microseconds. Zero means
+  /// the event did not originate from a timestamped pointer sample.
+  final BigInt timestampMicros;
+
   const MouseEvent({
     required this.screenPointerPosition,
     required this.buttons,
+    required this.timestampMicros,
   });
 
   @override
-  int get hashCode => screenPointerPosition.hashCode ^ buttons.hashCode;
+  int get hashCode =>
+      screenPointerPosition.hashCode ^
+      buttons.hashCode ^
+      timestampMicros.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -333,7 +341,8 @@ class MouseEvent {
       other is MouseEvent &&
           runtimeType == other.runtimeType &&
           screenPointerPosition == other.screenPointerPosition &&
-          buttons == other.buttons;
+          buttons == other.buttons &&
+          timestampMicros == other.timestampMicros;
 }
 
 /// Points with properties for colors
@@ -579,8 +588,13 @@ sealed class UserEvent with _$UserEvent {
   const factory UserEvent.scroll(double field0, MouseEvent field1) =
       UserEvent_Scroll;
 
-  /// Zoom is called around a point.
-  const factory UserEvent.zoom(double field0, Point2 field1) = UserEvent_Zoom;
+  /// Ease toward a zoom level around a point.
+  const factory UserEvent.zoomAnimated(double field0, Point2 field1) =
+      UserEvent_ZoomAnimated;
+
+  /// Apply a pinch-zoom delta immediately around a point.
+  const factory UserEvent.zoomImmediate(double field0, Point2 field1) =
+      UserEvent_ZoomImmediate;
 
   /// Rotate the map by this many degrees clockwise around a screen point.
   const factory UserEvent.rotate(double field0, Point2 field1) =

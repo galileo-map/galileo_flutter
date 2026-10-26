@@ -136,7 +136,7 @@ abstract class RustLibApi extends BaseApi {
     required int sessionId,
   });
 
-  Future<void> crateApiGalileoApiHandleEventForSession({
+  void crateApiGalileoApiHandleEventForSession({
     required int sessionId,
     required UserEvent event,
   });
@@ -593,22 +593,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<void> crateApiGalileoApiHandleEventForSession({
+  void crateApiGalileoApiHandleEventForSession({
     required int sessionId,
     required UserEvent event,
   }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_u_32(sessionId, serializer);
           sse_encode_box_autoadd_user_event(event, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 13,
-            port: port_,
-          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_unit,
@@ -1244,11 +1239,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   MouseEvent dco_decode_mouse_event(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
     return MouseEvent(
       screenPointerPosition: dco_decode_point_2(arr[0]),
       buttons: dco_decode_mouse_buttons_state(arr[1]),
+      timestampMicros: dco_decode_u_64(arr[2]),
     );
   }
 
@@ -1422,16 +1418,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dco_decode_box_autoadd_mouse_event(raw[2]),
         );
       case 9:
-        return UserEvent_Zoom(
+        return UserEvent_ZoomAnimated(
           dco_decode_f_64(raw[1]),
           dco_decode_box_autoadd_point_2(raw[2]),
         );
       case 10:
-        return UserEvent_Rotate(
+        return UserEvent_ZoomImmediate(
           dco_decode_f_64(raw[1]),
           dco_decode_box_autoadd_point_2(raw[2]),
         );
       case 11:
+        return UserEvent_Rotate(
+          dco_decode_f_64(raw[1]),
+          dco_decode_box_autoadd_point_2(raw[2]),
+        );
+      case 12:
         return UserEvent_Pitch(dco_decode_f_64(raw[1]));
       default:
         throw Exception("unreachable");
@@ -1784,9 +1785,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_screenPointerPosition = sse_decode_point_2(deserializer);
     var var_buttons = sse_decode_mouse_buttons_state(deserializer);
+    var var_timestampMicros = sse_decode_u_64(deserializer);
     return MouseEvent(
       screenPointerPosition: var_screenPointerPosition,
       buttons: var_buttons,
+      timestampMicros: var_timestampMicros,
     );
   }
 
@@ -1950,12 +1953,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 9:
         var var_field0 = sse_decode_f_64(deserializer);
         var var_field1 = sse_decode_box_autoadd_point_2(deserializer);
-        return UserEvent_Zoom(var_field0, var_field1);
+        return UserEvent_ZoomAnimated(var_field0, var_field1);
       case 10:
         var var_field0 = sse_decode_f_64(deserializer);
         var var_field1 = sse_decode_box_autoadd_point_2(deserializer);
-        return UserEvent_Rotate(var_field0, var_field1);
+        return UserEvent_ZoomImmediate(var_field0, var_field1);
       case 11:
+        var var_field0 = sse_decode_f_64(deserializer);
+        var var_field1 = sse_decode_box_autoadd_point_2(deserializer);
+        return UserEvent_Rotate(var_field0, var_field1);
+      case 12:
         var var_field0 = sse_decode_f_64(deserializer);
         return UserEvent_Pitch(var_field0);
       default:
@@ -2299,6 +2306,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_point_2(self.screenPointerPosition, serializer);
     sse_encode_mouse_buttons_state(self.buttons, serializer);
+    sse_encode_u_64(self.timestampMicros, serializer);
   }
 
   @protected
@@ -2449,16 +2457,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_i_32(8, serializer);
         sse_encode_f_64(field0, serializer);
         sse_encode_box_autoadd_mouse_event(field1, serializer);
-      case UserEvent_Zoom(field0: final field0, field1: final field1):
+      case UserEvent_ZoomAnimated(field0: final field0, field1: final field1):
         sse_encode_i_32(9, serializer);
         sse_encode_f_64(field0, serializer);
         sse_encode_box_autoadd_point_2(field1, serializer);
-      case UserEvent_Rotate(field0: final field0, field1: final field1):
+      case UserEvent_ZoomImmediate(field0: final field0, field1: final field1):
         sse_encode_i_32(10, serializer);
         sse_encode_f_64(field0, serializer);
         sse_encode_box_autoadd_point_2(field1, serializer);
-      case UserEvent_Pitch(field0: final field0):
+      case UserEvent_Rotate(field0: final field0, field1: final field1):
         sse_encode_i_32(11, serializer);
+        sse_encode_f_64(field0, serializer);
+        sse_encode_box_autoadd_point_2(field1, serializer);
+      case UserEvent_Pitch(field0: final field0):
+        sse_encode_i_32(12, serializer);
         sse_encode_f_64(field0, serializer);
     }
   }

@@ -110,7 +110,8 @@ Stream<RenderedMapFrame> streamRenderedMapFrames({required int sessionId}) =>
       sessionId: sessionId,
     );
 
-Future<void> handleEventForSession({
+/// Enqueue input without a Dart-to-Rust async round trip for every pointer move.
+void handleEventForSession({
   required int sessionId,
   required UserEvent event,
 }) => RustLib.instance.api.crateApiGalileoApiHandleEventForSession(

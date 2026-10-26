@@ -205,7 +205,7 @@ class PointClusterController extends ChangeNotifier {
     final effectiveSteps =
         steps ?? (cluster.count == 1 ? 1 : (cluster.count > 12 ? 4 : 3));
     for (var i = 0; i < effectiveSteps; i++) {
-      await controller.handleEvent(UserEvent.zoom(zoomFactor, anchor));
+      await controller.handleEvent(UserEvent.zoomAnimated(zoomFactor, anchor));
     }
   }
 }

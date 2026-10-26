@@ -246,7 +246,9 @@ pub async fn stream_rendered_map_frames(
     Ok(())
 }
 
-pub async fn handle_event_for_session(session_id: SessionID, event: UserEvent) {
+/// Enqueue input without a Dart-to-Rust async round trip for every pointer move.
+#[frb(sync)]
+pub fn handle_event_for_session(session_id: SessionID, event: UserEvent) {
     let session = SESSIONS.lock().get(&session_id).cloned();
 
     if let Some(session) = session {

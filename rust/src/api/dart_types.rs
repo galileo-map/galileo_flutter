@@ -314,6 +314,9 @@ pub struct MouseEvent {
     pub screen_pointer_position: Point2,
     /// State of the mouse buttons.
     pub buttons: MouseButtonsState,
+    /// Flutter's monotonic pointer timestamp, in microseconds. Zero means
+    /// the event did not originate from a timestamped pointer sample.
+    pub timestamp_micros: u64,
 }
 
 /// User interaction event.
@@ -337,8 +340,10 @@ pub enum UserEvent {
     DragEnded(MouseButton, MouseEvent),
     /// Scroll event is called.
     Scroll(f64, MouseEvent),
-    /// Zoom is called around a point.
-    Zoom(f64, Point2),
+    /// Ease toward a zoom level around a point.
+    ZoomAnimated(f64, Point2),
+    /// Apply a pinch-zoom delta immediately around a point.
+    ZoomImmediate(f64, Point2),
     /// Rotate the map by this many degrees clockwise around a screen point.
     Rotate(f64, Point2),
     /// Tilt the map by this many degrees (positive tilts towards the horizon).

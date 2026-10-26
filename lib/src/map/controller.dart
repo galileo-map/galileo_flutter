@@ -42,6 +42,7 @@ class GalileoMapController {
   StreamSubscription<RenderedMapFrame>? _renderedFrameSub;
   BigInt _lastRenderedFrameSequence = BigInt.zero;
   Future<void> _eventQueue = Future<void>.value();
+  int _queuedOperations = 0;
   bool _running = false;
   late final ValueNotifier<int?> _textureId;
 
@@ -165,14 +166,26 @@ class GalileoMapController {
   Future<void> handleEvent(UserEvent event) {
     if (!_running) return Future<void>.value();
 
-    _eventQueue = _eventQueue.then((_) async {
-      try {
-        await rlib.handleEventForSession(sessionId: sessionId, event: event);
-      } catch (e) {
-        _log.warning('Error handling event', e);
-      }
-    });
+    // Pointer motion only sends to the map thread. Send it immediately unless
+    // a resize is in flight, when events must keep their order with the resize.
+    if (_queuedOperations == 0) {
+      _sendEvent(event);
+      return Future<void>.value();
+    }
+
+    _queuedOperations++;
+    final next = _eventQueue.then((_) => _sendEvent(event));
+    _eventQueue = next.whenComplete(() => _queuedOperations--);
     return _eventQueue;
+  }
+
+  void _sendEvent(UserEvent event) {
+    if (!_running) return;
+    try {
+      rlib.handleEventForSession(sessionId: sessionId, event: event);
+    } catch (e) {
+      _log.warning('Error handling event', e);
+    }
   }
 
   Future<void> requestRedraw() async {
@@ -195,6 +208,7 @@ class GalileoMapController {
       return Future<void>.value();
     }
 
+    _queuedOperations++;
     final next = _eventQueue.then((_) async {
       if (newSize == _size) {
         return;
@@ -214,7 +228,7 @@ class GalileoMapController {
         _log.severe('Error resizing map', e);
       }
     });
-    _eventQueue = next.then((_) {});
+    _eventQueue = next.whenComplete(() => _queuedOperations--);
     return next;
   }
 

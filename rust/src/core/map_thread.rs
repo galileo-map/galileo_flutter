@@ -14,11 +14,12 @@ use std::sync::{mpsc, Arc};
 use std::time::{Duration, Instant};
 
 use flutter_plugin_sdk::gpu::wgpu;
-use flutter_plugin_sdk::{GpuQueue, PluginError, WgpuTexture};
-use log::{debug, error, warn};
+use flutter_plugin_sdk::{GpuQueue, PluginError, WgpuTexture, WgpuTextureFrame};
+use log::{debug, error, info, warn};
 use maplibre_native::{
-    AnyLayer, AnySource, CameraUpdate, Continuous, GeoJson, GeoJsonSource, ImageRenderer,
-    ImageRendererBuilder, LatLng, QueueOps, ResourceOptions, RunLoopHandle, Size, SourceRefMut,
+    AnyLayer, AnySource, CameraState, CameraUpdate, Continuous, GeoJson, GeoJsonSource,
+    ImageRenderer, ImageRendererBuilder, LatLng, QueueOps, ResourceOptions, RunLoopHandle,
+    ScreenCoordinate, Size, SourceRefMut,
 };
 use parking_lot::Mutex;
 use serde_json::{json, Value};
@@ -32,9 +33,8 @@ const ACTIVE_TICK: Duration = Duration::from_millis(16);
 const IDLE_TICK: Duration = Duration::from_millis(50);
 const IDLE_AFTER: Duration = Duration::from_secs(2);
 const ACK_TIMEOUT: Duration = Duration::from_secs(5);
-/// Time constant of the eased zoom: the remaining zoom distance shrinks by
-/// `1/e` every `ZOOM_TAU` seconds.
-const ZOOM_TAU: f64 = 0.09;
+/// Duration of MapLibre Native's anchored zoom transition.
+const ZOOM_DURATION: Duration = Duration::from_millis(220);
 /// Time constant of the velocity decay after a drag is released.
 const FLING_TAU: f64 = 0.35;
 /// Drags slower than this (px/s) at release do not fling.
@@ -83,6 +83,8 @@ pub enum Command {
     },
     Event(UserEvent),
     Redraw,
+    /// Flutter acquired the queued texture; render the next camera position now.
+    FrameAcquired,
     /// Swaps in a texture of a new size and renders into it before replying.
     Resize {
         texture: WgpuTexture,
@@ -121,13 +123,14 @@ impl MapThread {
         shared: Arc<Shared>,
     ) -> anyhow::Result<Self> {
         let (tx, rx) = mpsc::channel();
+        let frame_wake = tx.clone();
         let (ready_tx, ready_rx) = mpsc::sync_channel(1);
         std::thread::Builder::new()
             .name("maplibre-map".into())
             .spawn(move || match MapState::new(config, texture, shared) {
                 Ok(state) => {
                     let _ = ready_tx.send(Ok(()));
-                    state.run(rx);
+                    state.run(rx, frame_wake);
                 }
                 Err(err) => {
                     let _ = ready_tx.send(Err(err));
@@ -205,31 +208,36 @@ struct MapState {
     rasters: Vec<RasterSpec>,
     geo: BTreeMap<u32, GeoLayer>,
     camera: Camera,
+    camera_dirty: bool,
     size: MapSize,
     texture: Option<WgpuTexture>,
     retired: Option<WgpuTexture>,
-    /// The newest MapLibre frame that has not been copied into Flutter's ring yet.
-    pending_frame: Option<wgpu::Texture>,
+    /// Invalidates callbacks from texture slots retired by a resize.
+    frame_epoch: Arc<AtomicU64>,
+    /// At most one frame may wait in Flutter's FIFO texture queue.
+    queued_frame: Arc<AtomicBool>,
+    frame_wake: Option<mpsc::Sender<Command>>,
+    acquired_frames: Arc<AtomicU64>,
+    stats: Option<FrameStats>,
     sequence: AtomicU64,
-    zoom_target: Option<ZoomTarget>,
-    /// Fling velocity in px/s.
-    fling: Option<(f64, f64)>,
+    zoom_target: Option<f64>,
+    native_animation_until: Option<Instant>,
     drag: DragTracker,
-    last_animation: Instant,
-}
-
-/// An eased zoom in progress, anchored at a screen position.
-#[derive(Clone, Copy)]
-struct ZoomTarget {
-    zoom: f64,
-    px: f64,
-    py: f64,
 }
 
 /// Smoothed velocity of the current drag, for flinging on release.
 struct DragTracker {
-    last_event: Option<Instant>,
+    last_event_micros: Option<u64>,
+    last_received: Option<Instant>,
     velocity: (f64, f64),
+}
+
+struct FrameStats {
+    since: Instant,
+    rendered: u64,
+    busy: u64,
+    render_micros: u128,
+    slowest_micros: u128,
 }
 
 fn default_style(background: &GalileoColor) -> String {
@@ -343,35 +351,50 @@ impl MapState {
             rasters: Vec::new(),
             geo: BTreeMap::new(),
             camera: Camera::new(config.center, config.zoom),
+            camera_dirty: false,
             size: config.size,
             texture: Some(texture),
             retired: None,
-            pending_frame: None,
+            frame_epoch: Arc::new(AtomicU64::new(0)),
+            queued_frame: Arc::new(AtomicBool::new(false)),
+            frame_wake: None,
+            acquired_frames: Arc::new(AtomicU64::new(0)),
+            stats: std::env::var_os("GALILEO_FRAME_STATS").map(|_| FrameStats {
+                since: Instant::now(),
+                rendered: 0,
+                busy: 0,
+                render_micros: 0,
+                slowest_micros: 0,
+            }),
             sequence: AtomicU64::new(0),
             zoom_target: None,
-            fling: None,
+            native_animation_until: None,
             drag: DragTracker {
-                last_event: None,
+                last_event_micros: None,
+                last_received: None,
                 velocity: (0.0, 0.0),
             },
-            last_animation: Instant::now(),
         };
         state.reload_style();
         Ok(state)
     }
 
-    fn run(mut self, rx: mpsc::Receiver<Command>) {
+    fn run(mut self, rx: mpsc::Receiver<Command>, frame_wake: mpsc::Sender<Command>) {
+        self.frame_wake = Some(frame_wake);
         let run_loop = RunLoopHandle::current();
         let mut last_activity = Instant::now();
+        let mut next_frame_at = Instant::now();
         'outer: loop {
+            let mut frame_acquired = false;
             let tick = if last_activity.elapsed() > IDLE_AFTER {
                 IDLE_TICK
             } else {
                 ACTIVE_TICK
             };
-            match rx.recv_timeout(tick) {
+            match rx.recv_timeout(next_frame_at.saturating_duration_since(Instant::now())) {
                 Ok(command) => {
                     last_activity = Instant::now();
+                    frame_acquired |= matches!(command, Command::FrameAcquired);
                     if !self.handle(command) {
                         break 'outer;
                     }
@@ -379,25 +402,37 @@ impl MapState {
                 Err(mpsc::RecvTimeoutError::Timeout) => {}
                 Err(mpsc::RecvTimeoutError::Disconnected) => break,
             }
-            while let Ok(command) = rx.try_recv() {
+            // Bound the drain so a high-polling mouse cannot postpone rendering
+            // indefinitely. The camera update below coalesces drag bursts.
+            for _ in 0..128 {
+                let Ok(command) = rx.try_recv() else { break };
                 last_activity = Instant::now();
+                frame_acquired |= matches!(command, Command::FrameAcquired);
                 if !self.handle(command) {
                     break 'outer;
                 }
             }
 
+            run_loop.tick();
+            if !frame_acquired && Instant::now() < next_frame_at {
+                continue;
+            }
+            if self.camera_dirty {
+                self.apply_camera();
+            }
             if self.animate() {
                 last_activity = Instant::now();
             }
-            run_loop.tick();
-            if self.needs_frame.swap(false, Ordering::AcqRel) {
+            if self.needs_frame.load(Ordering::Acquire) {
                 last_activity = Instant::now();
                 self.render_frame();
             }
-            if self.pending_frame.is_some() {
-                last_activity = Instant::now();
-                self.present_pending();
-            }
+            self.report_frame_stats();
+            next_frame_at = if frame_acquired {
+                Instant::now() + tick
+            } else {
+                (next_frame_at + tick).max(Instant::now())
+            };
         }
         debug!("map thread exiting");
     }
@@ -406,6 +441,7 @@ impl MapState {
     fn handle(&mut self, command: Command) -> bool {
         match command {
             Command::SetBaseStyle(style) => {
+                self.stop_native_animation();
                 self.base_style = style;
                 self.reload_style();
             }
@@ -431,27 +467,26 @@ impl MapState {
             }
             Command::Event(event) => self.handle_event(event),
             Command::Redraw => self.needs_frame.store(true, Ordering::Release),
+            Command::FrameAcquired => {}
             Command::Resize {
                 texture,
                 size,
                 done,
             } => {
+                self.stop_native_animation();
                 self.size = size;
                 self.renderer.set_map_size(Size {
                     width: size.width.max(1),
                     height: size.height.max(1),
                 });
                 self.retired = self.texture.replace(texture);
+                self.frame_epoch.fetch_add(1, Ordering::AcqRel);
+                self.queued_frame = Arc::new(AtomicBool::new(false));
                 self.apply_camera();
-                self.needs_frame.store(false, Ordering::Release);
-                self.render_frame();
                 // The new texture must hold a frame before Flutter switches to it.
                 let deadline = Instant::now() + Duration::from_millis(250);
-                while self.pending_frame.is_some() && Instant::now() < deadline {
-                    self.present_pending();
-                    if self.pending_frame.is_some() {
-                        std::thread::sleep(Duration::from_millis(4));
-                    }
+                while !self.render_frame() && Instant::now() < deadline {
+                    std::thread::sleep(Duration::from_millis(4));
                 }
                 let _ = done.send(());
             }
@@ -466,33 +501,47 @@ impl MapState {
 
     fn handle_event(&mut self, event: UserEvent) {
         match event {
-            UserEvent::ButtonPressed(MouseButton::Left, _) => {
-                // A touch-down stops a fling in progress.
-                self.fling = None;
-                self.drag.last_event = None;
+            UserEvent::ButtonPressed(MouseButton::Left, event) => {
+                // Direct manipulation takes ownership of the camera.
+                self.stop_native_animation();
+                self.drag.last_event_micros =
+                    (event.timestamp_micros != 0).then_some(event.timestamp_micros);
+                self.drag.last_received = None;
                 self.drag.velocity = (0.0, 0.0);
             }
             UserEvent::Drag(MouseButton::Left, delta, event) => {
                 let (w, h) = self.screen_size();
                 let p = event.screen_pointer_position;
-                self.fling = None;
-                self.track_drag(delta.dx, delta.dy);
+                self.stop_native_animation();
+                self.track_drag(delta.dx, delta.dy, event.timestamp_micros);
                 self.camera.pan(delta.dx, delta.dy, p.x, p.y, w, h);
-                self.apply_camera();
+                self.camera_dirty = true;
             }
             UserEvent::Rotate(degrees, anchor) => {
                 let (w, h) = self.screen_size();
-                self.fling = None;
+                self.stop_native_animation();
                 self.camera.rotate_by(degrees, anchor.x, anchor.y, w, h);
                 self.apply_camera();
             }
             UserEvent::Pitch(degrees) => {
+                self.stop_native_animation();
                 self.camera.pitch_by(degrees);
                 self.apply_camera();
             }
-            UserEvent::ButtonReleased(MouseButton::Left, _)
-            | UserEvent::DragEnded(MouseButton::Left, _) => self.release_drag(),
-            UserEvent::Zoom(factor, point) => self.request_zoom(factor, point.x, point.y),
+            UserEvent::ButtonReleased(MouseButton::Left, event)
+            | UserEvent::DragEnded(MouseButton::Left, event) => {
+                self.release_drag(event.timestamp_micros)
+            }
+            UserEvent::ZoomAnimated(factor, point) => self.request_zoom(factor, point.x, point.y),
+            UserEvent::ZoomImmediate(factor, point) => {
+                if factor.is_finite() && factor > 0.0 {
+                    self.stop_native_animation();
+                    let (w, h) = self.screen_size();
+                    self.camera
+                        .zoom_by_resolution(factor, point.x, point.y, w, h);
+                    self.apply_camera();
+                }
+            }
             UserEvent::Scroll(delta, event) => {
                 let p = event.screen_pointer_position;
                 self.request_zoom(0.9f64.powf(delta), p.x, p.y);
@@ -509,11 +558,14 @@ impl MapState {
         (f64::from(self.size.width), f64::from(self.size.height))
     }
 
-    fn track_drag(&mut self, dx: f64, dy: f64) {
+    fn track_drag(&mut self, dx: f64, dy: f64, timestamp_micros: u64) {
         let now = Instant::now();
-        let instant = match self.drag.last_event {
-            Some(last) if now.duration_since(last) < FLING_MAX_IDLE => {
-                let dt = now.duration_since(last).as_secs_f64().max(0.004);
+        let instant = match self.drag.last_event_micros {
+            Some(last)
+                if timestamp_micros > last
+                    && timestamp_micros - last < FLING_MAX_IDLE.as_micros() as u64 =>
+            {
+                let dt = (timestamp_micros - last) as f64 / 1_000_000.0;
                 let (vx, vy) = (dx / dt, dy / dt);
                 // Blend with the previous estimate to ride out uneven event spacing.
                 (
@@ -524,72 +576,118 @@ impl MapState {
             _ => (0.0, 0.0),
         };
         self.drag.velocity = instant;
-        self.drag.last_event = Some(now);
+        self.drag.last_event_micros = (timestamp_micros != 0).then_some(timestamp_micros);
+        self.drag.last_received = Some(now);
     }
 
-    fn release_drag(&mut self) {
-        let recent = self
-            .drag
-            .last_event
-            .take()
-            .is_some_and(|last| last.elapsed() < FLING_MAX_IDLE);
+    fn release_drag(&mut self, timestamp_micros: u64) {
+        let recent = match self.drag.last_event_micros {
+            Some(last) if timestamp_micros >= last => {
+                timestamp_micros - last < FLING_MAX_IDLE.as_micros() as u64
+            }
+            _ => self
+                .drag
+                .last_received
+                .is_some_and(|last| last.elapsed() < FLING_MAX_IDLE),
+        };
+        self.drag.last_received = None;
+        self.drag.last_event_micros = None;
         let (vx, vy) = std::mem::take(&mut self.drag.velocity);
         if recent && vx.hypot(vy) >= FLING_MIN_SPEED {
-            self.fling = Some((vx, vy));
+            if self.camera_dirty {
+                self.apply_camera();
+            }
+            let duration_secs =
+                (FLING_TAU * (vx.hypot(vy) / FLING_STOP_SPEED).ln()).clamp(0.15, 1.2);
+            let distance_factor = FLING_TAU * (1.0 - (-duration_secs / FLING_TAU).exp());
+            let (w, h) = self.screen_size();
+            let mut target = self.camera;
+            target.pan(
+                vx * distance_factor,
+                vy * distance_factor,
+                w / 2.0,
+                h / 2.0,
+                w,
+                h,
+            );
+            let center = target.center();
+            self.renderer.ease_camera(
+                &CameraUpdate::new().center(LatLng {
+                    lat: center.latitude,
+                    lng: center.longitude,
+                }),
+                Duration::from_secs_f64(duration_secs),
+            );
+            self.native_animation_until =
+                Some(Instant::now() + Duration::from_secs_f64(duration_secs));
+            self.needs_frame.store(true, Ordering::Release);
         }
     }
 
-    /// Eases towards the zoom implied by `factor` (an applied resolution
-    /// multiplier, below 1 zooms in) around the screen position `(px, py)`.
+    /// Ask MapLibre Native to animate the zoom around a screen anchor.
     fn request_zoom(&mut self, factor: f64, px: f64, py: f64) {
         if !factor.is_finite() || factor <= 0.0 {
             return;
         }
-        self.fling = None;
-        let base = self.zoom_target.map_or(self.camera.zoom, |t| t.zoom);
+        let base = self.zoom_target.unwrap_or(self.camera.zoom);
+        self.stop_native_animation();
         let zoom = (base - factor.log2())
             .clamp(crate::core::camera::MIN_ZOOM, crate::core::camera::MAX_ZOOM);
-        self.zoom_target = Some(ZoomTarget { zoom, px, py });
+        self.renderer.ease_camera(
+            &CameraUpdate::new()
+                .zoom(zoom)
+                .anchor(ScreenCoordinate { x: px, y: py }),
+            ZOOM_DURATION,
+        );
+        self.zoom_target = Some(zoom);
+        self.native_animation_until = Some(Instant::now() + ZOOM_DURATION);
+        self.needs_frame.store(true, Ordering::Release);
     }
 
-    /// Advances eased zoom and fling by the time since the last call.
-    /// Returns whether an animation is still running.
+    /// Keep rendering while MapLibre Native advances its camera transition.
     fn animate(&mut self) -> bool {
-        let now = Instant::now();
-        let dt = now
-            .duration_since(std::mem::replace(&mut self.last_animation, now))
-            .as_secs_f64()
-            .min(0.05);
-        if self.zoom_target.is_none() && self.fling.is_none() {
+        let Some(until) = self.native_animation_until else {
+            return false;
+        };
+        self.needs_frame.store(true, Ordering::Release);
+        if Instant::now() >= until {
+            self.native_animation_until = None;
+            self.zoom_target = None;
             return false;
         }
-        let (w, h) = (f64::from(self.size.width), f64::from(self.size.height));
+        true
+    }
 
-        if let Some(target) = self.zoom_target {
-            let remaining = target.zoom - self.camera.zoom;
-            let step = if remaining.abs() < 0.002 {
-                remaining
-            } else {
-                remaining * (1.0 - (-dt / ZOOM_TAU).exp())
-            };
-            let before = self.camera.zoom;
-            self.camera
-                .zoom_by_resolution(2f64.powf(-step), target.px, target.py, w, h);
-            if (target.zoom - self.camera.zoom).abs() < 1e-6 || self.camera.zoom == before {
-                self.zoom_target = None;
-            }
+    fn stop_native_animation(&mut self) {
+        if self.native_animation_until.take().is_some() {
+            self.renderer.cancel_camera_transition();
+            self.sync_camera_from_renderer();
         }
-        if let Some((vx, vy)) = self.fling {
-            self.camera.pan(vx * dt, vy * dt, w / 2.0, h / 2.0, w, h);
-            let decay = (-dt / FLING_TAU).exp();
-            let (vx, vy) = (vx * decay, vy * decay);
-            self.fling = (vx.hypot(vy) >= FLING_STOP_SPEED).then_some((vx, vy));
-        }
-        self.apply_camera();
-        self.zoom_target.is_some() || self.fling.is_some()
+        self.zoom_target = None;
+    }
+
+    fn sync_camera_from_renderer(&mut self) {
+        let Some(state) = self.renderer.camera_state() else {
+            return;
+        };
+        self.camera = Self::camera_from_native(state);
+    }
+
+    fn camera_from_native(state: CameraState) -> Camera {
+        let mut camera = Camera::new(
+            GeoLocation {
+                latitude: state.center.lat,
+                longitude: state.center.lng,
+            },
+            state.zoom,
+        );
+        camera.bearing = state.bearing;
+        camera.pitch = state.pitch;
+        camera
     }
 
     fn apply_camera(&mut self) {
+        self.camera_dirty = false;
         let center = self.camera.center();
         self.renderer.update_camera(
             &CameraUpdate::new()
@@ -693,30 +791,80 @@ impl MapState {
         self.needs_frame.store(true, Ordering::Release);
     }
 
-    /// Renders with MapLibre and keeps the resulting texture for presentation.
-    fn render_frame(&mut self) {
-        self.renderer.render_once();
-        if let Some(texture) = self.renderer.take_texture() {
-            self.pending_frame = Some(texture);
+    /// Reserve a display slot before rendering so a full ring cannot make us
+    /// generate and discard GPU textures. Leave the request set while busy;
+    /// the next available slot will receive the latest camera state.
+    fn render_frame(&mut self) -> bool {
+        // Flutter consumes ready frames oldest-first. Rendering a second frame
+        // before it acquires the first only makes gestures display stale views.
+        if self.queued_frame.load(Ordering::Acquire) {
+            if let Some(stats) = &mut self.stats {
+                stats.busy += 1;
+            }
+            return false;
         }
-    }
-
-    /// Copies the pending MapLibre frame into the next free ring slot.
-    fn present_pending(&mut self) {
-        let (Some(source), Some(texture)) = (&self.pending_frame, &self.texture) else {
-            return;
+        let Some(texture) = &self.texture else {
+            return true;
         };
-        let mut frame = match texture.try_next_frame() {
+        let frame = match texture.try_next_frame() {
             Ok(frame) => frame,
-            // Flutter still holds every slot; retry on the next tick.
-            Err(PluginError::Busy) => return,
+            Err(PluginError::Busy) => {
+                if let Some(stats) = &mut self.stats {
+                    stats.busy += 1;
+                }
+                return false;
+            }
             Err(err) => {
-                self.pending_frame = None;
-                return error!("failed to acquire texture frame: {err:?}");
+                error!("failed to acquire texture frame: {err:?}");
+                return true;
             }
         };
+        self.needs_frame.swap(false, Ordering::AcqRel);
+        let started = Instant::now();
+        self.renderer.render_once();
+        // MapLibre may advance a transition while finishing the render. Use
+        // its pre-render snapshot for this texture, then read its current
+        // camera separately so the next gesture starts at the right position.
+        let rendered_camera = self
+            .renderer
+            .rendered_camera_state()
+            .map(Self::camera_from_native)
+            .unwrap_or(self.camera);
+        let viewport =
+            rendered_camera.viewport(f64::from(self.size.width), f64::from(self.size.height));
+        self.sync_camera_from_renderer();
+        *self.shared.viewport.lock() = Some(viewport);
+        if let Some(stats) = &mut self.stats {
+            let micros = started.elapsed().as_micros();
+            stats.rendered += 1;
+            stats.render_micros += micros;
+            stats.slowest_micros = stats.slowest_micros.max(micros);
+        }
+        let Some(source) = self.renderer.take_texture() else {
+            return true;
+        };
+        let metadata = RenderedMapFrame {
+            sequence: self.sequence.fetch_add(1, Ordering::Relaxed) + 1,
+            viewport,
+            map_size: self.size,
+        };
+        self.present_frame(frame, source, metadata);
+        true
+    }
 
-        let source = source.clone();
+    /// Copies the rendered MapLibre texture when Flutter acquires this slot.
+    fn present_frame(
+        &self,
+        mut frame: WgpuTextureFrame,
+        source: wgpu::Texture,
+        metadata: RenderedMapFrame,
+    ) {
+        let frames = self.shared.frames.clone();
+        let frame_epoch = self.frame_epoch.clone();
+        let queued_frame = self.queued_frame.clone();
+        let frame_wake = self.frame_wake.clone();
+        let acquired_frames = self.acquired_frames.clone();
+        let epoch = frame_epoch.load(Ordering::Acquire);
         let rendered = frame.render(move |_device, encoder, view| {
             let target = view.texture();
             let (s, t) = (source.size(), target.size());
@@ -729,19 +877,51 @@ impl MapState {
                     depth_or_array_layers: 1,
                 },
             );
+            // The shell executes this task when Flutter acquires this texture
+            // slot. Keep the overlay viewport with the image it describes.
+            queued_frame.store(false, Ordering::Release);
+            if frame_epoch.load(Ordering::Acquire) == epoch {
+                acquired_frames.fetch_add(1, Ordering::Relaxed);
+                frames.send_replace(Some(metadata));
+                if let Some(frame_wake) = &frame_wake {
+                    let _ = frame_wake.send(Command::FrameAcquired);
+                }
+            }
         });
-        self.pending_frame = None;
-        if let Err(err) = rendered.and_then(|()| frame.present()) {
-            return error!("failed to present texture frame: {err:?}");
+        if let Err(err) = rendered {
+            error!("failed to record texture frame: {err:?}");
+            return;
         }
+        self.queued_frame.store(true, Ordering::Release);
+        if let Err(err) = frame.present() {
+            self.queued_frame.store(false, Ordering::Release);
+            error!("failed to present texture frame: {err:?}");
+        }
+    }
 
-        let viewport = self
-            .camera
-            .viewport(f64::from(self.size.width), f64::from(self.size.height));
-        self.shared.frames.send_replace(Some(RenderedMapFrame {
-            sequence: self.sequence.fetch_add(1, Ordering::Relaxed) + 1,
-            viewport,
-            map_size: self.size,
-        }));
+    fn report_frame_stats(&mut self) {
+        let Some(stats) = &mut self.stats else { return };
+        if stats.since.elapsed() < Duration::from_secs(2) {
+            return;
+        }
+        let avg_ms = if stats.rendered == 0 {
+            0.0
+        } else {
+            stats.render_micros as f64 / stats.rendered as f64 / 1000.0
+        };
+        info!(
+            "map frames: rendered={}, acquired={}, waiting_for_flutter={}, render_avg={avg_ms:.1}ms, render_max={:.1}ms",
+            stats.rendered,
+            self.acquired_frames.swap(0, Ordering::Relaxed),
+            stats.busy,
+            stats.slowest_micros as f64 / 1000.0,
+        );
+        *stats = FrameStats {
+            since: Instant::now(),
+            rendered: 0,
+            busy: 0,
+            render_micros: 0,
+            slowest_micros: 0,
+        };
     }
 }
