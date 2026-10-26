@@ -89,12 +89,7 @@ class LayerController extends ChangeNotifier {
   /// Applies the viewport that was used to render the current texture frame.
   void updateViewport(MapViewport? nativeViewport, MapSize mapSize) {
     if (nativeViewport == null) return;
-    final viewport = MapViewport(
-      xMin: nativeViewport.xMin,
-      xMax: nativeViewport.xMax,
-      yMin: nativeViewport.yMin,
-      yMax: nativeViewport.yMax,
-    );
+    final viewport = nativeViewport;
 
     final coordWidth = viewport.xMax - viewport.xMin;
     double zoomScale = _zoomScale;

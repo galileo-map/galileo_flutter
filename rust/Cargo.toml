@@ -15,13 +15,10 @@ flutter-plugin-sdk = "0.1.0"
 # these features on the shared wgpu instance at application build time.
 wgpu = { git = "https://github.com/gfx-rs/wgpu.git", rev = "014d9e84813a2946febfa4888694c0b70565b2f5", default-features = false, features = ["wgsl", "vulkan"] }
 
-galileo = { git = "https://github.com/shri-acha/galileo", branch = "feature/additive-renderer", default-features = false, features = [
-    "wgpu",
-    "rustybuzz",
-    "image",
-    "fontconfig-dlopen",
-    "reqwest-default-tls"
-]}
+# MapLibre Native renders on a dedicated thread (the renderer is !Send) directly on
+# the Rust shell's wgpu device. This is a local checkout of maplibre-native-rs
+# ported to wgpu 30 whose queue access goes through the shell's lock-guarded queue.
+maplibre_native = { path = "/run/media/dev/33da92da-1869-46ee-a0c1-fd5c4c9049e5/@home/dev/1tb_desktop/1tboss/maplibre-native-rs-wgpu30", default-features = false, features = ["wgpu", "json", "geojson", "log"] }
 
 tokio = { version = "1.0", features = ["full"] }
 futures = "0.3"
@@ -34,9 +31,9 @@ log = "0.4"
 tracing-appender = "0.2.3"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 serde_json = "1.0"
+url = "2"
 
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
-font-kit = "0.14.3"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
@@ -50,3 +47,5 @@ registrar = "register_application"
 # the registry wgpu 30.0.0. Redirect it to the same revision as the Rust shell
 # so every crate in this plugin shares one wgpu instance.
 wgpu = { git = "https://github.com/gfx-rs/wgpu.git", rev = "014d9e84813a2946febfa4888694c0b70565b2f5" }
+# Local shell checkout that exposes the shared GPU device and queue to plugins.
+flutter-plugin-sdk = { path = "/home/dev/Desktop/oss/flutter/engine/src/flutter/shell/platform/rust/crates/flutter-plugin-sdk" }

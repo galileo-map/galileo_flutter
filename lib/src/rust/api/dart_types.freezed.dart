@@ -603,7 +603,7 @@ extension UserEventPatterns on UserEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( UserEvent_ButtonPressed value)?  buttonPressed,TResult Function( UserEvent_ButtonReleased value)?  buttonReleased,TResult Function( UserEvent_Click value)?  click,TResult Function( UserEvent_DoubleClick value)?  doubleClick,TResult Function( UserEvent_PointerMoved value)?  pointerMoved,TResult Function( UserEvent_DragStarted value)?  dragStarted,TResult Function( UserEvent_Drag value)?  drag,TResult Function( UserEvent_DragEnded value)?  dragEnded,TResult Function( UserEvent_Scroll value)?  scroll,TResult Function( UserEvent_Zoom value)?  zoom,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( UserEvent_ButtonPressed value)?  buttonPressed,TResult Function( UserEvent_ButtonReleased value)?  buttonReleased,TResult Function( UserEvent_Click value)?  click,TResult Function( UserEvent_DoubleClick value)?  doubleClick,TResult Function( UserEvent_PointerMoved value)?  pointerMoved,TResult Function( UserEvent_DragStarted value)?  dragStarted,TResult Function( UserEvent_Drag value)?  drag,TResult Function( UserEvent_DragEnded value)?  dragEnded,TResult Function( UserEvent_Scroll value)?  scroll,TResult Function( UserEvent_Zoom value)?  zoom,TResult Function( UserEvent_Rotate value)?  rotate,TResult Function( UserEvent_Pitch value)?  pitch,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case UserEvent_ButtonPressed() when buttonPressed != null:
@@ -616,7 +616,9 @@ return dragStarted(_that);case UserEvent_Drag() when drag != null:
 return drag(_that);case UserEvent_DragEnded() when dragEnded != null:
 return dragEnded(_that);case UserEvent_Scroll() when scroll != null:
 return scroll(_that);case UserEvent_Zoom() when zoom != null:
-return zoom(_that);case _:
+return zoom(_that);case UserEvent_Rotate() when rotate != null:
+return rotate(_that);case UserEvent_Pitch() when pitch != null:
+return pitch(_that);case _:
   return orElse();
 
 }
@@ -634,7 +636,7 @@ return zoom(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( UserEvent_ButtonPressed value)  buttonPressed,required TResult Function( UserEvent_ButtonReleased value)  buttonReleased,required TResult Function( UserEvent_Click value)  click,required TResult Function( UserEvent_DoubleClick value)  doubleClick,required TResult Function( UserEvent_PointerMoved value)  pointerMoved,required TResult Function( UserEvent_DragStarted value)  dragStarted,required TResult Function( UserEvent_Drag value)  drag,required TResult Function( UserEvent_DragEnded value)  dragEnded,required TResult Function( UserEvent_Scroll value)  scroll,required TResult Function( UserEvent_Zoom value)  zoom,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( UserEvent_ButtonPressed value)  buttonPressed,required TResult Function( UserEvent_ButtonReleased value)  buttonReleased,required TResult Function( UserEvent_Click value)  click,required TResult Function( UserEvent_DoubleClick value)  doubleClick,required TResult Function( UserEvent_PointerMoved value)  pointerMoved,required TResult Function( UserEvent_DragStarted value)  dragStarted,required TResult Function( UserEvent_Drag value)  drag,required TResult Function( UserEvent_DragEnded value)  dragEnded,required TResult Function( UserEvent_Scroll value)  scroll,required TResult Function( UserEvent_Zoom value)  zoom,required TResult Function( UserEvent_Rotate value)  rotate,required TResult Function( UserEvent_Pitch value)  pitch,}){
 final _that = this;
 switch (_that) {
 case UserEvent_ButtonPressed():
@@ -647,7 +649,9 @@ return dragStarted(_that);case UserEvent_Drag():
 return drag(_that);case UserEvent_DragEnded():
 return dragEnded(_that);case UserEvent_Scroll():
 return scroll(_that);case UserEvent_Zoom():
-return zoom(_that);}
+return zoom(_that);case UserEvent_Rotate():
+return rotate(_that);case UserEvent_Pitch():
+return pitch(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -661,7 +665,7 @@ return zoom(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( UserEvent_ButtonPressed value)?  buttonPressed,TResult? Function( UserEvent_ButtonReleased value)?  buttonReleased,TResult? Function( UserEvent_Click value)?  click,TResult? Function( UserEvent_DoubleClick value)?  doubleClick,TResult? Function( UserEvent_PointerMoved value)?  pointerMoved,TResult? Function( UserEvent_DragStarted value)?  dragStarted,TResult? Function( UserEvent_Drag value)?  drag,TResult? Function( UserEvent_DragEnded value)?  dragEnded,TResult? Function( UserEvent_Scroll value)?  scroll,TResult? Function( UserEvent_Zoom value)?  zoom,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( UserEvent_ButtonPressed value)?  buttonPressed,TResult? Function( UserEvent_ButtonReleased value)?  buttonReleased,TResult? Function( UserEvent_Click value)?  click,TResult? Function( UserEvent_DoubleClick value)?  doubleClick,TResult? Function( UserEvent_PointerMoved value)?  pointerMoved,TResult? Function( UserEvent_DragStarted value)?  dragStarted,TResult? Function( UserEvent_Drag value)?  drag,TResult? Function( UserEvent_DragEnded value)?  dragEnded,TResult? Function( UserEvent_Scroll value)?  scroll,TResult? Function( UserEvent_Zoom value)?  zoom,TResult? Function( UserEvent_Rotate value)?  rotate,TResult? Function( UserEvent_Pitch value)?  pitch,}){
 final _that = this;
 switch (_that) {
 case UserEvent_ButtonPressed() when buttonPressed != null:
@@ -674,7 +678,9 @@ return dragStarted(_that);case UserEvent_Drag() when drag != null:
 return drag(_that);case UserEvent_DragEnded() when dragEnded != null:
 return dragEnded(_that);case UserEvent_Scroll() when scroll != null:
 return scroll(_that);case UserEvent_Zoom() when zoom != null:
-return zoom(_that);case _:
+return zoom(_that);case UserEvent_Rotate() when rotate != null:
+return rotate(_that);case UserEvent_Pitch() when pitch != null:
+return pitch(_that);case _:
   return null;
 
 }
@@ -691,7 +697,7 @@ return zoom(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( MouseButton field0,  MouseEvent field1)?  buttonPressed,TResult Function( MouseButton field0,  MouseEvent field1)?  buttonReleased,TResult Function( MouseButton field0,  MouseEvent field1)?  click,TResult Function( MouseButton field0,  MouseEvent field1)?  doubleClick,TResult Function( MouseEvent field0)?  pointerMoved,TResult Function( MouseButton field0,  MouseEvent field1)?  dragStarted,TResult Function( MouseButton field0,  Vector2 field1,  MouseEvent field2)?  drag,TResult Function( MouseButton field0,  MouseEvent field1)?  dragEnded,TResult Function( double field0,  MouseEvent field1)?  scroll,TResult Function( double field0,  Point2 field1)?  zoom,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( MouseButton field0,  MouseEvent field1)?  buttonPressed,TResult Function( MouseButton field0,  MouseEvent field1)?  buttonReleased,TResult Function( MouseButton field0,  MouseEvent field1)?  click,TResult Function( MouseButton field0,  MouseEvent field1)?  doubleClick,TResult Function( MouseEvent field0)?  pointerMoved,TResult Function( MouseButton field0,  MouseEvent field1)?  dragStarted,TResult Function( MouseButton field0,  Vector2 field1,  MouseEvent field2)?  drag,TResult Function( MouseButton field0,  MouseEvent field1)?  dragEnded,TResult Function( double field0,  MouseEvent field1)?  scroll,TResult Function( double field0,  Point2 field1)?  zoom,TResult Function( double field0,  Point2 field1)?  rotate,TResult Function( double field0)?  pitch,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case UserEvent_ButtonPressed() when buttonPressed != null:
 return buttonPressed(_that.field0,_that.field1);case UserEvent_ButtonReleased() when buttonReleased != null:
@@ -703,7 +709,9 @@ return dragStarted(_that.field0,_that.field1);case UserEvent_Drag() when drag !=
 return drag(_that.field0,_that.field1,_that.field2);case UserEvent_DragEnded() when dragEnded != null:
 return dragEnded(_that.field0,_that.field1);case UserEvent_Scroll() when scroll != null:
 return scroll(_that.field0,_that.field1);case UserEvent_Zoom() when zoom != null:
-return zoom(_that.field0,_that.field1);case _:
+return zoom(_that.field0,_that.field1);case UserEvent_Rotate() when rotate != null:
+return rotate(_that.field0,_that.field1);case UserEvent_Pitch() when pitch != null:
+return pitch(_that.field0);case _:
   return orElse();
 
 }
@@ -721,7 +729,7 @@ return zoom(_that.field0,_that.field1);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( MouseButton field0,  MouseEvent field1)  buttonPressed,required TResult Function( MouseButton field0,  MouseEvent field1)  buttonReleased,required TResult Function( MouseButton field0,  MouseEvent field1)  click,required TResult Function( MouseButton field0,  MouseEvent field1)  doubleClick,required TResult Function( MouseEvent field0)  pointerMoved,required TResult Function( MouseButton field0,  MouseEvent field1)  dragStarted,required TResult Function( MouseButton field0,  Vector2 field1,  MouseEvent field2)  drag,required TResult Function( MouseButton field0,  MouseEvent field1)  dragEnded,required TResult Function( double field0,  MouseEvent field1)  scroll,required TResult Function( double field0,  Point2 field1)  zoom,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( MouseButton field0,  MouseEvent field1)  buttonPressed,required TResult Function( MouseButton field0,  MouseEvent field1)  buttonReleased,required TResult Function( MouseButton field0,  MouseEvent field1)  click,required TResult Function( MouseButton field0,  MouseEvent field1)  doubleClick,required TResult Function( MouseEvent field0)  pointerMoved,required TResult Function( MouseButton field0,  MouseEvent field1)  dragStarted,required TResult Function( MouseButton field0,  Vector2 field1,  MouseEvent field2)  drag,required TResult Function( MouseButton field0,  MouseEvent field1)  dragEnded,required TResult Function( double field0,  MouseEvent field1)  scroll,required TResult Function( double field0,  Point2 field1)  zoom,required TResult Function( double field0,  Point2 field1)  rotate,required TResult Function( double field0)  pitch,}) {final _that = this;
 switch (_that) {
 case UserEvent_ButtonPressed():
 return buttonPressed(_that.field0,_that.field1);case UserEvent_ButtonReleased():
@@ -733,7 +741,9 @@ return dragStarted(_that.field0,_that.field1);case UserEvent_Drag():
 return drag(_that.field0,_that.field1,_that.field2);case UserEvent_DragEnded():
 return dragEnded(_that.field0,_that.field1);case UserEvent_Scroll():
 return scroll(_that.field0,_that.field1);case UserEvent_Zoom():
-return zoom(_that.field0,_that.field1);}
+return zoom(_that.field0,_that.field1);case UserEvent_Rotate():
+return rotate(_that.field0,_that.field1);case UserEvent_Pitch():
+return pitch(_that.field0);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -747,7 +757,7 @@ return zoom(_that.field0,_that.field1);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( MouseButton field0,  MouseEvent field1)?  buttonPressed,TResult? Function( MouseButton field0,  MouseEvent field1)?  buttonReleased,TResult? Function( MouseButton field0,  MouseEvent field1)?  click,TResult? Function( MouseButton field0,  MouseEvent field1)?  doubleClick,TResult? Function( MouseEvent field0)?  pointerMoved,TResult? Function( MouseButton field0,  MouseEvent field1)?  dragStarted,TResult? Function( MouseButton field0,  Vector2 field1,  MouseEvent field2)?  drag,TResult? Function( MouseButton field0,  MouseEvent field1)?  dragEnded,TResult? Function( double field0,  MouseEvent field1)?  scroll,TResult? Function( double field0,  Point2 field1)?  zoom,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( MouseButton field0,  MouseEvent field1)?  buttonPressed,TResult? Function( MouseButton field0,  MouseEvent field1)?  buttonReleased,TResult? Function( MouseButton field0,  MouseEvent field1)?  click,TResult? Function( MouseButton field0,  MouseEvent field1)?  doubleClick,TResult? Function( MouseEvent field0)?  pointerMoved,TResult? Function( MouseButton field0,  MouseEvent field1)?  dragStarted,TResult? Function( MouseButton field0,  Vector2 field1,  MouseEvent field2)?  drag,TResult? Function( MouseButton field0,  MouseEvent field1)?  dragEnded,TResult? Function( double field0,  MouseEvent field1)?  scroll,TResult? Function( double field0,  Point2 field1)?  zoom,TResult? Function( double field0,  Point2 field1)?  rotate,TResult? Function( double field0)?  pitch,}) {final _that = this;
 switch (_that) {
 case UserEvent_ButtonPressed() when buttonPressed != null:
 return buttonPressed(_that.field0,_that.field1);case UserEvent_ButtonReleased() when buttonReleased != null:
@@ -759,7 +769,9 @@ return dragStarted(_that.field0,_that.field1);case UserEvent_Drag() when drag !=
 return drag(_that.field0,_that.field1,_that.field2);case UserEvent_DragEnded() when dragEnded != null:
 return dragEnded(_that.field0,_that.field1);case UserEvent_Scroll() when scroll != null:
 return scroll(_that.field0,_that.field1);case UserEvent_Zoom() when zoom != null:
-return zoom(_that.field0,_that.field1);case _:
+return zoom(_that.field0,_that.field1);case UserEvent_Rotate() when rotate != null:
+return rotate(_that.field0,_that.field1);case UserEvent_Pitch() when pitch != null:
+return pitch(_that.field0);case _:
   return null;
 
 }
@@ -1461,6 +1473,144 @@ class _$UserEvent_ZoomCopyWithImpl<$Res>
 null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
 as double,null == field1 ? _self.field1 : field1 // ignore: cast_nullable_to_non_nullable
 as Point2,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class UserEvent_Rotate extends UserEvent {
+  const UserEvent_Rotate(this.field0, this.field1): super._();
+  
+
+@override final  double field0;
+ final  Point2 field1;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UserEvent_RotateCopyWith<UserEvent_Rotate> get copyWith => _$UserEvent_RotateCopyWithImpl<UserEvent_Rotate>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEvent_Rotate&&(identical(other.field0, field0) || other.field0 == field0)&&(identical(other.field1, field1) || other.field1 == field1));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,field0,field1);
+}
+
+@override
+String toString() {
+    return 'UserEvent.rotate(field0: $field0, field1: $field1)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $UserEvent_RotateCopyWith<$Res> implements $UserEventCopyWith<$Res> {
+  factory $UserEvent_RotateCopyWith(UserEvent_Rotate value, $Res Function(UserEvent_Rotate) _then) = _$UserEvent_RotateCopyWithImpl;
+@useResult
+$Res call({
+ double field0, Point2 field1
+});
+
+
+
+
+}
+/// @nodoc
+class _$UserEvent_RotateCopyWithImpl<$Res>
+    implements $UserEvent_RotateCopyWith<$Res> {
+  _$UserEvent_RotateCopyWithImpl(this._self, this._then);
+
+  final UserEvent_Rotate _self;
+  final $Res Function(UserEvent_Rotate) _then;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,Object? field1 = null,}) {
+  return _then(UserEvent_Rotate(
+null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as double,null == field1 ? _self.field1 : field1 // ignore: cast_nullable_to_non_nullable
+as Point2,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class UserEvent_Pitch extends UserEvent {
+  const UserEvent_Pitch(this.field0): super._();
+  
+
+@override final  double field0;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UserEvent_PitchCopyWith<UserEvent_Pitch> get copyWith => _$UserEvent_PitchCopyWithImpl<UserEvent_Pitch>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEvent_Pitch&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,field0);
+}
+
+@override
+String toString() {
+    return 'UserEvent.pitch(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $UserEvent_PitchCopyWith<$Res> implements $UserEventCopyWith<$Res> {
+  factory $UserEvent_PitchCopyWith(UserEvent_Pitch value, $Res Function(UserEvent_Pitch) _then) = _$UserEvent_PitchCopyWithImpl;
+@useResult
+$Res call({
+ double field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$UserEvent_PitchCopyWithImpl<$Res>
+    implements $UserEvent_PitchCopyWith<$Res> {
+  _$UserEvent_PitchCopyWithImpl(this._self, this._then);
+
+  final UserEvent_Pitch _self;
+  final $Res Function(UserEvent_Pitch) _then;
+
+/// Create a copy of UserEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(UserEvent_Pitch(
+null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as double,
   ));
 }
 

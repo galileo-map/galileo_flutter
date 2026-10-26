@@ -1,7 +1,8 @@
 //! Types shared between Dart and Rust for Galileo Flutter integration.
 //! All types here are used by flutter_rust_bridge_codegen.
 use flutter_rust_bridge::frb;
-use galileo::galileo_types;
+
+use crate::core::camera::Projection;
 use std::f64;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -68,24 +69,18 @@ fn mercator_to_lat_lon(x: f64, y: f64) -> (f64, f64) {
     (lat, lon)
 }
 
+/// Screen position used for points that cannot be projected (behind the camera).
+const OFFSCREEN: f64 = -1.0e7;
+
 impl GeoLocation {
+    /// Projects onto a `width` x `height` screen showing `vp`, including any
+    /// bearing and pitch the viewport carries.
     #[frb(sync)]
     pub fn to_screen(self, height: f64, width: f64, vp: MapViewport) -> ScreenLocation {
+        let projection = Projection::from_viewport(&vp, width, height);
         let (mx, my) = lat_lon_to_mercator(self.latitude, self.longitude);
-        let dx = vp.x_max - vp.x_min;
-        let dy = vp.y_max - vp.y_min;
-        ScreenLocation {
-            x: if dx == 0.0 {
-                0.0
-            } else {
-                (mx - vp.x_min) / dx * width
-            },
-            y: if dy == 0.0 {
-                0.0
-            } else {
-                (vp.y_max - my) / dy * height
-            },
-        }
+        let (x, y) = projection.project(mx, my).unwrap_or((OFFSCREEN, OFFSCREEN));
+        ScreenLocation { x, y }
     }
 
     /// Projects many geographic points in one Dart-to-Rust call.
@@ -106,18 +101,7 @@ impl GeoLocation {
 impl ScreenLocation {
     #[frb(sync)]
     pub fn to_geographical(self, vp: MapViewport, height: f64, width: f64) -> GeoLocation {
-        let mx = vp.x_min
-            + if width == 0.0 {
-                0.0
-            } else {
-                (self.x / width) * (vp.x_max - vp.x_min)
-            };
-        let my = vp.y_max
-            - if height == 0.0 {
-                0.0
-            } else {
-                (self.y / height) * (vp.y_max - vp.y_min)
-            };
+        let (mx, my) = Projection::from_viewport(&vp, width, height).unproject(self.x, self.y);
         let (lat, lng) = mercator_to_lat_lon(mx, my);
         GeoLocation {
             latitude: lat,
@@ -126,13 +110,22 @@ impl ScreenLocation {
     }
 }
 
-/// Map viewport configuration including center, zoom, and rotation.
+/// The part of the map the camera looks at.
+///
+/// `x_min..x_max` / `y_min..y_max` are Web Mercator meters: the flat, top-down
+/// box centered on the camera at the current scale. They do not describe the
+/// visible area once the map is rotated or tilted; use [`GeoLocation::to_screen`]
+/// and [`ScreenLocation::to_geographical`], which apply `bearing` and `pitch`.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct MapViewport {
     pub x_min: f64,
     pub x_max: f64,
     pub y_min: f64,
     pub y_max: f64,
+    /// Degrees clockwise from north.
+    pub bearing: f64,
+    /// Degrees of tilt away from straight down.
+    pub pitch: f64,
 }
 
 /// Viewport and physical texture size used to produce a rendered map frame.
@@ -145,18 +138,6 @@ pub struct RenderedMapFrame {
     pub sequence: u64,
     pub viewport: MapViewport,
     pub map_size: MapSize,
-}
-
-impl MapViewport {
-    #[frb(ignore)]
-    pub fn from_rect(rect: &galileo_types::cartesian::Rect) -> Self {
-        Self {
-            x_min: rect.x_min(),
-            x_max: rect.x_max(),
-            y_min: rect.y_min(),
-            y_max: rect.y_max(),
-        }
-    }
 }
 
 /// Physical size of the map in pixels.
@@ -271,30 +252,11 @@ pub struct GalileoColor {
     pub a: f64,
 }
 
-impl GalileoColor {
-    #[frb(ignore)]
-    pub fn to_galileo(&self) -> galileo::Color {
-        galileo::Color::rgba(
-            (self.r * 255.0) as u8,
-            (self.g * 255.0) as u8,
-            (self.b * 255.0) as u8,
-            (self.a * 255.0) as u8,
-        )
-    }
-}
-
 /// 2D point in cartesian coordinate space.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Point2 {
     pub x: f64,
     pub y: f64,
-}
-
-impl Point2 {
-    #[frb(ignore)]
-    pub fn to_galileo(&self) -> galileo_types::cartesian::Point2<f64> {
-        galileo_types::cartesian::Point2::new(self.x, self.y)
-    }
 }
 
 /// 3D point in cartesian coordinate space.
@@ -305,25 +267,11 @@ pub struct Point3 {
     pub z: f64,
 }
 
-impl Point3 {
-    #[frb(ignore)]
-    pub fn to_galileo(&self) -> galileo_types::cartesian::Point3<f64> {
-        galileo_types::cartesian::Point3::new(self.x, self.y, self.z)
-    }
-}
-
 /// 2D vector in cartesian coordinate space.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Vector2 {
     pub dx: f64,
     pub dy: f64,
-}
-
-impl Vector2 {
-    #[frb(ignore)]
-    pub fn to_galileo(&self) -> galileo_types::cartesian::Vector2<f64> {
-        galileo_types::cartesian::Vector2::new(self.dx, self.dy)
-    }
 }
 
 /// Mouse button enum.
@@ -339,18 +287,6 @@ pub enum MouseButton {
     Other,
 }
 
-impl MouseButton {
-    #[frb(ignore)]
-    pub fn to_galileo(&self) -> galileo::control::MouseButton {
-        match self {
-            MouseButton::Left => galileo::control::MouseButton::Left,
-            MouseButton::Middle => galileo::control::MouseButton::Middle,
-            MouseButton::Right => galileo::control::MouseButton::Right,
-            MouseButton::Other => galileo::control::MouseButton::Other,
-        }
-    }
-}
-
 /// Mouse button state.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum MouseButtonState {
@@ -358,16 +294,6 @@ pub enum MouseButtonState {
     Pressed,
     /// Button is not pressed.
     Released,
-}
-
-impl MouseButtonState {
-    #[frb(ignore)]
-    pub fn to_galileo(&self) -> galileo::control::MouseButtonState {
-        match self {
-            MouseButtonState::Pressed => galileo::control::MouseButtonState::Pressed,
-            MouseButtonState::Released => galileo::control::MouseButtonState::Released,
-        }
-    }
 }
 
 /// State of all mouse buttons.
@@ -381,17 +307,6 @@ pub struct MouseButtonsState {
     pub right: MouseButtonState,
 }
 
-impl MouseButtonsState {
-    #[frb(ignore)]
-    pub fn to_galileo(&self) -> galileo::control::MouseButtonsState {
-        galileo::control::MouseButtonsState {
-            left: self.left.to_galileo(),
-            middle: self.middle.to_galileo(),
-            right: self.right.to_galileo(),
-        }
-    }
-}
-
 /// State of the mouse at the moment of the event.
 #[derive(Debug, Clone)]
 pub struct MouseEvent {
@@ -399,16 +314,6 @@ pub struct MouseEvent {
     pub screen_pointer_position: Point2,
     /// State of the mouse buttons.
     pub buttons: MouseButtonsState,
-}
-
-impl MouseEvent {
-    #[frb(ignore)]
-    pub fn to_galileo(&self) -> galileo::control::MouseEvent {
-        galileo::control::MouseEvent {
-            screen_pointer_position: self.screen_pointer_position.to_galileo(),
-            buttons: self.buttons.to_galileo(),
-        }
-    }
 }
 
 /// User interaction event.
@@ -434,44 +339,8 @@ pub enum UserEvent {
     Scroll(f64, MouseEvent),
     /// Zoom is called around a point.
     Zoom(f64, Point2),
-}
-
-impl UserEvent {
-    #[frb(ignore)]
-    pub fn to_galileo(&self) -> galileo::control::UserEvent {
-        match self {
-            UserEvent::ButtonPressed(button, event) => {
-                galileo::control::UserEvent::ButtonPressed(button.to_galileo(), event.to_galileo())
-            }
-            UserEvent::ButtonReleased(button, event) => {
-                galileo::control::UserEvent::ButtonReleased(button.to_galileo(), event.to_galileo())
-            }
-            UserEvent::Click(button, event) => {
-                galileo::control::UserEvent::Click(button.to_galileo(), event.to_galileo())
-            }
-            UserEvent::DoubleClick(button, event) => {
-                galileo::control::UserEvent::DoubleClick(button.to_galileo(), event.to_galileo())
-            }
-            UserEvent::PointerMoved(event) => {
-                galileo::control::UserEvent::PointerMoved(event.to_galileo())
-            }
-            UserEvent::DragStarted(button, event) => {
-                galileo::control::UserEvent::DragStarted(button.to_galileo(), event.to_galileo())
-            }
-            UserEvent::Drag(button, vector, event) => galileo::control::UserEvent::Drag(
-                button.to_galileo(),
-                vector.to_galileo(),
-                event.to_galileo(),
-            ),
-            UserEvent::DragEnded(button, event) => {
-                galileo::control::UserEvent::DragEnded(button.to_galileo(), event.to_galileo())
-            }
-            UserEvent::Scroll(delta, event) => {
-                galileo::control::UserEvent::Scroll(*delta, event.to_galileo())
-            }
-            UserEvent::Zoom(delta, point) => {
-                galileo::control::UserEvent::Zoom(*delta, point.to_galileo())
-            }
-        }
-    }
+    /// Rotate the map by this many degrees clockwise around a screen point.
+    Rotate(f64, Point2),
+    /// Tilt the map by this many degrees (positive tilts towards the horizon).
+    Pitch(f64),
 }

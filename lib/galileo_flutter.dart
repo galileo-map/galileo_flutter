@@ -41,8 +41,26 @@ export 'package:galileo_flutter/src/widgets/polygon_overlay.dart';
 export 'package:galileo_flutter/src/widgets/cluster/cluster_controller.dart';
 export 'package:galileo_flutter/src/widgets/cluster/cluster_overlay.dart';
 
+/// Whether the plugin's Rust code is linked into the running process, as it is
+/// under the Rust shell, instead of living in a separate `libgalileo_flutter`.
+///
+/// Older runners announced this with `FLUTTER_RUST_SHELL=1`; newer ones do not,
+/// so also look for flutter_rust_bridge's exported symbols in the process.
+bool _isRustShell() {
+  if (Platform.environment['FLUTTER_RUST_SHELL'] == '1') {
+    return true;
+  }
+  try {
+    return ffi.DynamicLibrary.process().providesSymbol(
+      'frb_get_rust_content_hash',
+    );
+  } catch (_) {
+    return false;
+  }
+}
+
 Future<void> initGalileo({String? cachePath}) async {
-  final isRustShell = Platform.environment['FLUTTER_RUST_SHELL'] == '1';
+  final isRustShell = _isRustShell();
   await rlib_gen.RustLib.init(
     externalLibrary: isRustShell
         ? ExternalLibrary.process(iKnowHowToUseIt: true)

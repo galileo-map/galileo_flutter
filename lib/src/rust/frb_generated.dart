@@ -5,14 +5,11 @@
 
 import 'api/dart_types.dart';
 import 'api/galileo_api.dart';
-
 import 'dart:async';
 import 'dart:convert';
-
 import 'frb_generated.dart';
 import 'frb_generated.io.dart'
     if (dart.library.js_interop) 'frb_generated.web.dart';
-
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 /// Main entrypoint of the Rust API
@@ -1206,13 +1203,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   MapViewport dco_decode_map_viewport(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
     return MapViewport(
       xMin: dco_decode_f_64(arr[0]),
       xMax: dco_decode_f_64(arr[1]),
       yMin: dco_decode_f_64(arr[2]),
       yMax: dco_decode_f_64(arr[3]),
+      bearing: dco_decode_f_64(arr[4]),
+      pitch: dco_decode_f_64(arr[5]),
     );
   }
 
@@ -1427,6 +1426,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dco_decode_f_64(raw[1]),
           dco_decode_box_autoadd_point_2(raw[2]),
         );
+      case 10:
+        return UserEvent_Rotate(
+          dco_decode_f_64(raw[1]),
+          dco_decode_box_autoadd_point_2(raw[2]),
+        );
+      case 11:
+        return UserEvent_Pitch(dco_decode_f_64(raw[1]));
       default:
         throw Exception("unreachable");
     }
@@ -1732,11 +1738,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_xMax = sse_decode_f_64(deserializer);
     var var_yMin = sse_decode_f_64(deserializer);
     var var_yMax = sse_decode_f_64(deserializer);
+    var var_bearing = sse_decode_f_64(deserializer);
+    var var_pitch = sse_decode_f_64(deserializer);
     return MapViewport(
       xMin: var_xMin,
       xMax: var_xMax,
       yMin: var_yMin,
       yMax: var_yMax,
+      bearing: var_bearing,
+      pitch: var_pitch,
     );
   }
 
@@ -1941,6 +1951,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         var var_field0 = sse_decode_f_64(deserializer);
         var var_field1 = sse_decode_box_autoadd_point_2(deserializer);
         return UserEvent_Zoom(var_field0, var_field1);
+      case 10:
+        var var_field0 = sse_decode_f_64(deserializer);
+        var var_field1 = sse_decode_box_autoadd_point_2(deserializer);
+        return UserEvent_Rotate(var_field0, var_field1);
+      case 11:
+        var var_field0 = sse_decode_f_64(deserializer);
+        return UserEvent_Pitch(var_field0);
       default:
         throw UnimplementedError('');
     }
@@ -2247,6 +2264,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_f_64(self.xMax, serializer);
     sse_encode_f_64(self.yMin, serializer);
     sse_encode_f_64(self.yMax, serializer);
+    sse_encode_f_64(self.bearing, serializer);
+    sse_encode_f_64(self.pitch, serializer);
   }
 
   @protected
@@ -2434,6 +2453,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_i_32(9, serializer);
         sse_encode_f_64(field0, serializer);
         sse_encode_box_autoadd_point_2(field1, serializer);
+      case UserEvent_Rotate(field0: final field0, field1: final field1):
+        sse_encode_i_32(10, serializer);
+        sse_encode_f_64(field0, serializer);
+        sse_encode_box_autoadd_point_2(field1, serializer);
+      case UserEvent_Pitch(field0: final field0):
+        sse_encode_i_32(11, serializer);
+        sse_encode_f_64(field0, serializer);
     }
   }
 

@@ -1191,11 +1191,15 @@ impl SseDecode for crate::api::dart_types::MapViewport {
         let mut var_xMax = <f64>::sse_decode(deserializer);
         let mut var_yMin = <f64>::sse_decode(deserializer);
         let mut var_yMax = <f64>::sse_decode(deserializer);
+        let mut var_bearing = <f64>::sse_decode(deserializer);
+        let mut var_pitch = <f64>::sse_decode(deserializer);
         return crate::api::dart_types::MapViewport {
             x_min: var_xMin,
             x_max: var_xMax,
             y_min: var_yMin,
             y_max: var_yMax,
+            bearing: var_bearing,
+            pitch: var_pitch,
         };
     }
 }
@@ -1448,6 +1452,15 @@ impl SseDecode for crate::api::dart_types::UserEvent {
                 let mut var_field0 = <f64>::sse_decode(deserializer);
                 let mut var_field1 = <crate::api::dart_types::Point2>::sse_decode(deserializer);
                 return crate::api::dart_types::UserEvent::Zoom(var_field0, var_field1);
+            }
+            10 => {
+                let mut var_field0 = <f64>::sse_decode(deserializer);
+                let mut var_field1 = <crate::api::dart_types::Point2>::sse_decode(deserializer);
+                return crate::api::dart_types::UserEvent::Rotate(var_field0, var_field1);
+            }
+            11 => {
+                let mut var_field0 = <f64>::sse_decode(deserializer);
+                return crate::api::dart_types::UserEvent::Pitch(var_field0);
             }
             _ => {
                 unimplemented!("");
@@ -1779,6 +1792,8 @@ impl flutter_rust_bridge::IntoDart for crate::api::dart_types::MapViewport {
             self.x_max.into_into_dart().into_dart(),
             self.y_min.into_into_dart().into_dart(),
             self.y_max.into_into_dart().into_dart(),
+            self.bearing.into_into_dart().into_dart(),
+            self.pitch.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -2090,6 +2105,15 @@ impl flutter_rust_bridge::IntoDart for crate::api::dart_types::UserEvent {
                 field1.into_into_dart().into_dart(),
             ]
             .into_dart(),
+            crate::api::dart_types::UserEvent::Rotate(field0, field1) => [
+                10.into_dart(),
+                field0.into_into_dart().into_dart(),
+                field1.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::dart_types::UserEvent::Pitch(field0) => {
+                [11.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
             _ => {
                 unimplemented!("");
             }
@@ -2335,6 +2359,8 @@ impl SseEncode for crate::api::dart_types::MapViewport {
         <f64>::sse_encode(self.x_max, serializer);
         <f64>::sse_encode(self.y_min, serializer);
         <f64>::sse_encode(self.y_max, serializer);
+        <f64>::sse_encode(self.bearing, serializer);
+        <f64>::sse_encode(self.pitch, serializer);
     }
 }
 
@@ -2547,6 +2573,15 @@ impl SseEncode for crate::api::dart_types::UserEvent {
                 <i32>::sse_encode(9, serializer);
                 <f64>::sse_encode(field0, serializer);
                 <crate::api::dart_types::Point2>::sse_encode(field1, serializer);
+            }
+            crate::api::dart_types::UserEvent::Rotate(field0, field1) => {
+                <i32>::sse_encode(10, serializer);
+                <f64>::sse_encode(field0, serializer);
+                <crate::api::dart_types::Point2>::sse_encode(field1, serializer);
+            }
+            crate::api::dart_types::UserEvent::Pitch(field0) => {
+                <i32>::sse_encode(11, serializer);
+                <f64>::sse_encode(field0, serializer);
             }
             _ => {
                 unimplemented!("");

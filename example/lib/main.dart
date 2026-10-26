@@ -3,12 +3,15 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
 
-const MAP_TILER_API_KEY = '';
-const MAP_TILER_URL_TEMPLATE =
-    'https://api.maptiler.com/tiles/v3-openmaptiles/{z}/{x}/{y}.pbf?key=$MAP_TILER_API_KEY';
+// Free, keyless MapLibre vector styles. `styleJson` accepts a style URL or the
+// style document itself; the style supplies its own sources, glyphs and sprites.
+const OPENFREEMAP_LIBERTY_STYLE =
+    'https://tiles.openfreemap.org/styles/liberty';
+const OPENFREEMAP_POSITRON_STYLE =
+    'https://tiles.openfreemap.org/styles/positron';
+const MAPLIBRE_DEMO_STYLE = 'https://demotiles.maplibre.org/style.json';
 const MAPBOX_ACCESS_TOKEN = '';
 const MAPBOX_SATELLITE_URL_TEMPLATE =
     'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/256/{z}/{x}/{y}?access_token=$MAPBOX_ACCESS_TOKEN';
@@ -106,14 +109,8 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
   Future<void> _refreshViewport() async {
     final vp = await _controller?.getViewport();
     if (vp == null || !mounted) return;
-    final bounds = MapViewport(
-      xMin: vp.xMin,
-      xMax: vp.xMax,
-      yMin: vp.yMin,
-      yMax: vp.yMax,
-    );
-    _polygonEditor.updateViewport(bounds);
-    _polygonDrawer.updateViewport(bounds);
+    _polygonEditor.updateViewport(vp);
+    _polygonDrawer.updateViewport(vp);
     _controller?.layerController.updateViewport(
       vp,
       _controller?.size ?? _kMapSize,
@@ -217,12 +214,7 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
     final viewport = await _controller?.getViewport();
     if (viewport == null || !mounted) return;
 
-    final vp = MapViewport(
-      xMin: viewport.xMin,
-      xMax: viewport.xMax,
-      yMin: viewport.yMin,
-      yMax: viewport.yMax,
-    );
+    final vp = viewport;
     _polygonEditor.updateViewport(vp);
     _polygonDrawer.updateViewport(vp);
 
@@ -387,26 +379,25 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                               attribution: 'Mapbox',
                             ),
                           );
-                        case 'vector_tile_layer_1':
-                          final style = await rootBundle.loadString(
-                            'assets/vt_style.json',
-                          );
-                          if (!mounted) return;
+                        case 'openfreemap_liberty':
                           await _switchLayer(
                             LayerConfig.vectorTiles(
-                              urlTemplate: MAP_TILER_URL_TEMPLATE,
-                              styleJson: style,
+                              urlTemplate: '',
+                              styleJson: OPENFREEMAP_LIBERTY_STYLE,
                             ),
                           );
-                        case 'vector_tile_layer_2':
-                          final style = await rootBundle.loadString(
-                            'assets/simple_style.json',
-                          );
-                          if (!mounted) return;
+                        case 'openfreemap_positron':
                           await _switchLayer(
                             LayerConfig.vectorTiles(
-                              urlTemplate: MAP_TILER_URL_TEMPLATE,
-                              styleJson: style,
+                              urlTemplate: '',
+                              styleJson: OPENFREEMAP_POSITRON_STYLE,
+                            ),
+                          );
+                        case 'maplibre_demo':
+                          await _switchLayer(
+                            LayerConfig.vectorTiles(
+                              urlTemplate: '',
+                              styleJson: MAPLIBRE_DEMO_STYLE,
                             ),
                           );
                       }
@@ -421,12 +412,16 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                         child: Text('Mapbox Satellite'),
                       ),
                       DropdownMenuItem(
-                        value: 'vector_tile_layer_1',
-                        child: Text('Vector Tile Style 1'),
+                        value: 'openfreemap_liberty',
+                        child: Text('Vector: OpenFreeMap Liberty'),
                       ),
                       DropdownMenuItem(
-                        value: 'vector_tile_layer_2',
-                        child: Text('Vector Tile Style 2'),
+                        value: 'openfreemap_positron',
+                        child: Text('Vector: OpenFreeMap Positron'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'maplibre_demo',
+                        child: Text('Vector: MapLibre Demo Tiles'),
                       ),
                     ],
                   ),
@@ -593,15 +588,9 @@ class _GalileoMapPageState extends State<GalileoMapPage> {
                             enableKeyboard: true,
                             autoDispose: false,
                             onViewportChanged: (vp) async {
-                              final bounds = MapViewport(
-                                xMin: vp.xMin,
-                                xMax: vp.xMax,
-                                yMin: vp.yMin,
-                                yMax: vp.yMax,
-                              );
                               if (!mounted) return;
-                              _polygonEditor.updateViewport(bounds);
-                              _polygonDrawer.updateViewport(bounds);
+                              _polygonEditor.updateViewport(vp);
+                              _polygonDrawer.updateViewport(vp);
                               _controller?.layerController.updateViewport(
                                 vp,
                                 _controller?.size ?? _kMapSize,

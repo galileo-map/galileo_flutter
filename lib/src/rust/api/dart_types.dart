@@ -4,7 +4,6 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import '../frb_generated.dart';
-
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'dart_types.freezed.dart';
@@ -12,7 +11,6 @@ part 'dart_types.freezed.dart';
 // These functions are ignored because they are not marked as `pub`: `lat_lon_to_mercator`, `mercator_to_lat_lon`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `Point3`, `PointSymbol`, `PolygonSymbol`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
-// These functions are ignored (category: IgnoreBecauseExplicitAttribute): `from_rect`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`, `to_galileo`
 
 class GalileoColor {
   final double r;
@@ -64,6 +62,8 @@ class GeoLocation {
     vp: vp,
   );
 
+  /// Projects onto a `width` x `height` screen showing `vp`, including any
+  /// bearing and pitch the viewport carries.
   ScreenLocation toScreen({
     required double height,
     required double width,
@@ -208,23 +208,41 @@ class MapSize {
           height == other.height;
 }
 
-/// Map viewport configuration including center, zoom, and rotation.
+/// The part of the map the camera looks at.
+///
+/// `x_min..x_max` / `y_min..y_max` are Web Mercator meters: the flat, top-down
+/// box centered on the camera at the current scale. They do not describe the
+/// visible area once the map is rotated or tilted; use [`GeoLocation::to_screen`]
+/// and [`ScreenLocation::to_geographical`], which apply `bearing` and `pitch`.
 class MapViewport {
   final double xMin;
   final double xMax;
   final double yMin;
   final double yMax;
 
+  /// Degrees clockwise from north.
+  final double bearing;
+
+  /// Degrees of tilt away from straight down.
+  final double pitch;
+
   const MapViewport({
     required this.xMin,
     required this.xMax,
     required this.yMin,
     required this.yMax,
+    required this.bearing,
+    required this.pitch,
   });
 
   @override
   int get hashCode =>
-      xMin.hashCode ^ xMax.hashCode ^ yMin.hashCode ^ yMax.hashCode;
+      xMin.hashCode ^
+      xMax.hashCode ^
+      yMin.hashCode ^
+      yMax.hashCode ^
+      bearing.hashCode ^
+      pitch.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -234,7 +252,9 @@ class MapViewport {
           xMin == other.xMin &&
           xMax == other.xMax &&
           yMin == other.yMin &&
-          yMax == other.yMax;
+          yMax == other.yMax &&
+          bearing == other.bearing &&
+          pitch == other.pitch;
 }
 
 /// Mouse button enum.
@@ -561,6 +581,13 @@ sealed class UserEvent with _$UserEvent {
 
   /// Zoom is called around a point.
   const factory UserEvent.zoom(double field0, Point2 field1) = UserEvent_Zoom;
+
+  /// Rotate the map by this many degrees clockwise around a screen point.
+  const factory UserEvent.rotate(double field0, Point2 field1) =
+      UserEvent_Rotate;
+
+  /// Tilt the map by this many degrees (positive tilts towards the horizon).
+  const factory UserEvent.pitch(double field0) = UserEvent_Pitch;
 }
 
 /// 2D vector in cartesian coordinate space.

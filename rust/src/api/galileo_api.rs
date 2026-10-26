@@ -5,21 +5,8 @@
 
 use crate::frb_generated::StreamSink;
 use flutter_rust_bridge::frb;
-use font_kit::handle::Handle;
-use font_kit::source::SystemSource;
-use galileo::control::UserEventHandler;
-use galileo::galileo_types::geo::Crs;
-use galileo::layer::data_provider::remove_parameters_modifier;
-use galileo::layer::feature_layer::FeatureLayer;
-use galileo::layer::raster_tile_layer::RasterTileLayerBuilder;
-use galileo::layer::vector_tile_layer::style::VectorTileStyle;
-use galileo::layer::vector_tile_layer::VectorTileLayerBuilder;
-use galileo::render::text::text_service::TextService;
-use galileo::render::text::RustybuzzRasterizer;
-use galileo::tile_schema::TileSchemaBuilder;
 use log::{debug, info};
 use std::sync::atomic::Ordering;
-use std::sync::Arc;
 
 use crate::api::dart_types::*;
 use crate::core::map_session::{MapSession, SessionID};
@@ -37,28 +24,8 @@ pub fn galileo_flutter_init(_ffi_ptr: i64) {
     }
 
     init_logger();
-    initialize_font_service();
     info!("Galileo Flutter plugin initialized with texture support");
     IS_INITIALIZED.store(true, Ordering::SeqCst);
-}
-
-fn initialize_font_service() {
-    let rasterizer: RustybuzzRasterizer = RustybuzzRasterizer::default();
-    let _service: &'static TextService = TextService::initialize(rasterizer);
-    if let Ok(default_font_source) = SystemSource::new().all_fonts() {
-        for font_source in default_font_source {
-            match font_source {
-                Handle::Path { path, .. } => {
-                    _service.load_fonts(path);
-                }
-                Handle::Memory { bytes, .. } => {
-                    _service.load_font(bytes);
-                }
-            }
-        }
-    } else {
-        info!("Failed to find source!");
-    }
 }
 
 pub fn set_tile_cache_path(path: Option<String>) {
@@ -123,20 +90,10 @@ pub async fn destroy_session(session_id: SessionID) {
         }
     };
 
-    let flctx = session.terminate().await;
-    drop(flctx);
+    let textures = session.terminate().await;
+    drop(textures);
 
     info!("Session {} destroyed with full cleanup", session_id);
-}
-
-/// Replaces {z}, {x}, {y} with tile indices
-fn create_url_source(url_template: String) -> impl Fn(&galileo::tile_schema::TileIndex) -> String {
-    move |index: &galileo::tile_schema::TileIndex| {
-        url_template
-            .replace("{z}", &index.z.to_string())
-            .replace("{x}", &index.x.to_string())
-            .replace("{y}", &index.y.to_string())
-    }
 }
 
 /// Adds a layer to a session
@@ -152,92 +109,7 @@ pub async fn add_session_layer(
             .clone()
     };
 
-    match layer_config {
-        LayerConfig::Osm => {
-            let mut builder = RasterTileLayerBuilder::new_osm();
-
-            if let Some(ref path) = *TILE_CACHE_PATH.read() {
-                builder = builder
-                    .with_file_cache_modifier_checked(path, Box::new(remove_parameters_modifier));
-            }
-
-            let layer = builder
-                .build()
-                .map_err(|e| anyhow::anyhow!("Failed to create OSM layer: {}", e))?;
-            let layer = Arc::new(parking_lot::RwLock::new(layer));
-            session.add_layer(layer).await;
-        }
-        LayerConfig::RasterTiles {
-            url_template,
-            attribution,
-        } => {
-            let tile_schema = TileSchemaBuilder::web_mercator(0..=22)
-                .build()
-                .map_err(|e| anyhow::anyhow!("Failed to build raster tile schema: {}", e))?;
-
-            let mut builder = RasterTileLayerBuilder::new_rest(create_url_source(url_template))
-                .with_tile_schema(tile_schema);
-
-            if let Some(ref path) = *TILE_CACHE_PATH.read() {
-                builder = builder
-                    .with_file_cache_modifier_checked(path, Box::new(remove_parameters_modifier));
-            }
-
-            if let Some(attr) = attribution {
-                builder = builder.with_attribution(attr, "".to_string());
-            }
-
-            let layer = builder
-                .build()
-                .map_err(|e| anyhow::anyhow!("Failed to create raster tile layer: {}", e))?;
-            let layer = Arc::new(parking_lot::RwLock::new(layer));
-            session.add_layer(layer).await;
-        }
-        LayerConfig::VectorTiles {
-            url_template,
-            style_json,
-            attribution,
-        } => {
-            let style: VectorTileStyle = serde_json::from_str(&style_json)
-                .map_err(|e| anyhow::anyhow!("Failed to parse vector tile style: {}", e))?;
-            let tile_schema = TileSchemaBuilder::web_mercator(0..19)
-                .build()
-                .map_err(|e| anyhow::anyhow!("Failed to build tile schema: {}", e))?;
-
-            let mut builder = VectorTileLayerBuilder::new_rest(create_url_source(url_template))
-                .with_style(style)
-                .with_tile_schema(tile_schema);
-
-            if let Some(ref path) = *TILE_CACHE_PATH.read() {
-                builder = builder
-                    .with_file_cache_modifier_checked(path, Box::new(remove_parameters_modifier));
-            }
-
-            if let Some(attr) = attribution {
-                builder = builder.with_attribution(attr, "".to_string());
-            }
-
-            let layer = builder
-                .build()
-                .map_err(|e| anyhow::anyhow!("Failed to create vector tile layer: {}", e))?;
-            session.add_layer(layer).await;
-        }
-        LayerConfig::PolygonLayer { features } => {
-            // PolygonSymbol is stateless; style is read per-feature at render time.
-            let layer = FeatureLayer::new(features, PolygonSymbol {}, Crs::EPSG3857);
-            session.add_layer(layer).await;
-        }
-
-        LayerConfig::PointLayer { features } => {
-            let layer = FeatureLayer::new(features, PointSymbol {}, Crs::EPSG3857);
-            session.add_layer(layer).await;
-        }
-        LayerConfig::WidgetLayer => {
-            // Handled by flutter
-        }
-    }
-
-    Ok(())
+    session.add_layer(layer_config).await
 }
 
 pub async fn add_point_feature_layer(
@@ -252,9 +124,7 @@ pub async fn add_point_feature_layer(
             .clone()
     };
 
-    let layer = FeatureLayer::new(initial_points, PointSymbol {}, Crs::EPSG3857);
-    let layer_id = session.add_managed_layer(layer).await;
-    Ok(layer_id)
+    session.add_point_layer(&initial_points).await
 }
 
 pub async fn add_polygon_feature_layer(
@@ -269,9 +139,7 @@ pub async fn add_polygon_feature_layer(
             .clone()
     };
 
-    let layer = FeatureLayer::new(initial_polygons, PolygonSymbol {}, Crs::EPSG3857);
-    let layer_id = session.add_managed_layer(layer).await;
-    Ok(layer_id)
+    session.add_polygon_layer(&initial_polygons).await
 }
 
 pub async fn add_point_to_layer(
@@ -286,12 +154,7 @@ pub async fn add_point_to_layer(
             .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?
             .clone()
     };
-    let feature_id = session.add_point_to_layer(layer_id, point).await?;
-    Ok(unsafe {
-        u32::try_from(std::mem::transmute::<galileo::layer::FeatureId, u64>(
-            feature_id,
-        ))?
-    })
+    session.add_point_to_layer(layer_id, point).await
 }
 
 pub async fn add_polygon_to_layer(
@@ -306,13 +169,7 @@ pub async fn add_polygon_to_layer(
             .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?
             .clone()
     };
-    let feature_id = session.add_polygon_to_layer(layer_id, polygon).await?;
-    unsafe {
-        u32::try_from(std::mem::transmute::<galileo::layer::FeatureId, u64>(
-            feature_id,
-        ))
-        .map_err(|e| e.into())
-    }
+    session.add_polygon_to_layer(layer_id, polygon).await
 }
 
 pub async fn remove_point_from_layer(
@@ -327,8 +184,7 @@ pub async fn remove_point_from_layer(
             .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?
             .clone()
     };
-    let id = unsafe { std::mem::transmute::<u64, galileo::layer::FeatureId>(u64::from(index)) };
-    session.remove_point_from_layer(layer_id, id).await
+    session.remove_point_from_layer(layer_id, index).await
 }
 
 pub async fn remove_polygon_from_layer(
@@ -343,8 +199,7 @@ pub async fn remove_polygon_from_layer(
             .ok_or_else(|| anyhow::anyhow!("Session {} not found", session_id))?
             .clone()
     };
-    let id = unsafe { std::mem::transmute::<u64, galileo::layer::FeatureId>(u64::from(index)) };
-    session.remove_polygon_from_layer(layer_id, id).await
+    session.remove_polygon_from_layer(layer_id, index).await
 }
 
 pub async fn get_map_viewport(session_id: SessionID) -> Option<MapViewport> {
@@ -392,12 +247,10 @@ pub async fn stream_rendered_map_frames(
 }
 
 pub async fn handle_event_for_session(session_id: SessionID, event: UserEvent) {
-    let galileo_event = event.to_galileo();
     let session = SESSIONS.lock().get(&session_id).cloned();
 
     if let Some(session) = session {
-        let mut map = session.map.lock().await;
-        session.controller.handle(&galileo_event, &mut map);
+        session.handle_event(event);
     }
 }
 

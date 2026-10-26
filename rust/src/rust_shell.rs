@@ -63,3 +63,11 @@ pub(crate) fn create_wgpu_texture(size: MapSize) -> anyhow::Result<(WgpuTexture,
         .recv_timeout(Duration::from_secs(5))
         .map_err(|error| anyhow::anyhow!("timed out creating Rust shell texture: {error}"))?
 }
+
+/// The shell's GPU capability, for code that renders on its own thread.
+pub(crate) fn gpu_textures() -> anyhow::Result<GpuTextures> {
+    GPU_TEXTURES
+        .get()
+        .cloned()
+        .ok_or_else(|| anyhow::anyhow!("Rust shell plugin was not registered"))
+}

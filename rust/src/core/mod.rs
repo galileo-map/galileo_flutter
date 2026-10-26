@@ -1,25 +1,16 @@
+pub mod camera;
 pub mod flutter;
-pub mod galileo_ref;
 pub mod map_session;
-pub mod windowless_renderer;
+pub mod map_thread;
 
-use galileo::galileo_types;
 use log::debug;
 use parking_lot::Mutex;
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::sync::{Arc, OnceLock};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
-pub use windowless_renderer::WindowlessRenderer;
 
-use crate::api::dart_types::MapSize;
 use crate::core::map_session::{MapSession, SessionID};
-impl MapSize {
-    pub fn as_galileo(&self) -> galileo_types::cartesian::Size<u32> {
-        galileo_types::cartesian::Size::new(self.width, self.height)
-    }
-}
-
 lazy_static::lazy_static! {
     pub static ref IS_INITIALIZED: AtomicBool = AtomicBool::new(false);
     pub static ref WORKER_GUARD: std::sync::Mutex<Option<tracing_appender::non_blocking::WorkerGuard>> = std::sync::Mutex::new(None);
