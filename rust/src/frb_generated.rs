@@ -39,7 +39,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 730467754;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 2064308204;
 
 // Section: executor
 
@@ -281,56 +281,13 @@ fn wire__crate__api__galileo_api__create_new_map_session_impl(
             };
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_engine_handle = <i64>::sse_decode(&mut deserializer);
             let api_config = <crate::api::dart_types::MapInitConfig>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || async move {
-                        let output_ok = crate::api::galileo_api::create_new_map_session(
-                            api_engine_handle,
-                            api_config,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__galileo_api__destroy_all_engine_sessions_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
-    rust_vec_len_: i32,
-    data_len_: i32,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "destroy_all_engine_sessions",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let message = unsafe {
-                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
-                    ptr_,
-                    rust_vec_len_,
-                    data_len_,
-                )
-            };
-            let mut deserializer =
-                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_engine_id = <i64>::sse_decode(&mut deserializer);
-            deserializer.end();
-            move |context| async move {
-                transform_result_sse::<_, ()>(
-                    (move || async move {
-                        let output_ok = Ok::<_, ()>({
-                            crate::api::galileo_api::destroy_all_engine_sessions(api_engine_id)
-                                .await;
-                        })?;
+                        let output_ok =
+                            crate::api::galileo_api::create_new_map_session(api_config).await?;
                         std::result::Result::Ok(output_ok)
                     })()
                     .await,
@@ -431,12 +388,12 @@ fn wire__crate__api__galileo_api__galileo_flutter_init_impl(
             };
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_ffi_ptr = <i64>::sse_decode(&mut deserializer);
+            let api__ffi_ptr = <i64>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Ok::<_, ()>({
-                        crate::api::galileo_api::galileo_flutter_init(api_ffi_ptr);
+                        crate::api::galileo_api::galileo_flutter_init(api__ffi_ptr);
                     })?;
                     std::result::Result::Ok(output_ok)
                 })())
@@ -555,16 +512,15 @@ fn wire__crate__api__galileo_api__get_map_viewport_impl(
     )
 }
 fn wire__crate__api__galileo_api__handle_event_for_session_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
     data_len_: i32,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "handle_event_for_session",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
         },
         move || {
             let message = unsafe {
@@ -579,21 +535,12 @@ fn wire__crate__api__galileo_api__handle_event_for_session_impl(
             let api_session_id = <u32>::sse_decode(&mut deserializer);
             let api_event = <crate::api::dart_types::UserEvent>::sse_decode(&mut deserializer);
             deserializer.end();
-            move |context| async move {
-                transform_result_sse::<_, ()>(
-                    (move || async move {
-                        let output_ok = Ok::<_, ()>({
-                            crate::api::galileo_api::handle_event_for_session(
-                                api_session_id,
-                                api_event,
-                            )
-                            .await;
-                        })?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
+            transform_result_sse::<_, ()>((move || {
+                let output_ok = Ok::<_, ()>({
+                    crate::api::galileo_api::handle_event_for_session(api_session_id, api_event);
+                })?;
+                std::result::Result::Ok(output_ok)
+            })())
         },
     )
 }
@@ -1234,11 +1181,15 @@ impl SseDecode for crate::api::dart_types::MapViewport {
         let mut var_xMax = <f64>::sse_decode(deserializer);
         let mut var_yMin = <f64>::sse_decode(deserializer);
         let mut var_yMax = <f64>::sse_decode(deserializer);
+        let mut var_bearing = <f64>::sse_decode(deserializer);
+        let mut var_pitch = <f64>::sse_decode(deserializer);
         return crate::api::dart_types::MapViewport {
             x_min: var_xMin,
             x_max: var_xMax,
             y_min: var_yMin,
             y_max: var_yMax,
+            bearing: var_bearing,
+            pitch: var_pitch,
         };
     }
 }
@@ -1289,9 +1240,11 @@ impl SseDecode for crate::api::dart_types::MouseEvent {
         let mut var_screenPointerPosition =
             <crate::api::dart_types::Point2>::sse_decode(deserializer);
         let mut var_buttons = <crate::api::dart_types::MouseButtonsState>::sse_decode(deserializer);
+        let mut var_timestampMicros = <u64>::sse_decode(deserializer);
         return crate::api::dart_types::MouseEvent {
             screen_pointer_position: var_screenPointerPosition,
             buttons: var_buttons,
+            timestamp_micros: var_timestampMicros,
         };
     }
 }
@@ -1490,7 +1443,21 @@ impl SseDecode for crate::api::dart_types::UserEvent {
             9 => {
                 let mut var_field0 = <f64>::sse_decode(deserializer);
                 let mut var_field1 = <crate::api::dart_types::Point2>::sse_decode(deserializer);
-                return crate::api::dart_types::UserEvent::Zoom(var_field0, var_field1);
+                return crate::api::dart_types::UserEvent::ZoomAnimated(var_field0, var_field1);
+            }
+            10 => {
+                let mut var_field0 = <f64>::sse_decode(deserializer);
+                let mut var_field1 = <crate::api::dart_types::Point2>::sse_decode(deserializer);
+                return crate::api::dart_types::UserEvent::ZoomImmediate(var_field0, var_field1);
+            }
+            11 => {
+                let mut var_field0 = <f64>::sse_decode(deserializer);
+                let mut var_field1 = <crate::api::dart_types::Point2>::sse_decode(deserializer);
+                return crate::api::dart_types::UserEvent::Rotate(var_field0, var_field1);
+            }
+            12 => {
+                let mut var_field0 = <f64>::sse_decode(deserializer);
+                return crate::api::dart_types::UserEvent::Pitch(var_field0);
             }
             _ => {
                 unimplemented!("");
@@ -1553,78 +1520,66 @@ fn pde_ffi_dispatcher_primary_impl(
             rust_vec_len,
             data_len,
         ),
-        7 => wire__crate__api__galileo_api__destroy_all_engine_sessions_impl(
+        7 => wire__crate__api__galileo_api__destroy_session_impl(port, ptr, rust_vec_len, data_len),
+        8 => wire__crate__api__dart_types__galileo_color_default_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        8 => wire__crate__api__galileo_api__destroy_session_impl(port, ptr, rust_vec_len, data_len),
-        9 => wire__crate__api__dart_types__galileo_color_default_impl(
+        9 => wire__crate__api__galileo_api__galileo_flutter_init_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        10 => wire__crate__api__galileo_api__galileo_flutter_init_impl(
-            port,
-            ptr,
-            rust_vec_len,
-            data_len,
-        ),
-        13 => {
+        12 => {
             wire__crate__api__galileo_api__get_map_viewport_impl(port, ptr, rust_vec_len, data_len)
         }
-        14 => wire__crate__api__galileo_api__handle_event_for_session_impl(
+        14 => wire__crate__api__galileo_api__init_galileo_flutter_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        15 => wire__crate__api__galileo_api__init_galileo_flutter_impl(
+        15 => wire__crate__api__galileo_api__mark_session_alive_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        16 => wire__crate__api__galileo_api__mark_session_alive_impl(
+        16 => wire__crate__api__dart_types__polygon_style_default_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        17 => wire__crate__api__dart_types__polygon_style_default_impl(
+        17 => wire__crate__api__galileo_api__remove_point_from_layer_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        18 => wire__crate__api__galileo_api__remove_point_from_layer_impl(
+        18 => wire__crate__api__galileo_api__remove_polygon_from_layer_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        19 => wire__crate__api__galileo_api__remove_polygon_from_layer_impl(
+        19 => wire__crate__api__galileo_api__request_map_redraw_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        20 => wire__crate__api__galileo_api__request_map_redraw_impl(
+        20 => wire__crate__api__galileo_api__resize_session_impl(port, ptr, rust_vec_len, data_len),
+        22 => wire__crate__api__galileo_api__set_tile_cache_path_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        21 => wire__crate__api__galileo_api__resize_session_impl(port, ptr, rust_vec_len, data_len),
-        23 => wire__crate__api__galileo_api__set_tile_cache_path_impl(
-            port,
-            ptr,
-            rust_vec_len,
-            data_len,
-        ),
-        24 => wire__crate__api__galileo_api__stream_rendered_map_frames_impl(
+        23 => wire__crate__api__galileo_api__stream_rendered_map_frames_impl(
             port,
             ptr,
             rust_vec_len,
@@ -1642,15 +1597,20 @@ fn pde_ffi_dispatcher_sync_impl(
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        11 => wire__crate__api__dart_types__geo_location_points_to_screen_impl(
+        10 => wire__crate__api__dart_types__geo_location_points_to_screen_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        12 => {
+        11 => {
             wire__crate__api__dart_types__geo_location_to_screen_impl(ptr, rust_vec_len, data_len)
         }
-        22 => wire__crate__api__dart_types__screen_location_to_geographical_impl(
+        13 => wire__crate__api__galileo_api__handle_event_for_session_impl(
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        21 => wire__crate__api__dart_types__screen_location_to_geographical_impl(
             ptr,
             rust_vec_len,
             data_len,
@@ -1828,6 +1788,8 @@ impl flutter_rust_bridge::IntoDart for crate::api::dart_types::MapViewport {
             self.x_max.into_into_dart().into_dart(),
             self.y_min.into_into_dart().into_dart(),
             self.y_max.into_into_dart().into_dart(),
+            self.bearing.into_into_dart().into_dart(),
+            self.pitch.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -1915,6 +1877,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::dart_types::MouseEvent {
         [
             self.screen_pointer_position.into_into_dart().into_dart(),
             self.buttons.into_into_dart().into_dart(),
+            self.timestamp_micros.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -2133,12 +2096,27 @@ impl flutter_rust_bridge::IntoDart for crate::api::dart_types::UserEvent {
                 field1.into_into_dart().into_dart(),
             ]
             .into_dart(),
-            crate::api::dart_types::UserEvent::Zoom(field0, field1) => [
+            crate::api::dart_types::UserEvent::ZoomAnimated(field0, field1) => [
                 9.into_dart(),
                 field0.into_into_dart().into_dart(),
                 field1.into_into_dart().into_dart(),
             ]
             .into_dart(),
+            crate::api::dart_types::UserEvent::ZoomImmediate(field0, field1) => [
+                10.into_dart(),
+                field0.into_into_dart().into_dart(),
+                field1.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::dart_types::UserEvent::Rotate(field0, field1) => [
+                11.into_dart(),
+                field0.into_into_dart().into_dart(),
+                field1.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::dart_types::UserEvent::Pitch(field0) => {
+                [12.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
             _ => {
                 unimplemented!("");
             }
@@ -2384,6 +2362,8 @@ impl SseEncode for crate::api::dart_types::MapViewport {
         <f64>::sse_encode(self.x_max, serializer);
         <f64>::sse_encode(self.y_min, serializer);
         <f64>::sse_encode(self.y_max, serializer);
+        <f64>::sse_encode(self.bearing, serializer);
+        <f64>::sse_encode(self.pitch, serializer);
     }
 }
 
@@ -2435,6 +2415,7 @@ impl SseEncode for crate::api::dart_types::MouseEvent {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <crate::api::dart_types::Point2>::sse_encode(self.screen_pointer_position, serializer);
         <crate::api::dart_types::MouseButtonsState>::sse_encode(self.buttons, serializer);
+        <u64>::sse_encode(self.timestamp_micros, serializer);
     }
 }
 
@@ -2592,10 +2573,24 @@ impl SseEncode for crate::api::dart_types::UserEvent {
                 <f64>::sse_encode(field0, serializer);
                 <crate::api::dart_types::MouseEvent>::sse_encode(field1, serializer);
             }
-            crate::api::dart_types::UserEvent::Zoom(field0, field1) => {
+            crate::api::dart_types::UserEvent::ZoomAnimated(field0, field1) => {
                 <i32>::sse_encode(9, serializer);
                 <f64>::sse_encode(field0, serializer);
                 <crate::api::dart_types::Point2>::sse_encode(field1, serializer);
+            }
+            crate::api::dart_types::UserEvent::ZoomImmediate(field0, field1) => {
+                <i32>::sse_encode(10, serializer);
+                <f64>::sse_encode(field0, serializer);
+                <crate::api::dart_types::Point2>::sse_encode(field1, serializer);
+            }
+            crate::api::dart_types::UserEvent::Rotate(field0, field1) => {
+                <i32>::sse_encode(11, serializer);
+                <f64>::sse_encode(field0, serializer);
+                <crate::api::dart_types::Point2>::sse_encode(field1, serializer);
+            }
+            crate::api::dart_types::UserEvent::Pitch(field0) => {
+                <i32>::sse_encode(12, serializer);
+                <f64>::sse_encode(field0, serializer);
             }
             _ => {
                 unimplemented!("");

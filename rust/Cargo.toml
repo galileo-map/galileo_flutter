@@ -4,24 +4,22 @@ version = "0.1.0"
 edition = "2021"
 
 [lib]
-crate-type = ["cdylib", "staticlib"]
+crate-type = ["cdylib", "rlib", "staticlib"]
 
 [dependencies]
 flutter_rust_bridge = "=2.13.0"
+flutter-plugin-sdk = "0.1.0"
+# The SDK re-exports its own wgpu (30.0.0). Depending on the same revision and
+# enabling the `wgsl` feature keeps shader compilation available when the
+# plugin is checked against the crates.io SDK; the Rust shell already enables
+# these features on the shared wgpu instance at application build time.
+wgpu = { git = "https://github.com/gfx-rs/wgpu.git", rev = "014d9e84813a2946febfa4888694c0b70565b2f5", default-features = false, features = ["wgsl", "vulkan"] }
 
-# irondash
-irondash_texture = "*"
-irondash_run_loop = "*"
-irondash_engine_context = "*"
-irondash_dart_ffi = "*"
-galileo = { git = "https://github.com/shri-acha/galileo", default-features = false, features = [
-    "wgpu",
-    "rustybuzz",
-    "image",
-    "fontconfig-dlopen"
-]}
+# MapLibre Native renders on a dedicated thread (the renderer is !Send) directly on
+# the Rust shell's wgpu device. This is the wgpu-30 branch of our maplibre-native-rs
+# fork, which supports the precompiled, non-amalgamated core in .cache/mln-core.
+maplibre_native = { git = "https://github.com/shri-acha/maplibre-native-rs", branch = "wgpu-30", default-features = false, features = ["wgpu", "json", "geojson", "log"] }
 
-wgpu = "27.0.1"
 tokio = { version = "1.0", features = ["full"] }
 futures = "0.3"
 parking_lot = "0.12"
@@ -33,9 +31,21 @@ log = "0.4"
 tracing-appender = "0.2.3"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 serde_json = "1.0"
+url = "2"
 
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
-font-kit = "0.14.3"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
+
+[package.metadata.flutter]
+plugin = true
+registrar = "register_application"
+
+[patch.crates-io]
+# In the standalone `cargo check` build the crates.io flutter-plugin-sdk links
+# the registry wgpu 30.0.0. Redirect it to the same revision as the Rust shell
+# so every crate in this plugin shares one wgpu instance.
+wgpu = { git = "https://github.com/gfx-rs/wgpu.git", rev = "014d9e84813a2946febfa4888694c0b70565b2f5" }
+# Local shell checkout that exposes the shared GPU device and queue to plugins.
+flutter-plugin-sdk = { path = "../example/.dart_tool/flutter_rs/sdk/crates/flutter-plugin-sdk" }

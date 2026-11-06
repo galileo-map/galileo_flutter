@@ -1,4 +1,6 @@
 pub mod api;
 pub mod core;
 mod frb_generated;
-pub mod utils;
+mod rust_shell;
+
+pub use rust_shell::register_application;

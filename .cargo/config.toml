@@ -1,0 +1,16 @@
+# Use a locally built, precompiled MapLibre Native core instead of recompiling
+# the C++ engine from source for every cargo invocation. The artifacts live in
+# .cache/mln-core (created by tool/setup-mln-core.sh) and are gitignored.
+#
+# MLN_PRECOMPILE switches maplibre-native-rs into precompiled mode; the two
+# MLN_CORE_LIBRARY_* paths point it at the cached non-amalgamated core (plus its
+# vendor libraries) and the public header tarball instead of running cmake.
+# MLN_CORE_LIBRARY_USE_AMALGAM=0 selects the non-amalgamated flavor, whose
+# vendor libraries are linked manually from the same cache directory.
+[env]
+MLN_PRECOMPILE = "1"
+MLN_CORE_LIBRARY_USE_AMALGAM = "0"
+MLN_CORE_LIBRARY_PATH = { value = ".cache/mln-core/libmbgl-core.a", relative = true }
+MLN_CORE_LIBRARY_HEADERS_PATH = { value = ".cache/mln-core/maplibre-native-headers.tar.gz", relative = true }
+MLN_WEBGPU_CPP_INCLUDE_DIR = { value = ".cache/mln-core/webgpu-cpp", relative = true }
+MLN_CORE_SRC_INCLUDE_DIR = { value = ".cache/mln-core/src", relative = true }

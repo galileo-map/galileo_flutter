@@ -1,7 +1,10 @@
 library;
 
 import 'dart:ffi' as ffi;
+import 'dart:io';
 
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart'
+    show ExternalLibrary;
 import 'package:path_provider/path_provider.dart';
 
 export 'package:galileo_flutter/src/map/widget.dart' show GalileoMapWidget;
@@ -22,7 +25,7 @@ export 'package:galileo_flutter/src/rust/api/dart_types.dart'
         GalileoColor,
         Point2,
         Point,
-		  UserEvent,
+        UserEvent,
         PointStyle;
 export 'package:galileo_flutter/src/map/widget.dart';
 export 'package:galileo_flutter/src/extensions/color.dart';
@@ -38,8 +41,31 @@ export 'package:galileo_flutter/src/widgets/polygon_overlay.dart';
 export 'package:galileo_flutter/src/widgets/cluster/cluster_controller.dart';
 export 'package:galileo_flutter/src/widgets/cluster/cluster_overlay.dart';
 
+/// Whether the plugin's Rust code is linked into the running process, as it is
+/// under the Rust shell, instead of living in a separate `libgalileo_flutter`.
+///
+/// Older runners announced this with `FLUTTER_RUST_SHELL=1`; newer ones do not,
+/// so also look for flutter_rust_bridge's exported symbols in the process.
+bool _isRustShell() {
+  if (Platform.environment['FLUTTER_RUST_SHELL'] == '1') {
+    return true;
+  }
+  try {
+    return ffi.DynamicLibrary.process().providesSymbol(
+      'frb_get_rust_content_hash',
+    );
+  } catch (_) {
+    return false;
+  }
+}
+
 Future<void> initGalileo({String? cachePath}) async {
-  await rlib_gen.RustLib.init();
+  final isRustShell = _isRustShell();
+  await rlib_gen.RustLib.init(
+    externalLibrary: isRustShell
+        ? ExternalLibrary.process(iKnowHowToUseIt: true)
+        : null,
+  );
   rlib.galileoFlutterInit(ffiPtr: ffi.NativeApi.initializeApiDLData.address);
 
   String? tileCachePath = cachePath;

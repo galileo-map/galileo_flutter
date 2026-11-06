@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:galileo_flutter/galileo_flutter.dart';
 
 /// Builds the widget shown for a single [PointCluster] bubble.
-typedef ClusterBubbleBuilder =
-    Widget Function(BuildContext context, PointCluster cluster);
+typedef ClusterBubbleBuilder = Widget Function(
+  BuildContext context,
+  PointCluster cluster,
+);
 
 /// Renders the clusters computed by a [PointClusterController] as tappable
 /// bubbles positioned over the map, zooming in around a cluster when tapped.
@@ -55,17 +57,16 @@ class ClusterOverlay extends StatelessWidget {
         ],
       ),
       alignment: Alignment.center,
-      child:
-          isCluster
-              ? Text(
-                '${cluster.count}',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
-              )
-              : const Icon(Icons.location_on, color: Colors.white, size: 14),
+      child: isCluster
+          ? Text(
+              '${cluster.count}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            )
+          : const Icon(Icons.location_on, color: Colors.white, size: 14),
     );
   }
 
@@ -93,15 +94,14 @@ class ClusterOverlay extends StatelessWidget {
             return Listener(
               behavior: HitTestBehavior.translucent,
               onPointerDown: (e) => controller.handlePointerDown(e, size, vp),
-              onPointerUp:
-                  (e) => controller.handlePointerUp(
-                    e,
-                    size,
-                    vp,
-                    mapController,
-                    devicePixelRatio,
-                    onClusterTap,
-                  ),
+              onPointerUp: (e) => controller.handlePointerUp(
+                e,
+                size,
+                vp,
+                mapController,
+                devicePixelRatio,
+                onClusterTap,
+              ),
               child: Stack(
                 children: [
                   for (final cluster in clusters)

@@ -7,12 +7,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:galileo_flutter/src/map/controller.dart';
 import 'package:galileo_flutter/src/rust/api/dart_types.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:galileo_flutter/src/layer/overlay/overlay.dart';
 
 final _log = Logger('GalileoMapWidget');
 
 /// A widget that displays a Galileo map with interactive controls
+/// Degrees of rotation per physical pixel of a secondary-button mouse drag.
+const double _kRotateDegreesPerPixel = 0.5;
+
+/// Degrees of tilt per physical pixel of vertical drag (mouse or two fingers).
+const double _kPitchDegreesPerPixel = 0.25;
+
+/// A two-finger gesture counts as zoom/rotate once the fingers' spread
+/// (natural-log scale) or twist (radians) travels this far...
+const double _kGestureScaleSlop = 0.03;
+const double _kGestureRotationSlop = 0.06;
+
+/// ...and as a tilt once both fingers slid this many logical pixels vertically
+/// (and mostly vertically) without spreading or twisting first.
+const double _kGestureTiltSlop = 8;
+
+/// Twist (radians) the fingers must accumulate before the map starts rotating,
+/// so an ordinary pinch-zoom does not wobble the bearing.
+const double _kRotationDeadband = 0.12;
+
+enum _TwoFingerMode { undecided, tilt, transform }
+
 class GalileoMapWidget extends StatefulWidget {
   final GalileoMapController controller;
 
@@ -108,20 +128,31 @@ class GalileoMapWidget extends StatefulWidget {
   State<GalileoMapWidget> createState() => _GalileoMapWidgetState();
 }
 
-class _GalileoMapWidgetState extends State<GalileoMapWidget>
-    with TickerProviderStateMixin {
+class _GalileoMapWidgetState extends State<GalileoMapWidget> {
   GalileoMapState? currentState;
   StreamSubscription<GalileoMapState>? streamSubscription;
   StreamSubscription<MapViewport>? viewportSubscription;
   late FocusNode _focusNode;
   final Set<LogicalKeyboardKey> _pressedKeys = {};
-  late Ticker panTicker;
-  Offset _panAccumulatedDelta = Offset.zero;
 
   Offset? _lastPointerPosition;
   MapSize? _lastMapSize;
+  Timer? resizeTimer;
   double _lastPinchScaleValue = 1;
   bool _isPinchScaling = false;
+
+  /// True while a secondary mouse button drag rotates and tilts the map.
+  bool _isOrientDragging = false;
+
+  // Two-finger gesture state. A gesture is either a tilt (both fingers sliding
+  // vertically together) or a zoom/rotate; it is decided from the first few
+  // frames of movement and then latched.
+  _TwoFingerMode _twoFingerMode = _TwoFingerMode.undecided;
+  double _pinchStartScale = 1;
+  double _rotationStart = 0;
+  Offset _twoFingerFocalTravel = Offset.zero;
+  double _lastRotation = 0;
+  bool _isRotating = false;
 
   final Set<int> _activePointers = {};
 
@@ -134,7 +165,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
     super.initState();
 
     _focusNode = widget.focusNode ?? FocusNode();
-    panTicker = createTicker(_onTickPan);
 
     if (widget.enableKeyboard) {
       HardwareKeyboard.instance.addHandler(_handleKeyEvent);
@@ -147,6 +177,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
         });
       }
     });
+    widget.controller.textureIdListenable.addListener(_handleTextureIdChanged);
     viewportSubscription = widget.controller.renderedViewportStream.listen((
       vp,
     ) {
@@ -154,7 +185,17 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
     });
   }
 
-  Future<void> _sendPanEvent(Offset delta, Offset position) {
+  void _handleTextureIdChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> _sendPanEvent(
+    Offset delta,
+    Offset position,
+    Duration timestamp,
+  ) {
     final scaleFactor = _devicePixelRatio;
     final panEvent = UserEvent.drag(
       MouseButton.left,
@@ -169,32 +210,69 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
           middle: MouseButtonState.released,
           right: MouseButtonState.released,
         ),
+        timestampMicros: BigInt.from(timestamp.inMicroseconds),
       ),
     );
     return widget.controller.handleEvent(panEvent);
   }
 
-  /// Sends a zoom event to Rust. Overlay updates arrive with the rendered frame.
-  Future<void> _sendZoomEvent(double zoomFactor, Offset position) {
+  Future<void> _sendPointerPressed(Offset position, Duration timestamp) {
     final scaleFactor = _devicePixelRatio;
-    final zoomEvent = UserEvent.zoom(
-      zoomFactor,
-      Point2(x: position.dx * scaleFactor, y: position.dy * scaleFactor),
+    return widget.controller.handleEvent(
+      UserEvent.buttonPressed(
+        MouseButton.left,
+        MouseEvent(
+          screenPointerPosition: Point2(
+            x: position.dx * scaleFactor,
+            y: position.dy * scaleFactor,
+          ),
+          buttons: const MouseButtonsState(
+            left: MouseButtonState.pressed,
+            middle: MouseButtonState.released,
+            right: MouseButtonState.released,
+          ),
+          timestampMicros: BigInt.from(timestamp.inMicroseconds),
+        ),
+      ),
     );
-    return widget.controller.handleEvent(zoomEvent);
   }
 
-  void _onTickPan(Duration elapsed) {
-    // If pan is suppressed, discard any accumulated delta
-    // so the map doesn't pan when the user releases.
-    if (widget.controller.layerController.shouldSuppressPan) {
-      _panAccumulatedDelta = Offset.zero;
-      return;
-    }
-    if (_panAccumulatedDelta != Offset.zero) {
-      _sendPanEvent(_panAccumulatedDelta, _lastPointerPosition!);
-      _panAccumulatedDelta = Offset.zero;
-    }
+  Future<void> _sendPointerReleased(Offset position, Duration timestamp) {
+    final scaleFactor = _devicePixelRatio;
+    return widget.controller.handleEvent(
+      UserEvent.buttonReleased(
+        MouseButton.left,
+        MouseEvent(
+          screenPointerPosition: Point2(
+            x: position.dx * scaleFactor,
+            y: position.dy * scaleFactor,
+          ),
+          buttons: const MouseButtonsState(
+            left: MouseButtonState.released,
+            middle: MouseButtonState.released,
+            right: MouseButtonState.released,
+          ),
+          timestampMicros: BigInt.from(timestamp.inMicroseconds),
+        ),
+      ),
+    );
+  }
+
+  /// Sends a zoom event to Rust. Overlay updates arrive with the rendered frame.
+  Future<void> _sendZoomEvent(
+    double zoomFactor,
+    Offset position, {
+    bool direct = false,
+  }) {
+    final scaleFactor = _devicePixelRatio;
+    final point = Point2(
+      x: position.dx * scaleFactor,
+      y: position.dy * scaleFactor,
+    );
+    final zoomEvent = direct
+        ? UserEvent.zoomImmediate(zoomFactor, point)
+        : UserEvent.zoomAnimated(zoomFactor, point);
+    return widget.controller.handleEvent(zoomEvent);
   }
 
   Widget _buildLoadingWidget(String message) {
@@ -245,7 +323,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
         Positioned.fill(child: Texture(textureId: textureId)),
         // Geo-anchored widgets from LayerController
         ListenableBuilder(
-          listenable: widget.controller.layerController,
+          listenable: widget.controller.layerController.overlaysRevision,
           builder: (context, _) {
             return MapOverlayLayer(
               controller: widget.controller.layerController,
@@ -270,17 +348,35 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
         if (widget.enableKeyboard) {
           _focusNode.requestFocus();
         }
-        widget.onTap?.call(event.localPosition.dx, event.localPosition.dy);
         _lastPointerPosition = event.localPosition;
-        panTicker.start();
+        if (event.kind == PointerDeviceKind.mouse &&
+            event.buttons & kSecondaryMouseButton != 0) {
+          _isOrientDragging = true;
+          return;
+        }
+        widget.onTap?.call(event.localPosition.dx, event.localPosition.dy);
+        // A touch-down stops any fling in progress.
+        _sendPointerPressed(event.localPosition, event.timeStamp);
       },
       onPointerUp: (event) {
+        if (_isOrientDragging) {
+          _isOrientDragging = false;
+          _activePointers.remove(event.pointer);
+          _lastPointerPosition = null;
+          return;
+        }
+        final wasPanning = _activePointers.length == 1 && !_isPinchScaling;
         _activePointers.remove(event.pointer);
+        // Tell the map the button went up so it can fling with the drag's velocity.
+        if (wasPanning &&
+            _lastPointerPosition != null &&
+            !widget.controller.layerController.shouldSuppressPan) {
+          _sendPointerReleased(event.localPosition, event.timeStamp);
+        }
         _lastPointerPosition = null;
-        panTicker.stop();
-        _panAccumulatedDelta = Offset.zero;
       },
       onPointerCancel: (event) {
+        _isOrientDragging = false;
         _activePointers.remove(event.pointer);
         _lastPointerPosition = null;
 
@@ -298,6 +394,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
               middle: MouseButtonState.released,
               right: MouseButtonState.released,
             ),
+            timestampMicros: BigInt.from(event.timeStamp.inMicroseconds),
           ),
         );
         widget.controller.handleEvent(mouseEvent);
@@ -305,8 +402,9 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
       onPointerSignal: (event) {
         if (event is PointerScrollEvent) {
           const zoomSensitivity = 0.002;
-          final zoomFactor =
-              math.pow(1.0 - zoomSensitivity, -event.scrollDelta.dy).toDouble();
+          final zoomFactor = math
+              .pow(1.0 - zoomSensitivity, -event.scrollDelta.dy)
+              .toDouble();
           _sendZoomEvent(zoomFactor, event.localPosition);
         }
       },
@@ -319,9 +417,29 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
           return;
         }
 
-        // If an overlay has requested pan suppression,
-        // still track the position so the next un-suppressed frame is correct,
-        // but don't accumulate the delta.
+        if (_isOrientDragging) {
+          // Secondary-button drag: horizontal rotates, vertical tilts.
+          final scale = _devicePixelRatio;
+          final size = widget.controller.size;
+          final delta = event.delta * scale;
+          if (delta.dx != 0) {
+            widget.controller.handleEvent(
+              UserEvent.rotate(
+                delta.dx * _kRotateDegreesPerPixel,
+                Point2(x: size.width / 2, y: size.height / 2),
+              ),
+            );
+          }
+          if (delta.dy != 0) {
+            widget.controller.handleEvent(
+              UserEvent.pitch(-delta.dy * _kPitchDegreesPerPixel),
+            );
+          }
+          return;
+        }
+
+        // If an overlay suppresses panning, keep the next drag anchored at
+        // the current pointer position.
         if (widget.controller.layerController.shouldSuppressPan) {
           _lastPointerPosition = event.localPosition;
           return;
@@ -331,7 +449,9 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
 
         if (_lastPointerPosition case final lastPosition?) {
           final delta = currentPosition - lastPosition;
-          _panAccumulatedDelta += delta;
+          if (delta != Offset.zero) {
+            _sendPanEvent(delta, currentPosition, event.timeStamp);
+          }
         }
 
         _lastPointerPosition = currentPosition;
@@ -351,28 +471,20 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
     mapContent = GestureDetector(
       onScaleStart: (details) {
         _lastPinchScaleValue = 1.0;
+        _lastRotation = 0;
+        _isRotating = false;
+        _twoFingerMode = _TwoFingerMode.undecided;
+        _pinchStartScale = 1;
+        _rotationStart = 0;
+        _twoFingerFocalTravel = Offset.zero;
       },
-      onScaleUpdate: (details) {
-        if (details.pointerCount >= 2) {
-          if (!_isPinchScaling) {
-            _isPinchScaling = true;
-            _lastPinchScaleValue = details.scale;
-            return;
-          }
-
-          if (details.scale != _lastPinchScaleValue) {
-            final scaleDelta = details.scale / _lastPinchScaleValue;
-            const zoomSensitivity = 2.5;
-            final amplifiedDelta =
-                math.pow(scaleDelta, zoomSensitivity).toDouble();
-            _lastPinchScaleValue = details.scale;
-            _sendZoomEvent(1.0 / amplifiedDelta, details.localFocalPoint);
-          }
-        }
-      },
+      onScaleUpdate: _handleScaleUpdate,
       onScaleEnd: (details) {
         _lastPinchScaleValue = 1.0;
+        _lastRotation = 0;
+        _isRotating = false;
         _isPinchScaling = false;
+        _twoFingerMode = _TwoFingerMode.undecided;
       },
       child: mapContent,
     );
@@ -380,24 +492,101 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
     return LayoutBuilder(
       builder: (context, constraints) {
         final size = Size(constraints.maxWidth, constraints.maxHeight);
+        final scale = _devicePixelRatio;
         final newMapSize = MapSize(
-          width: size.width.toInt(),
-          height: size.height.toInt(),
+          width: (size.width * scale).round(),
+          height: (size.height * scale).round(),
         );
 
         if (_lastMapSize == null ||
             _lastMapSize!.width != newMapSize.width ||
             _lastMapSize!.height != newMapSize.height) {
           _lastMapSize = newMapSize;
-          // resize in next frame
-          Future.microtask(() async {
-            if (!mounted) return;
-            await widget.controller.resize(newMapSize);
+          resizeTimer?.cancel();
+          resizeTimer = Timer(const Duration(milliseconds: 50), () {
+            if (mounted) {
+              widget.controller.resize(newMapSize);
+            }
           });
         }
 
         return mapContent;
       },
+    );
+  }
+
+  void _handleScaleUpdate(ScaleUpdateDetails details) {
+    if (details.pointerCount < 2) return;
+    if (!_isPinchScaling) {
+      _isPinchScaling = true;
+      _lastPinchScaleValue = details.scale;
+      _lastRotation = details.rotation;
+      _pinchStartScale = details.scale;
+      _rotationStart = details.rotation;
+      return;
+    }
+
+    final scaleDelta = details.scale / _lastPinchScaleValue;
+    var rotationDelta = details.rotation - _lastRotation;
+    _lastPinchScaleValue = details.scale;
+    _lastRotation = details.rotation;
+    _twoFingerFocalTravel += details.focalPointDelta;
+
+    if (_twoFingerMode == _TwoFingerMode.undecided) {
+      final focal = _twoFingerFocalTravel;
+      final isSpreading =
+          math.log(details.scale / _pinchStartScale).abs() >
+              _kGestureScaleSlop ||
+          (details.rotation - _rotationStart).abs() > _kGestureRotationSlop;
+      if (isSpreading) {
+        _twoFingerMode = _TwoFingerMode.transform;
+      } else if (focal.dy.abs() > _kGestureTiltSlop &&
+          focal.dy.abs() > 2 * focal.dx.abs()) {
+        _twoFingerMode = _TwoFingerMode.tilt;
+        // Apply the movement accumulated while deciding.
+        _sendPitchEvent(-focal.dy);
+        return;
+      } else {
+        return;
+      }
+    }
+
+    if (_twoFingerMode == _TwoFingerMode.tilt) {
+      _sendPitchEvent(-details.focalPointDelta.dy);
+      return;
+    }
+
+    final focal = details.localFocalPoint;
+    final rotationTotal = (details.rotation - _rotationStart).abs();
+    if (!_isRotating && rotationTotal > _kRotationDeadband) {
+      // Past the dead band: start rotating from here so the map does not jump.
+      _isRotating = true;
+      rotationDelta = 0;
+    }
+    if (_isRotating) {
+      if (rotationDelta != 0) {
+        final scale = _devicePixelRatio;
+        widget.controller.handleEvent(
+          UserEvent.rotate(
+            rotationDelta * 180 / math.pi,
+            Point2(x: focal.dx * scale, y: focal.dy * scale),
+          ),
+        );
+      }
+    }
+    if (scaleDelta != 1.0) {
+      const zoomSensitivity = 2.5;
+      final amplifiedDelta = math.pow(scaleDelta, zoomSensitivity).toDouble();
+      _sendZoomEvent(1.0 / amplifiedDelta, focal, direct: true);
+    }
+  }
+
+  /// Tilts the map for a vertical two-finger movement of [dy] logical pixels
+  /// (positive tilts towards the horizon).
+  void _sendPitchEvent(double dy) {
+    if (dy == 0) return;
+    widget.controller.handleEvent(
+      UserEvent.pitch(dy * _devicePixelRatio * _kPitchDegreesPerPixel),
     );
   }
 
@@ -425,18 +614,18 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
 
     switch (key) {
       case LogicalKeyboardKey.arrowUp:
-        await _sendPanEvent(const Offset(0, step), center);
+        await _sendPanEvent(const Offset(0, step), center, Duration.zero);
       case LogicalKeyboardKey.arrowDown:
-        await _sendPanEvent(const Offset(0, -step), center);
+        await _sendPanEvent(const Offset(0, -step), center, Duration.zero);
       case LogicalKeyboardKey.arrowLeft:
-        await _sendPanEvent(const Offset(step, 0), center);
+        await _sendPanEvent(const Offset(step, 0), center, Duration.zero);
       case LogicalKeyboardKey.arrowRight:
-        await _sendPanEvent(const Offset(-step, 0), center);
+        await _sendPanEvent(const Offset(-step, 0), center, Duration.zero);
 
       case LogicalKeyboardKey.equal:
       case LogicalKeyboardKey.numpadAdd:
         await widget.controller.handleEvent(
-          UserEvent.zoom(
+          UserEvent.zoomAnimated(
             0.9,
             Point2(
               x: centerX * _devicePixelRatio,
@@ -447,7 +636,7 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
       case LogicalKeyboardKey.minus:
       case LogicalKeyboardKey.numpadSubtract:
         await widget.controller.handleEvent(
-          UserEvent.zoom(
+          UserEvent.zoomAnimated(
             1.1,
             Point2(
               x: centerX * _devicePixelRatio,
@@ -493,6 +682,10 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
       HardwareKeyboard.instance.removeHandler(_handleKeyEvent);
     }
 
+    resizeTimer?.cancel();
+    widget.controller.textureIdListenable.removeListener(
+      _handleTextureIdChanged,
+    );
     super.dispose();
 
     Future.microtask(() async {
@@ -513,7 +706,6 @@ class _GalileoMapWidgetState extends State<GalileoMapWidget>
     if (widget.focusNode == null) {
       _focusNode.dispose();
     }
-    panTicker.dispose();
   }
 }
 

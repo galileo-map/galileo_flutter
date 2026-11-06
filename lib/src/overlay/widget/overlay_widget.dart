@@ -58,6 +58,11 @@ class OverlayWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(width: width, height: height, child: child);
+    // The flow layer repositions this subtree by transform on every viewport
+    // change. The repaint boundary lets the child rasterize once and be
+    // re-composited instead of re-painted for each position update.
+    return RepaintBoundary(
+      child: SizedBox(width: width, height: height, child: child),
+    );
   }
 }

@@ -69,7 +69,7 @@ class PolygonEditOverlayPainter extends CustomPainter {
     if (vertices.isEmpty) return;
     canvas.clipRect(Offset.zero & size);
 
-    final pts = vertices.map((v) => geoToOffset(v, size, viewport)).toList();
+    final pts = geosToOffsets(vertices, size, viewport);
 
     if (pts.length >= 3) {
       final path = Path()..moveTo(pts[0].dx, pts[0].dy);
@@ -133,7 +133,7 @@ class PendingPolygonPainter extends CustomPainter {
     if (vertices.isEmpty) return;
     canvas.clipRect(Offset.zero & size);
 
-    final pts = vertices.map((v) => geoToOffset(v, size, viewport)).toList();
+    final pts = geosToOffsets(vertices, size, viewport);
 
     if (pts.length >= 3) {
       final path = Path()..moveTo(pts[0].dx, pts[0].dy);

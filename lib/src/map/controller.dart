@@ -1,11 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:galileo_flutter/src/rust/api/dart_types.dart';
 import 'package:galileo_flutter/src/rust/api/galileo_api.dart' as rlib;
 import 'package:galileo_flutter/src/layer/controller.dart';
 import 'package:logging/logging.dart';
 
-import 'package:irondash_engine_context/irondash_engine_context.dart';
 import "package:rxdart/rxdart.dart" as rx;
 
 final _log = Logger('GalileoMapController');
@@ -42,8 +42,9 @@ class GalileoMapController {
   StreamSubscription<RenderedMapFrame>? _renderedFrameSub;
   BigInt _lastRenderedFrameSequence = BigInt.zero;
   Future<void> _eventQueue = Future<void>.value();
+  int _queuedOperations = 0;
   bool _running = false;
-  int? _textureId;
+  late final ValueNotifier<int?> _textureId;
 
   GalileoMapController._({
     required MapSize size,
@@ -51,9 +52,11 @@ class GalileoMapController {
     required this.layers,
     required this.sessionId,
     required rx.BehaviorSubject<GalileoMapState> stateBroadcast,
+    required int textureId,
   }) : _size = size,
        _stateBroadcast = stateBroadcast {
     layerController = LayerController(sessionId: sessionId, layers: layers);
+    _textureId = ValueNotifier<int?>(textureId);
   }
 
   /// Stream of map state changes
@@ -67,7 +70,9 @@ class GalileoMapController {
       _renderedViewportBroadcast.stream;
 
   /// Texture ID for rendering (null if not ready)
-  int? get textureId => _textureId;
+  int? get textureId => _textureId.value;
+
+  ValueListenable<int?> get textureIdListenable => _textureId;
 
   /// Whether the map is currently running
   bool get isRunning => _running;
@@ -79,14 +84,8 @@ class GalileoMapController {
     List<LayerConfig> layers = const [LayerConfig.osm()],
   }) async {
     try {
-      // Get Flutter engine handle for texture registration
-      final handle = await EngineContext.instance.getEngineHandle();
-
       // Create the map instance
-      final newSessionResp = await rlib.createNewMapSession(
-        engineHandle: handle,
-        config: config,
-      );
+      final newSessionResp = await rlib.createNewMapSession(config: config);
 
       // Create state broadcast
       final stateBroadcast = rx.BehaviorSubject<GalileoMapState>.seeded(
@@ -99,13 +98,13 @@ class GalileoMapController {
         layers: layers,
         sessionId: newSessionResp.sessionId,
         stateBroadcast: stateBroadcast,
+        textureId: newSessionResp.textureId,
       );
 
       for (final layer in layers) {
         await controller.layerController.addLayer(layer);
       }
 
-      controller._textureId = newSessionResp.textureId;
       controller._running = true;
       controller._startRenderedFrameStream();
 
@@ -167,14 +166,26 @@ class GalileoMapController {
   Future<void> handleEvent(UserEvent event) {
     if (!_running) return Future<void>.value();
 
-    _eventQueue = _eventQueue.then((_) async {
-      try {
-        await rlib.handleEventForSession(sessionId: sessionId, event: event);
-      } catch (e) {
-        _log.warning('Error handling event', e);
-      }
-    });
+    // Pointer motion only sends to the map thread. Send it immediately unless
+    // a resize is in flight, when events must keep their order with the resize.
+    if (_queuedOperations == 0) {
+      _sendEvent(event);
+      return Future<void>.value();
+    }
+
+    _queuedOperations++;
+    final next = _eventQueue.then((_) => _sendEvent(event));
+    _eventQueue = next.whenComplete(() => _queuedOperations--);
     return _eventQueue;
+  }
+
+  void _sendEvent(UserEvent event) {
+    if (!_running) return;
+    try {
+      rlib.handleEventForSession(sessionId: sessionId, event: event);
+    } catch (e) {
+      _log.warning('Error handling event', e);
+    }
   }
 
   Future<void> requestRedraw() async {
@@ -192,14 +203,33 @@ class GalileoMapController {
   }
 
   /// Resize the map
-  Future<void> resize(MapSize newSize) async {
-    if (!_running) return;
-    try {
-      await rlib.resizeSession(sessionId: sessionId, newSize: newSize);
-      _size = newSize;
-    } catch (e) {
-      _log.severe('Error resizing map', e);
+  Future<void> resize(MapSize newSize) {
+    if (!_running) {
+      return Future<void>.value();
     }
+
+    _queuedOperations++;
+    final next = _eventQueue.then((_) async {
+      if (newSize == _size) {
+        return;
+      }
+
+      try {
+        final newTextureId = await rlib.resizeSession(
+          sessionId: sessionId,
+          newSize: newSize,
+        );
+        if (!_running) {
+          return;
+        }
+        _textureId.value = newTextureId;
+        _size = newSize;
+      } catch (e) {
+        _log.severe('Error resizing map', e);
+      }
+    });
+    _eventQueue = next.whenComplete(() => _queuedOperations--);
+    return next;
   }
 
   /// Dispose of the controller and clean up resources
@@ -214,5 +244,6 @@ class GalileoMapController {
     } catch (e) {
       _log.severe('Error disposing Galileo map controller', e);
     }
+    _textureId.dispose();
   }
 }

@@ -67,7 +67,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.13.0';
 
   @override
-  int get rustContentHash => 730467754;
+  int get rustContentHash => 2064308204;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -107,12 +107,7 @@ abstract class RustLibApi extends BaseApi {
   });
 
   Future<CreateNewSessionResponse> crateApiGalileoApiCreateNewMapSession({
-    required PlatformInt64 engineHandle,
     required MapInitConfig config,
-  });
-
-  Future<void> crateApiGalileoApiDestroyAllEngineSessions({
-    required PlatformInt64 engineId,
   });
 
   Future<void> crateApiGalileoApiDestroySession({required int sessionId});
@@ -141,7 +136,7 @@ abstract class RustLibApi extends BaseApi {
     required int sessionId,
   });
 
-  Future<void> crateApiGalileoApiHandleEventForSession({
+  void crateApiGalileoApiHandleEventForSession({
     required int sessionId,
     required UserEvent event,
   });
@@ -166,7 +161,7 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateApiGalileoApiRequestMapRedraw({required int sessionId});
 
-  Future<void> crateApiGalileoApiResizeSession({
+  Future<PlatformInt64> crateApiGalileoApiResizeSession({
     required int sessionId,
     required MapSize newSize,
   });
@@ -374,14 +369,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @override
   Future<CreateNewSessionResponse> crateApiGalileoApiCreateNewMapSession({
-    required PlatformInt64 engineHandle,
     required MapInitConfig config,
   }) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_i_64(engineHandle, serializer);
           sse_encode_box_autoadd_map_init_config(config, serializer);
           pdeCallFfi(
             generalizedFrbRustBinding,
@@ -395,7 +388,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeErrorData: sse_decode_AnyhowException,
         ),
         constMeta: kCrateApiGalileoApiCreateNewMapSessionConstMeta,
-        argValues: [engineHandle, config],
+        argValues: [config],
         apiImpl: this,
       ),
     );
@@ -404,40 +397,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiGalileoApiCreateNewMapSessionConstMeta =>
       const TaskConstMeta(
         debugName: "create_new_map_session",
-        argNames: ["engineHandle", "config"],
-      );
-
-  @override
-  Future<void> crateApiGalileoApiDestroyAllEngineSessions({
-    required PlatformInt64 engineId,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_i_64(engineId, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 7,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiGalileoApiDestroyAllEngineSessionsConstMeta,
-        argValues: [engineId],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiGalileoApiDestroyAllEngineSessionsConstMeta =>
-      const TaskConstMeta(
-        debugName: "destroy_all_engine_sessions",
-        argNames: ["engineId"],
+        argNames: ["config"],
       );
 
   @override
@@ -450,7 +410,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 8,
+            funcId: 7,
             port: port_,
           );
         },
@@ -480,7 +440,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 9,
+            funcId: 8,
             port: port_,
           );
         },
@@ -510,7 +470,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 10,
+            funcId: 9,
             port: port_,
           );
         },
@@ -546,7 +506,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           sse_encode_f_64(height, serializer);
           sse_encode_f_64(width, serializer);
           sse_encode_box_autoadd_map_viewport(vp, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_list_screen_location,
@@ -580,7 +540,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           sse_encode_f_64(height, serializer);
           sse_encode_f_64(width, serializer);
           sse_encode_box_autoadd_map_viewport(vp, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_screen_location,
@@ -611,7 +571,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 13,
+            funcId: 12,
             port: port_,
           );
         },
@@ -633,22 +593,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<void> crateApiGalileoApiHandleEventForSession({
+  void crateApiGalileoApiHandleEventForSession({
     required int sessionId,
     required UserEvent event,
   }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_u_32(sessionId, serializer);
           sse_encode_box_autoadd_user_event(event, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 14,
-            port: port_,
-          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_unit,
@@ -676,7 +631,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 15,
+            funcId: 14,
             port: port_,
           );
         },
@@ -704,7 +659,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 16,
+            funcId: 15,
             port: port_,
           );
         },
@@ -734,7 +689,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 17,
+            funcId: 16,
             port: port_,
           );
         },
@@ -768,7 +723,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 18,
+            funcId: 17,
             port: port_,
           );
         },
@@ -805,7 +760,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 19,
+            funcId: 18,
             port: port_,
           );
         },
@@ -836,7 +791,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 20,
+            funcId: 19,
             port: port_,
           );
         },
@@ -858,7 +813,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<void> crateApiGalileoApiResizeSession({
+  Future<PlatformInt64> crateApiGalileoApiResizeSession({
     required int sessionId,
     required MapSize newSize,
   }) {
@@ -871,12 +826,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 21,
+            funcId: 20,
             port: port_,
           );
         },
         codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
+          decodeSuccessData: sse_decode_i_64,
           decodeErrorData: sse_decode_AnyhowException,
         ),
         constMeta: kCrateApiGalileoApiResizeSessionConstMeta,
@@ -907,7 +862,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           sse_encode_box_autoadd_map_viewport(vp, serializer);
           sse_encode_f_64(height, serializer);
           sse_encode_f_64(width, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 22)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_geo_location,
@@ -936,7 +891,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 23,
+            funcId: 22,
             port: port_,
           );
         },
@@ -969,7 +924,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             pdeCallFfi(
               generalizedFrbRustBinding,
               serializer,
-              funcId: 24,
+              funcId: 23,
               port: port_,
             );
           },
@@ -1243,13 +1198,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   MapViewport dco_decode_map_viewport(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
     return MapViewport(
       xMin: dco_decode_f_64(arr[0]),
       xMax: dco_decode_f_64(arr[1]),
       yMin: dco_decode_f_64(arr[2]),
       yMax: dco_decode_f_64(arr[3]),
+      bearing: dco_decode_f_64(arr[4]),
+      pitch: dco_decode_f_64(arr[5]),
     );
   }
 
@@ -1282,11 +1239,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   MouseEvent dco_decode_mouse_event(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
     return MouseEvent(
       screenPointerPosition: dco_decode_point_2(arr[0]),
       buttons: dco_decode_mouse_buttons_state(arr[1]),
+      timestampMicros: dco_decode_u_64(arr[2]),
     );
   }
 
@@ -1460,10 +1418,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dco_decode_box_autoadd_mouse_event(raw[2]),
         );
       case 9:
-        return UserEvent_Zoom(
+        return UserEvent_ZoomAnimated(
           dco_decode_f_64(raw[1]),
           dco_decode_box_autoadd_point_2(raw[2]),
         );
+      case 10:
+        return UserEvent_ZoomImmediate(
+          dco_decode_f_64(raw[1]),
+          dco_decode_box_autoadd_point_2(raw[2]),
+        );
+      case 11:
+        return UserEvent_Rotate(
+          dco_decode_f_64(raw[1]),
+          dco_decode_box_autoadd_point_2(raw[2]),
+        );
+      case 12:
+        return UserEvent_Pitch(dco_decode_f_64(raw[1]));
       default:
         throw Exception("unreachable");
     }
@@ -1769,11 +1739,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_xMax = sse_decode_f_64(deserializer);
     var var_yMin = sse_decode_f_64(deserializer);
     var var_yMax = sse_decode_f_64(deserializer);
+    var var_bearing = sse_decode_f_64(deserializer);
+    var var_pitch = sse_decode_f_64(deserializer);
     return MapViewport(
       xMin: var_xMin,
       xMax: var_xMax,
       yMin: var_yMin,
       yMax: var_yMax,
+      bearing: var_bearing,
+      pitch: var_pitch,
     );
   }
 
@@ -1811,9 +1785,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_screenPointerPosition = sse_decode_point_2(deserializer);
     var var_buttons = sse_decode_mouse_buttons_state(deserializer);
+    var var_timestampMicros = sse_decode_u_64(deserializer);
     return MouseEvent(
       screenPointerPosition: var_screenPointerPosition,
       buttons: var_buttons,
+      timestampMicros: var_timestampMicros,
     );
   }
 
@@ -1977,7 +1953,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 9:
         var var_field0 = sse_decode_f_64(deserializer);
         var var_field1 = sse_decode_box_autoadd_point_2(deserializer);
-        return UserEvent_Zoom(var_field0, var_field1);
+        return UserEvent_ZoomAnimated(var_field0, var_field1);
+      case 10:
+        var var_field0 = sse_decode_f_64(deserializer);
+        var var_field1 = sse_decode_box_autoadd_point_2(deserializer);
+        return UserEvent_ZoomImmediate(var_field0, var_field1);
+      case 11:
+        var var_field0 = sse_decode_f_64(deserializer);
+        var var_field1 = sse_decode_box_autoadd_point_2(deserializer);
+        return UserEvent_Rotate(var_field0, var_field1);
+      case 12:
+        var var_field0 = sse_decode_f_64(deserializer);
+        return UserEvent_Pitch(var_field0);
       default:
         throw UnimplementedError('');
     }
@@ -2284,6 +2271,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_f_64(self.xMax, serializer);
     sse_encode_f_64(self.yMin, serializer);
     sse_encode_f_64(self.yMax, serializer);
+    sse_encode_f_64(self.bearing, serializer);
+    sse_encode_f_64(self.pitch, serializer);
   }
 
   @protected
@@ -2317,6 +2306,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_point_2(self.screenPointerPosition, serializer);
     sse_encode_mouse_buttons_state(self.buttons, serializer);
+    sse_encode_u_64(self.timestampMicros, serializer);
   }
 
   @protected
@@ -2467,10 +2457,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_i_32(8, serializer);
         sse_encode_f_64(field0, serializer);
         sse_encode_box_autoadd_mouse_event(field1, serializer);
-      case UserEvent_Zoom(field0: final field0, field1: final field1):
+      case UserEvent_ZoomAnimated(field0: final field0, field1: final field1):
         sse_encode_i_32(9, serializer);
         sse_encode_f_64(field0, serializer);
         sse_encode_box_autoadd_point_2(field1, serializer);
+      case UserEvent_ZoomImmediate(field0: final field0, field1: final field1):
+        sse_encode_i_32(10, serializer);
+        sse_encode_f_64(field0, serializer);
+        sse_encode_box_autoadd_point_2(field1, serializer);
+      case UserEvent_Rotate(field0: final field0, field1: final field1):
+        sse_encode_i_32(11, serializer);
+        sse_encode_f_64(field0, serializer);
+        sse_encode_box_autoadd_point_2(field1, serializer);
+      case UserEvent_Pitch(field0: final field0):
+        sse_encode_i_32(12, serializer);
+        sse_encode_f_64(field0, serializer);
     }
   }
 
