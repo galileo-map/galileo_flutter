@@ -2,16 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// flutter-rust-runner-version: 7
+// flutter-rust-runner-version: 9
 
 use std::{env, path::PathBuf};
 
 fn main() {
     let manifest_dir = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").unwrap());
-    // Cargo sets PROFILE to "debug" or "release"; rlutter provides a matching
-    // engine (JIT vs AOT-capable) under the same name so `cargo build
-    // --release` links the engine that can actually run an AOT app.
-    let profile = env::var("PROFILE").unwrap();
+    // Cargo reports custom release-derived profiles as "release". rlutter
+    // supplies the Dart mode explicitly so profile links the profiling engine.
+    println!("cargo:rerun-if-env-changed=FLUTTER_RS_BUILD_MODE");
+    let profile = env::var("FLUTTER_RS_BUILD_MODE")
+        .unwrap_or_else(|_| env::var("PROFILE").unwrap());
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
     let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
     let platform = match (target_os.as_str(), target_arch.as_str()) {
@@ -35,6 +36,9 @@ fn main() {
     println!("cargo:rustc-link-search=native={}", engine_dir.display());
     println!("cargo:rustc-link-lib=dylib={engine_name}");
     if target_os == "android" {
+        // System.loadLibrary normally loads locally. Android's global group
+        // must include Rust plugins for Dart process() and native providers.
+        println!("cargo:rustc-link-arg=-Wl,-z,global");
         // The engine ships inside the APK's jniLibs/<abi>/ next to this
         // cdylib, so resolve it relative to wherever this library is loaded.
         println!("cargo:rustc-link-arg=-Wl,-rpath,$ORIGIN");

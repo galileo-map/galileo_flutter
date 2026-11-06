@@ -42,6 +42,11 @@ tasks:
         cmds:
             - cargo check
 
+    mln-core:
+        desc: Cache a prebuilt MapLibre Native core so builds skip the C++ compile
+        cmds:
+            - ./tool/setup-mln-core.sh
+
     rust.test:
         desc: Run Rust tests
         dir: rust

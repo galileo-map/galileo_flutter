@@ -2140,6 +2140,7 @@ checksum = "4050469837a6ff301cd14c1f8f24f88549e6d548f24f64e2148eb0f72cebc51f"
 [[package]]
 name = "maplibre_native"
 version = "0.10.0"
+source = "git+https://github.com/shri-acha/maplibre-native-rs?branch=wgpu-30#ae633e6305ff3e0a8d6094f71d04a465bee09b6c"
 dependencies = [
  "cmake",
  "cxx",
@@ -4642,6 +4643,7 @@ dependencies = [
 [[package]]
 name = "webgpu-shim"
 version = "0.1.2"
+source = "git+https://github.com/shri-acha/maplibre-native-rs?branch=wgpu-30#ae633e6305ff3e0a8d6094f71d04a465bee09b6c"
 dependencies = [
  "bindgen",
  "cxx",
